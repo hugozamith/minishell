@@ -5,6 +5,7 @@ FT_PRINTF_PATH	=	./libraries/ft_printf
 PRINTF			=	$(FT_PRINTF_PATH)/libftprintf.a
 
 READLINE_FLAGS	=	-lreadline
+NCURSES_FLAGS	=	-lncurses  # Adicionamos ncurses aqui
 
 SOURCES_DIR		=	sources
 SOURCES_FILES	=	$(wildcard $(SOURCES_DIR)/*.c)
@@ -27,7 +28,7 @@ CFLAGS			=	-Wall -Wextra -Werror -ggdb
 all:			$(NAME)
 
 $(NAME):		$(LIBFT) $(PRINTF) $(OBJECTS) $(HEADER)
-				$(CC) $(CFLAGS) $(OBJECTS) $(PRINTF) $(LIBFT) $(READLINE_FLAGS) -o $(NAME)
+				$(CC) $(CFLAGS) $(OBJECTS) $(PRINTF) $(LIBFT) $(READLINE_FLAGS) $(NCURSES_FLAGS) -o $(NAME)  # Flags de ncurses adicionadas
 
 $(LIBFT):
 				$(MAKE) -C $(LIBFT_PATH)

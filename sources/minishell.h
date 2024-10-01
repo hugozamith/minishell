@@ -1,3 +1,4 @@
+
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -6,7 +7,7 @@
 /*   By: hteixeir <hteixeir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:48:55 by hteixeir          #+#    #+#             */
-/*   Updated: 2024/09/16 13:43:08 by hteixeir         ###   ########.fr       */
+/*   Updated: 2024/09/16 17:42:09 by hteixeir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,17 +33,48 @@
 #include "../libraries/libft/libft.h"
 #include "../libraries/ft_printf/ft_printf.h"
 
-typedef struct s_flags
+extern char	**g_env;
+
+
+typedef enum e_tokens
 {
-	char *command;
-	char *args;
-}	t_flags;
+	COMMAND,
+	ARGUMENT,
+	//OPERATOR,
+	QUOTE,
+	VARIABLE,
+	PIPE,
+	REDIRECT_IN,
+	REDIRECT_OUT,
+	END
+}	t_tokens;
 
-typedef struct s_command
+
+typedef struct s_word
 {
-	char *command;
-	char *args;
-}	t_command;
+	t_tokens			type;
+	char				*value;
+	struct s_word		*next;
+}	t_word;
 
+//
+//typedef struct s_command
+//{
+//	char *command;
+//	char *args;
+//}	t_command;int	env_init(void)
 
+int bt_exit(t_word *args);
+int bt_pwd(void);
+int bt_cd(t_word *args);
+int bt_env(void);
+int is_bt(char *word, t_word *args);
+int	split_count(char **split);
+int	print_error(char *s1, char *s2, char *s3, char *message);
+void	ft_free_split(char ***split);
+void print_env(void);
+int	env_init(void);
+int		ft_clear_screen(void);
+void	lexer(char *input, t_word **token_list);
+char	*ft_strndup(const char *s, int n);
 #endif
