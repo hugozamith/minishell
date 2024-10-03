@@ -64,17 +64,22 @@ typedef struct s_word
 //	char *args;
 //}	t_command;int	env_init(void)
 
-int bt_exit(t_word *args);
-int bt_pwd(void);
-int bt_cd(t_word *args);
-int bt_env(void);
-int is_bt(char *word, t_word *args);
-int	split_count(char **split);
-int	print_error(char *s1, char *s2, char *s3, char *message);
+char	*extract_string(char *input, int *len);
+char	remove_quotations(char **str);
+int		handle_redirections(t_word *args);
+int		bt_echo(t_word *args, int fd);
+int		bt_exit(t_word *args);
+int		bt_pwd(void);
+int		bt_cd(t_word *args);
+int		bt_env(void);
+int		is_bt(char *word, t_word *args);
+int		split_count(char **split);
+int		print_error(char *s1, char *s2, char *s3, char *message);
 void	ft_free_split(char ***split);
-void print_env(void);
-int	env_init(void);
+void	print_env(void);
+int		env_init(void);
 int		ft_clear_screen(void);
 void	lexer(char *input, t_word **token_list);
 char	*ft_strndup(const char *s, int n);
+
 #endif

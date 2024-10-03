@@ -104,3 +104,31 @@ char	*ft_strndup(const char *s, int n)
 	*str = '\0';
 	return (ret);
 }
+
+char remove_quotations(char **str)
+{
+	char	*new;
+	char	*old;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	old = *str;
+	new = malloc(ft_strlen(old) + 1);
+	if (new == NULL)
+		return (1);
+	while (old[i])
+	{
+		if (old[i] != '\'' && old[i] != '\"')
+		{
+			new[j] = old[i];
+			j++;
+		}
+		i++;
+	}
+	new[j] = '\0';
+	free(old);
+	*str = new;
+	return (0);
+}

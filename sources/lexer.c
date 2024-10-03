@@ -30,7 +30,7 @@ char *extract_word(char *input, int *len)
 	return (ft_strndup(start, *len)); // malloc !!!	
 }
 
-char *extract_string(char *input, int *len)
+/*char *extract_string(char *input, int *len)
 {
 	char	quote_type = *input;
 	*len = 0;
@@ -44,7 +44,7 @@ char *extract_string(char *input, int *len)
 	}
 	input++;
 	return (ft_strndup(start, *len)); // malloc !!!
-}
+}*/
 
 char *extract_variable(char *input, int *len)
 {
@@ -61,70 +61,70 @@ char *extract_variable(char *input, int *len)
 
 void lexer(char *input, t_word **token_list)
 {
-	int pepi;
+    int pepi;
 
-	while (*input != '\0')
-	{
-		while (*input == ' ' || *input == '\t')
-			input++;
-		if (*input == '|')
-		{
-			add_token(token_list, PIPE, "|");
-			input++;
-			pepi = 1;
-		}
-		else if (*input == '>')
-		{
-			if (*(input + 1) == '>')
-			{
-				add_token(token_list, REDIRECT_OUT, ">>");
-				input++;
-			}
-			else
-				add_token(token_list, REDIRECT_OUT, ">");
-			input++;
-		}
-		else if (*input == '<')
-		{
-			if (*(input + 1) == '<')
-			{
-				add_token(token_list, REDIRECT_IN, "<<");
-				input++;
-			}
-			else
-				add_token(token_list, REDIRECT_IN, "<");
-			input++;
-		}
-		else if (*input == '$')
-		{
-			int len;
-			char *var = extract_variable(input, &len);
-			add_token(token_list, VARIABLE, var);
-			free(var);
-			input += len + 1;
-		}
-		// else if (*input == '"' || *input == '\'')
-		// {
-		// 	int len;
-		// 	char *str = extract_string(input, &len);
-		// 	add_token(token_list, ARGUMENT, str);
-		// 	free(str);
-		// 	input += len;
-		// }
-		else
-		{
-			int len;
-			char *word = extract_word(input, &len);
-			if (*token_list == NULL || pepi)
-			{
-				add_token(token_list, COMMAND, word);
-				pepi = 0;
-			}
-			else
-				add_token(token_list, ARGUMENT, word);
-			free(word);
-			input += len;
-		}
-	}
-	add_token(token_list, END, "END");
+    while (*input != '\0')
+    {
+        while (*input == ' ' || *input == '\t')
+            input++;
+        if (*input == '|')
+        {
+            add_token(token_list, PIPE, "|");
+            input++;
+            pepi = 1;
+        }
+        else if (*input == '>')
+        {
+            if (*(input + 1) == '>')
+            {
+                add_token(token_list, REDIRECT_OUT, ">>");
+                input++;
+            }
+            else
+                add_token(token_list, REDIRECT_OUT, ">");
+            input++;
+        }
+        else if (*input == '<')
+        {
+            if (*(input + 1) == '<')
+            {
+                add_token(token_list, REDIRECT_IN, "<<");
+                input++;
+            }
+            else
+                add_token(token_list, REDIRECT_IN, "<");
+            input++;
+        }
+        else if (*input == '$')
+        {
+            int len;
+            char *var = extract_variable(input, &len);
+            add_token(token_list, VARIABLE, var);
+            free(var);
+            input += len + 1;
+        }
+        else if (*input == '"' || *input == '\'')
+        {
+            int len;
+            char *str = extract_string(input, &len);
+            add_token(token_list, ARGUMENT, str);
+            free(str);
+            input += len;
+        }
+        else
+        {
+            int len;
+            char *word = extract_word(input, &len);
+            if (*token_list == NULL || pepi)
+            {
+                add_token(token_list, COMMAND, word);
+                pepi = 0;
+            }
+            else
+                add_token(token_list, ARGUMENT, word);
+            free(word);
+            input += len;
+        }
+    }
+    add_token(token_list, END, "END");
 }

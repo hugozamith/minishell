@@ -32,8 +32,8 @@ const char *token_type_to_str(t_tokens type)
 
 int is_bt(char *word, t_word *args)
 {
-//	if (!ft_strncmp(word, "echo", 5))
-//		return (bt_echo(args));
+	if (!ft_strncmp(word, "echo", 5))
+		return (bt_echo(args, 1));
 	if (!ft_strncmp(word, "cd", 3))
 		return (bt_cd(args));
 	if (!ft_strncmp(word, "pwd", 4))
@@ -54,7 +54,6 @@ int is_bt(char *word, t_word *args)
 {
 	
 }*/
-
 
 int main(void)
 {
