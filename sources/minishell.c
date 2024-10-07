@@ -46,7 +46,7 @@ int is_bt(char *word, t_word *args)
 		return (bt_env());
 	if (!ft_strncmp(word, "exit", 5))
 		return (bt_exit(args));
-	return (0);
+	return (1);
 }
 
 
@@ -55,15 +55,20 @@ int is_bt(char *word, t_word *args)
 	
 }*/
 
-
 int main(void)
 {
+	signal(SIGINT, ft_handlesignal);
+	signal(SIGQUIT, SIG_IGN);
 	env_init();
     char *line = NULL;
     t_word *args = NULL;
     while (1)
 	{
         line = readline("minishell$ ");
+		if (line == NULL) {
+           	ft_printf("exit\n");
+            break;
+        }
         if (strlen(line) > 0)
             add_history(line);
 		if (line)
@@ -78,7 +83,11 @@ int main(void)
 
 		}
 
-		is_bt(args->value, args);
+		if (is_bt(args->value, args))
+		{
+			ft_auto_execute(line);	
+			//printf("HEHEHEHEHEHE");
+		}
 //		if (strcmp(line, "env") == 0)
 //		{
 //			env_init();
@@ -86,20 +95,15 @@ int main(void)
 //		}
 		if (strcmp(line, "clear") == 0)
 			ft_clear_screen();
-        if (line == NULL) {
-            printf("\n");
-            break;
-        }
         //printf("Comando recebido: %s\n", line);
-
         free(line);
-	while (args)
-	{
-		t_word *next = args->next;
-		free(args->value);
-		free(args);
-		args = next;
-	}
+		while (args)
+		{
+			t_word *next = args->next;
+			free(args->value);
+			free(args);
+			args = next;
+		}
     }
 
 

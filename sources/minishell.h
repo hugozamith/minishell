@@ -15,6 +15,8 @@
 # define MINISHELL_H
 
 # include <string.h>
+# include <unistd.h>
+# include <stdio.h>
 # include <fcntl.h>
 # include <curses.h>
 # include <termcap.h>
@@ -77,4 +79,7 @@ int	env_init(void);
 int		ft_clear_screen(void);
 void	lexer(char *input, t_word **token_list);
 char	*ft_strndup(const char *s, int n);
+void ft_handlesignal(int sigur);
+void ft_auto_execute(char *input);
+
 #endif
