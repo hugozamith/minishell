@@ -69,17 +69,20 @@ typedef struct s_word
 int bt_exit(t_word *args);
 int bt_pwd(void);
 int bt_cd(t_word *args);
-int bt_env(void);
-int is_bt(char *word, t_word *args);
+int bt_env(char **envp);
+int bt_unset(t_word *args, char ***envp);
+int is_bt(char *word, t_word *args, char ***envp);
 int	split_count(char **split);
 int	print_error(char *s1, char *s2, char *s3, char *message);
 void	ft_free_split(char ***split);
-void print_env(void);
-int	env_init(void);
+void print_env(char **envp);
+char	**env_init(char **envp);
 int		ft_clear_screen(void);
 void	lexer(char *input, t_word **token_list);
 char	*ft_strndup(const char *s, int n);
 void ft_handlesignal(int sigur);
 void ft_auto_execute(char *input);
+int	bt_export(t_word *args, char ***envp);
+int	ft_strcmp(const char *s1, const char *s2);
 
 #endif

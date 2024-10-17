@@ -82,7 +82,7 @@ int ft_clear_screen(void)
 
     // Envia a sequência para limpar a tela
     tputs(clear_cmd, 1, putchar);
-
+	printf("\033[3J");
     return (0);
 }
 

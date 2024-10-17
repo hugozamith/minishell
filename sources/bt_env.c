@@ -1,48 +1,40 @@
 #include "minishell.h"
 
-void print_env(void)
+void print_env(char **envp)
 {
     int i = 0;
-
-    while (g_env[i] != NULL)
-    {
-        printf("%s\n", g_env[i]);
+	//ft_printf("SECOND\n");
+	while (envp[i] != NULL)
         i++;
+	//ft_printf("LINES: %d\t%s\n\n", i, envp[0]);
+	i = -1;
+    while (envp[++i] != NULL)
+    {
+		//ft_printf("Line: %d\t", i);
+        printf("%s\n", envp[i]);
     }
+	//ft_printf("IS THIS WRONG? %s\n", envp[i-1]);
 }
 
-int	env_init(void)
+char	**env_init(char **envp)
 {
-	extern char	**environ;
-	int			i;
+	int	i;
+	char	**str;
 
-	i = split_count(environ);
-	if (i == 0)
-		return (0);
-	g_env = malloc((i + 1) * sizeof(char *));
-	if (g_env == NULL)
-		return (print_error("minishell", NULL, NULL, strerror(ENOMEM)));
 	i = 0;
-	while (environ[i])
-	{
-		g_env[i] = ft_strdup(environ[i]);
-		if (g_env[i] == NULL)
-		{
-			ft_free_split(&g_env);
-			return (print_error("minishell", NULL, NULL, strerror(ENOMEM)));
-		}
+	while(envp[i])
 		i++;
-	}
-
-	
-	g_env[i] = NULL;
-	return (0);
+	str = malloc(sizeof(char *) * (i + 1));
+	i = -1;
+	while (envp[++i])
+		str[i] = ft_strdup(envp[i]);
+	str[i] = NULL;
+	return(str);
 }
 
-int bt_env(void)
+int bt_env(char **envp)
 {
-	env_init();
-	print_env();
-
+	//ft_printf("FIRST\n");
+	print_env(envp);
 	return(1);
 }

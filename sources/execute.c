@@ -54,26 +54,26 @@ static void	ft_exec_input(char *input)
 	char **args;
 
 	args = ft_split(input, ' ');
-	command_path = ft_find_command(args[0]);
+	if (!ft_strchr(args[0], '/'))
+		command_path = ft_find_command(args[0]);
+	else
+		command_path = args[0];
 	if (fork() == 0)// Child process
 	{
         if (execve(command_path, args, NULL) == -1) {
-            perror("execve failed");
-            exit(EXIT_FAILURE);
+			ft_printf("%s: command not found\n", args[0]);
+			exit(EXIT_FAILURE);
         }
-    } else // Parent process
+    } else 
+	{
+		// Parent process
         wait(NULL); // Wait for the child process to finish
-    //free(input);
+    }//free(input);
 	//command_path = ft_find_command(word);
 }
+
+
 void	ft_auto_execute(char *input)
 {
-	char **str;
-	str = ft_split(input, '|');
-	while (*str)
-	{
-		ft_exec_input(*str);
-		//ft_printf("STR: %s", *str);
-		str++;
-	}
+	ft_exec_input(input);
 }

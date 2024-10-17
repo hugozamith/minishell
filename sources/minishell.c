@@ -30,7 +30,7 @@ const char *token_type_to_str(t_tokens type)
 
 
 
-int is_bt(char *word, t_word *args)
+int is_bt(char *word, t_word *args, char ***envp)
 {
 //	if (!ft_strncmp(word, "echo", 5))
 //		return (bt_echo(args));
@@ -38,12 +38,12 @@ int is_bt(char *word, t_word *args)
 		return (bt_cd(args));
 	if (!ft_strncmp(word, "pwd", 4))
 		return (bt_pwd());
-//	if (!ft_strncmp(word, "export", 7))
-//		return (bt_export(args));
-//	if (!ft_strncmp(word, "unset", 6))
-//		return (bt_unset(args));
+	if (!ft_strncmp(word, "export", 7))
+		return (bt_export(args, envp));
+	if (!ft_strncmp(word, "unset", 6))
+		return (bt_unset(args, envp));
 	if (!ft_strncmp(word, "env", 4))
-		return (bt_env());
+		return (bt_env(*envp));
 	if (!ft_strncmp(word, "exit", 5))
 		return (bt_exit(args));
 	return (1);
@@ -55,11 +55,15 @@ int is_bt(char *word, t_word *args)
 	
 }*/
 
-int main(void)
+int main(int argc, char **argv, char **envp)
 {
+	char ***my_env;
+
+	argc = 0;
+	argv = NULL;
+	my_env = &envp;
 	signal(SIGINT, ft_handlesignal);
 	signal(SIGQUIT, SIG_IGN);
-	env_init();
     char *line = NULL;
     t_word *args = NULL;
     while (1)
@@ -82,8 +86,9 @@ int main(void)
 			}
 
 		}
-
-		if (is_bt(args->value, args))
+		if (strcmp(line, "clear") == 0)
+			ft_clear_screen();
+		if (is_bt(args->value, args, my_env))
 		{
 			ft_auto_execute(line);	
 			//printf("HEHEHEHEHEHE");
@@ -93,8 +98,6 @@ int main(void)
 //			env_init();
 //			print_env();
 //		}
-		if (strcmp(line, "clear") == 0)
-			ft_clear_screen();
         //printf("Comando recebido: %s\n", line);
         free(line);
 		while (args)
