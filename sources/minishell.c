@@ -57,6 +57,7 @@ int is_bt(char *word, t_word *args)
 
 int main(void)
 {
+	int	status;
 	env_init();
     char *line = NULL;
     t_word *args = NULL;
@@ -67,7 +68,7 @@ int main(void)
             add_history(line);
 		if (line)
 		{
-			lexer(line, &args);
+			status = lexer(line, &args);
 			t_word *temp = args;
 			while (temp)
 			{
@@ -76,9 +77,9 @@ int main(void)
 			}
 
 		}
-
-		is_bt(args->value, args);
-//		if (strcmp(line, "env") == 0)
+		if (!(status))
+			is_bt(args->value, args);
+//		if (strcmp(line, "env")x	 == 0)
 //		{
 //			env_init();
 //			print_env();
@@ -92,14 +93,14 @@ int main(void)
         //printf("Comando recebido: %s\n", line);
 
         free(line);
-	while (args)
-	{
-		t_word *next = args->next;
-		free(args->value);
-		free(args);
-		args = next;
-	}
-    }
+		while (args)
+		{
+			t_word *next = args->next;
+			free(args->value);
+			free(args);
+			args = next;
+		}
+		}
 
 
     return 0;

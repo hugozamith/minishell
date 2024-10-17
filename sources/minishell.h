@@ -55,6 +55,7 @@ typedef struct s_word
 	t_tokens			type;
 	char				*value;
 	struct s_word		*next;
+	struct s_word		*prev;
 }	t_word;
 
 //
@@ -64,8 +65,13 @@ typedef struct s_word
 //	char *args;
 //}	t_command;int	env_init(void)
 
+char	*add_char(char *str, char c);
+void	delete_token_list(t_word **token_list);
+char	*ft_strjoin_free(char *s1, char *s2);
+char	*expand_string(t_word *input);
 char	*extract_string(char *input, int *len);
-char	remove_quotations(char **str);
+char	*remove_quotations(char *str);
+//char	remove_quotations(char **str);
 int		handle_redirections(t_word *args);
 int		bt_echo(t_word *args, int fd);
 int		bt_exit(t_word *args);
@@ -79,7 +85,7 @@ void	ft_free_split(char ***split);
 void	print_env(void);
 int		env_init(void);
 int		ft_clear_screen(void);
-void	lexer(char *input, t_word **token_list);
+int		lexer(char *input, t_word **token_list);
 char	*ft_strndup(const char *s, int n);
 
 #endif
