@@ -104,3 +104,82 @@ char	*ft_strndup(const char *s, int n)
 	*str = '\0';
 	return (ret);
 }
+
+
+/*char remove_quotations(char **str)
+{
+	char	*new;
+	char	*old;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	old = *str;
+	new = malloc(ft_strlen(old) + 1);
+	if (new == NULL)
+		return (1);
+	while (old[i])
+	{
+		if (old[i] != '\'' && old[i] != '\"')
+		{
+			new[j] = old[i];
+			j++;
+		}
+		i++;
+	}
+	new[j] = '\0';
+	free(old);
+	*str = new;
+	return (0);
+}*/
+
+
+char	*ft_strjoin_free(char *s1, char *s2)
+{
+	size_t	len_s1;
+	size_t	len_s2;
+	char	*ret;
+	char	*a;
+
+	a = (char *)s1;
+	len_s1 = ft_strlen(s1);
+	len_s2 = ft_strlen(s2);
+	ret = (char *)malloc((len_s1 + len_s2 + 1) * sizeof(char));
+	if (ret == NULL)
+		return (NULL);
+	ft_memcpy(ret, a, len_s1);
+	ft_strlcpy(ret + len_s1, s2, len_s2 + 1);
+	free(s1);
+	return (ret);
+}
+
+void delete_token_list(t_word **token_list)
+{
+    t_word *current = *token_list;
+    t_word *next_token;
+
+    while (current)
+    {
+        next_token = current->next;
+        free(current->value);  // Free the value string
+        free(current);  // Free the current token structure
+        current = next_token;
+    }
+    *token_list = NULL;  // Set the list pointer to NULL after deletion
+}
+char *add_char(char *str, char c)
+{
+	char *new_str;
+	int len;
+
+	len = ft_strlen(str);
+	new_str = malloc(len + 2);
+	if (new_str == NULL)
+		return (NULL);
+	ft_memcpy(new_str, str, len);
+	new_str[len] = c;
+	new_str[len + 1] = '\0';
+	free(str);
+	return (new_str);
+}
