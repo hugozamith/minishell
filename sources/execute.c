@@ -12,7 +12,7 @@ static char	*ft_shelljoin(char *dir, char *command)
 	len = dirlen + comlen;
 	result = malloc(sizeof(char) * (len + 2));
 	if (!result)
-		return NULL;
+		return (NULL);
 	ft_memcpy(result, dir, dirlen);
 	result[dirlen] = '/';
 	ft_memcpy(result + dirlen + 1, command, comlen);
@@ -31,7 +31,7 @@ static char	*ft_find_command(char *command)
 	i = -1;
 	path_env = getenv("PATH");
 	if (!path_env)
-		return NULL;
+		return (NULL);
 	path_copy = ft_strdup(path_env);
 	dir = ft_split(path_copy, ':');
 	while (dir[++i])
@@ -48,10 +48,27 @@ static char	*ft_find_command(char *command)
 	return (NULL);
 }
 
+char	*ft_args_to_line(t_word *args)
+{
+	char	*result;
+	int		i;
+
+	result = malloc(1);
+	i = 0;
+	while (args->type == COMMAND || args->type == ARGUMENT)
+	{
+		result = ft_strjoin(result, expand_string(args));
+		result = ft_strjoin(result, " ");
+		args = args->next;
+	}
+	//ft_printf("RESULT: %s\n", result);
+	return (result);
+}
+
 static void	ft_exec_input(char *input)
 {
-	char *command_path;
-	char **args;
+	char	*command_path;
+	char	**args;
 
 	args = ft_split(input, ' ');
 	if (!ft_strchr(args[0], '/'))
@@ -60,20 +77,24 @@ static void	ft_exec_input(char *input)
 		command_path = args[0];
 	if (fork() == 0)// Child process
 	{
-        if (execve(command_path, args, NULL) == -1) {
+		if (execve(command_path, args, NULL) == -1)
+		{
 			ft_printf("%s: command not found\n", args[0]);
 			exit(EXIT_FAILURE);
-        }
-    } else 
+		}
+		
+	}
+	else
 	{
 		// Parent process
-        wait(NULL); // Wait for the child process to finish
-    }//free(input);
-	//command_path = ft_find_command(word);
+		wait(NULL); // Wait for the child process to finish
+	} //free(input);
 }
 
-
-void	ft_auto_execute(char *input)
+void	ft_auto_execute(t_word *args)
 {
+	char *input;
+
+	input = ft_args_to_line(args);
 	ft_exec_input(input);
 }

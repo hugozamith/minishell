@@ -1,40 +1,50 @@
 #include "minishell.h"
 
-void print_env(char **envp)
+void	print_env(char **envp)
 {
-    int i = 0;
-	//ft_printf("SECOND\n");
+	int	i;
+
+	i = 0;
 	while (envp[i] != NULL)
-        i++;
-	//ft_printf("LINES: %d\t%s\n\n", i, envp[0]);
+		i++;
 	i = -1;
-    while (envp[++i] != NULL)
-    {
-		//ft_printf("Line: %d\t", i);
-        printf("%s\n", envp[i]);
-    }
-	//ft_printf("IS THIS WRONG? %s\n", envp[i-1]);
+	while (envp[++i] != NULL)
+	{
+		printf("%s\n", envp[i]);
+	}
 }
 
 char	**env_init(char **envp)
 {
-	int	i;
+	int		i;
 	char	**str;
 
 	i = 0;
-	while(envp[i])
+	while (envp[i])
 		i++;
-	str = malloc(sizeof(char *) * (i + 1));
+	str = malloc((i + 1) * sizeof(char *));
+	if (!str)
+		return (NULL);
 	i = -1;
 	while (envp[++i])
+	{
 		str[i] = ft_strdup(envp[i]);
+		if (!str[i])  // Check for allocation failure
+		{
+			while (i > 0)
+			{
+				free(str[--i]);
+			}
+			free(str);
+			return (NULL);
+		}
+	}
 	str[i] = NULL;
-	return(str);
+	return (str);
 }
 
-int bt_env(char **envp)
+int	bt_env(char **envp)
 {
-	//ft_printf("FIRST\n");
 	print_env(envp);
-	return(1);
+	return (0);
 }

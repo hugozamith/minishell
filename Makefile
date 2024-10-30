@@ -50,6 +50,10 @@ fclean:			clean
 				$(MAKE) -C $(FT_PRINTF_PATH) fclean
 				$(RM) $(NAME)
 
+valgrind: 
+	@echo "{\n   leak readline\n   Memcheck:Leak\n...\n   fun:readline\n}\n{\n   leak add_history\n   Memcheck:Leak\n...\n   fun:add_history\n}" > readline.supp
+	@valgrind --suppressions=readline.supp --leak-check=full -s --show-leak-kinds=all ./$(NAME)
+
 re:				fclean all
 
 .PHONY:			all clean fclean re
