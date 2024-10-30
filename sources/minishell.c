@@ -3,6 +3,17 @@
 
 char	**g_env = NULL;
 
+int has_pipe(t_word *args)
+{
+	while (args)
+	{
+		if (args->type == PIPE)
+			return (1);
+		args = args->next;
+	}
+	return (0);
+}
+
 const char *token_type_to_str(t_tokens type)
 {
     switch (type)
@@ -48,65 +59,51 @@ int is_bt(char *word, t_word *args, char ***envp)
 		return (bt_exit(args));
 	return (1);
 }
-
-
-/*int parce_line(char *line)
-{
-	
-}*/
-
 int main(int argc, char **argv, char **envp)
 {
-	char ***my_env;
-
-	argc = 0;
-	argv = NULL;
-	my_env = &envp;
-	signal(SIGINT, ft_handlesignal);
-	signal(SIGQUIT, SIG_IGN);
+    char ***my_env;
+    argc = 0;
+    argv = NULL;
+    my_env = &envp;
+    signal(SIGINT, ft_handlesignal);
+    signal(SIGQUIT, SIG_IGN);
     char *line = NULL;
     t_word *args = NULL;
+
     while (1)
-	{
+    {
         line = readline("minishell$ ");
-		if (line == NULL) {
-           	ft_printf("exit\n");
+        if (line == NULL) {
+            ft_printf("exit\n");
             break;
         }
         if (strlen(line) > 0)
             add_history(line);
-		if (line)
-		{
-			lexer(line, &args);
-			t_word *temp = args;
-			while (temp)
-			{
-				//printf("Token Type: %s, Value: %s\n", token_type_to_str(temp->type), temp->value);
-				temp = temp->next;
-			}
-
-		}
-		if (strcmp(line, "clear") == 0)
-			ft_clear_screen();
-		if (is_bt(args->value, args, my_env))
-		{
-			ft_auto_execute(line);	
-			//printf("HEHEHEHEHEHE");
-		}
-//		if (strcmp(line, "env") == 0)
-//		{
-//			env_init();
-//			print_env();
-//		}
-        //printf("Comando recebido: %s\n", line);
+        
+        if (line)
+        {
+            lexer(line, &args);
+			// while (temp)
+			// {
+			// 	printf("Token Type: %s, Value: %s\n", token_type_to_str(temp->type), temp->value);
+			// 	temp = temp->next;
+			// }
+			//printf("line 		: %s\n", line);
+            if (has_pipe(args)) {
+                pipe_execution(args, my_env);
+            } else if (is_bt(args->value, args, my_env)) {
+                ft_auto_execute(line);
+            }
+        }
+        
         free(line);
-		while (args)
-		{
-			t_word *next = args->next;
-			free(args->value);
-			free(args);
-			args = next;
-		}
+        while (args)
+        {
+            t_word *next = args->next;
+            free(args->value);
+            free(args);
+            args = next;
+        }
     }
     return 0;
 }
