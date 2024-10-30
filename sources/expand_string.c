@@ -1,37 +1,33 @@
 #include "minishell.h"
 
 // Function to expand variables like `$VAR`
-char *expand_variable(char *str)
+char	*expand_variable(char *str)
 {
-	char *var_name;
-	char *value;
+	char	*var_name;
+	char	*value;
+	char	*var;
 
 	// Skip the '$' character
 	str++;
-
 	// Extract the variable name
 	var_name = str;
 	while (*str && (ft_isalnum(*str) || *str == '_'))
 		str++;
-	
 	// Create a null-terminated variable name string
-	char *var = ft_strndup(var_name, str - var_name);
-
+	var = ft_strndup(var_name, str - var_name);
 	// Use getenv or custom function to fetch the variable value
 	value = getenv(var);
 	free(var);  // Free the variable name string
-
 	if (!value)
 		return (ft_strdup(""));  // If variable not found, return empty string
-
 	return (ft_strdup(value));  // Return the value as a new string
 }
 
 // Handle double-quoted string
-char *handle_double_quotes(char *str)
+char	*handle_double_quotes(char *str)
 {
-	char *expanded;
-	char *result;
+	char	*expanded;
+	char	*result;
 
 	result = ft_strdup("");  // Initialize result string
 	while (*str && *str != '"')
@@ -53,9 +49,9 @@ char *handle_double_quotes(char *str)
 }
 
 // Handle single-quoted string (no expansion)
-char *handle_single_quotes(char *str)
+char	*handle_single_quotes(char *str)
 {
-	char *result;
+	char	*result;
 
 	result = ft_strdup("");  // Initialize result string
 	while (*str && *str != '\'')
@@ -67,15 +63,14 @@ char *handle_single_quotes(char *str)
 }
 
 // Expander function
-char *expand_string(t_word *input)
+char	*expand_string(t_word *input)
 {
-	char *result;
-	char *current;
-	char *expanded;
+	char	*result;
+	char	*current;
+	char	*expanded;
 
 	result = ft_strdup("");  // Initialize result string
 	current = input->value;
-
 	while (*current)
 	{
 		//printf("Current: %s\n", current);
@@ -108,12 +103,12 @@ char *expand_string(t_word *input)
 				current = input->value;
 			//printf("Current after bling: %s\n", current);
 		}
-		else if (*current != '\'' && *current != '"' && *current != '$') // Normal character handling
+		else if (*current != '\'' && *current != '"'
+			&& *current != '$') // Normal character handling
 		{
 			result = add_char(result, *current);
 			current++;
 		}
 	}
-	return result;
+	return (result);
 }
-
