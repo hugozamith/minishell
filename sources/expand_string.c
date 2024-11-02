@@ -114,6 +114,7 @@ char *expand_string(t_word *input)
 			current++;
 		}
 	}
+	//printf("Result: -%s-\n", result);
 	return result;
 }
 

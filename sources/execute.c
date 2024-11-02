@@ -47,7 +47,6 @@ static char	*ft_find_command(char *command)
 	free(path_copy);
 	return (NULL);
 }
-
 static void	ft_exec_input(char *input)
 {
 	char *command_path;
@@ -75,5 +74,6 @@ static void	ft_exec_input(char *input)
 
 void	ft_auto_execute(char *input)
 {
+	printf("input: %s\n", input);
 	ft_exec_input(input);
 }

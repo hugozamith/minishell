@@ -67,6 +67,7 @@ typedef struct s_word
 //	char *args;
 //}	t_command;int	env_init(void)
 
+void pipe_execution(t_word *args, char ***rara);
 int bt_exit(t_word *args);
 int bt_pwd(void);
 int bt_cd(t_word *args);
@@ -94,6 +95,5 @@ void ft_handlesignal(int sigur);
 void ft_auto_execute(char *input);
 int	bt_export(t_word *args, char ***envp);
 int	ft_strcmp(const char *s1, const char *s2);
-
 
 #endif
