@@ -1,19 +1,18 @@
 #include "minishell.h"
 
-int bt_exit(t_word *args)
+int	bt_exit(t_word *args)
 {
-    int exit_status;
-	char *arg;
+	int		exit_status;
+	char	*arg;
 
-    if (!ft_strncmp(args->next->value, "END", 3))
+	if (!ft_strncmp(args->next->value, "END", 3))
 	{
-    printf("exit\n");
-	        exit(EXIT_SUCCESS);
+		printf("exit\n");
+		exit(EXIT_SUCCESS);
 	}
 	arg = args->next->value;
 	if (*arg == '-' || *arg == '+')
 		arg++;
-
 	while (*arg)
 	{
 		if (!ft_isdigit(*arg))
@@ -23,7 +22,6 @@ int bt_exit(t_word *args)
 		}
 		arg++;
 	}
-	
 	exit_status = atoi(args->next->value);
 	printf("exit\n");
 	exit(exit_status);

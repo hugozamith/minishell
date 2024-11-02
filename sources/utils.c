@@ -151,6 +151,7 @@ char	*ft_strjoin_free(char *s1, char *s2)
 	ft_memcpy(ret, a, len_s1);
 	ft_strlcpy(ret + len_s1, s2, len_s2 + 1);
 	free(s1);
+	free(s2);
 	return (ret);
 }
 

@@ -101,7 +101,7 @@ void execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2
         handle_pipe_redirection(i, pipe_count, pipes);
 		printf("line: %s  pid: %d\n", line, pid);
         if (is_bt(command->value, command, envp))
-            ft_auto_execute(line);
+            ft_auto_execute(command);
 		free(line);
         exit(EXIT_SUCCESS);
     }

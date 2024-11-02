@@ -43,8 +43,8 @@ typedef enum e_tokens
 	COMMAND,
 	ARGUMENT,
 	//OPERATOR,
-	QUOTE,
-	VARIABLE,
+	//QUOTE,
+	//VARIABLE,
 	PIPE,
 	REDIRECT_IN,
 	REDIRECT_OUT,
@@ -70,7 +70,7 @@ typedef struct s_word
 void pipe_execution(t_word *args, char ***rara);
 int bt_exit(t_word *args);
 int bt_pwd(void);
-int bt_cd(t_word *args);
+int	bt_cd(t_word *args, char ***envp);
 int bt_env(char **envp);
 int bt_unset(t_word *args, char ***envp);
 int is_bt(char *word, t_word *args, char ***envp);
@@ -92,8 +92,10 @@ int		ft_clear_screen(void);
 int		lexer(char *input, t_word **token_list);
 char	*ft_strndup(const char *s, int n);
 void ft_handlesignal(int sigur);
-void ft_auto_execute(char *input);
+void	ft_auto_execute(t_word *args);
 int	bt_export(t_word *args, char ***envp);
 int	ft_strcmp(const char *s1, const char *s2);
+void	ft_free_all(char **env, t_word **args);
+void	ft_free_argvs(char **argv);
 
 #endif

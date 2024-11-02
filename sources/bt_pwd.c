@@ -1,8 +1,8 @@
 #include "minishell.h"
 
-int bt_pwd(void)
+int	bt_pwd(void)
 {
-	char cwd[1024];
+	char	cwd[1024];
 
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
 	{

@@ -1,10 +1,10 @@
 #include "minishell.h"
 
-int bt_echo(t_word *args, int fd)
+int	bt_echo(t_word *args, int fd)
 {
-    int newline;
-    t_word *current;
-    char *expanded;
+	int		newline;
+	t_word	*current;
+	char	*expanded;
 
     newline = 1;
     current = args->next;
@@ -38,4 +38,3 @@ int bt_echo(t_word *args, int fd)
 
     return (0);
 }
-
