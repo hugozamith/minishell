@@ -5,6 +5,7 @@ int	bt_exit(t_word *args)
 	int		exit_status;
 	char	*arg;
 
+	//printf("exit\n");
 	if (!ft_strncmp(args->next->value, "END", 3))
 	{
 		printf("exit\n");

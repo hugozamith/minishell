@@ -1,5 +1,15 @@
 #include "minishell.h"
 
+char *handle_shenanigans(char *result)
+{
+	char *expanded;
+
+	expanded = ft_strdup("$\0");
+	free(result);
+	return (expanded);
+}
+
+
 // Function to expand variables like `$VAR`
 char	*expand_variable(char *str)
 {
@@ -9,6 +19,16 @@ char	*expand_variable(char *str)
 
 	// Skip the '$' character
 	str++;
+	// if (*str == '$')
+	// {
+	// 	str++;
+	// 	return (ft_strdup("937709979"));
+	// }
+	// if (*str == '?')
+	// {
+	// 	str++;
+	// 	return (ft_itoa(0));//          to do!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// }
 	// Extract the variable name
 	var_name = str;
 	while (*str && (ft_isalnum(*str) || *str == '_'))
@@ -34,9 +54,13 @@ char	*handle_double_quotes(char *str)
 	{
 		if (*str == '$')  // Expand variables inside double quotes
 		{
+			if (*(str + 2) == '\0')
+				return (handle_shenanigans(result));
 			expanded = expand_variable(str);
 			result = ft_strjoin_free(result, expanded);
-			str += ft_strlen(expanded);  // Move past the expanded variable
+			str += ft_strlen(expanded);
+			if (*(str + 2) == '\'')
+				result = add_char(result, '\'');
 			return (result);
 		}
 		else
@@ -91,17 +115,17 @@ char	*expand_string(t_word *input)
 			result = ft_strjoin_free(result, expanded);
 			while (*current && *current != '\'')
 				current++;
-			if (*current == '\'')
-				current++;  // Skip closing single quote
+			//if (*current == '\'')
+			//	current++;  // Skip closing single quote
 		}
-		else if (*current == '$')  // Handle variable expansion
+		else if (*current == '$')  // Expand variables inside double quotes
 		{
+			if (*(current + 2) == '\0')
+				return (handle_shenanigans(result));
 			expanded = expand_variable(current);
 			result = ft_strjoin_free(result, expanded);
-			current += (ft_strlen(expanded) - 3);  // Move the pointer past the expanded variable
-			if (current < input->value)
-				current = input->value;
-			//printf("Current after bling: %s\n", current);
+			current += ft_strlen(expanded);  // Move past the expanded variable
+			return (result);
 		}
 		else if (*current != '\'' && *current != '"'
 			&& *current != '$') // Normal character handling
