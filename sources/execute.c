@@ -53,7 +53,7 @@ char	*ft_args_to_line(t_word *args)
 	char	*result;
 	int		i;
 
-	result = malloc(1);
+	result = "";
 	i = 0;
 	while (args->type == COMMAND || args->type == ARGUMENT)
 	{
@@ -93,6 +93,8 @@ void	ft_auto_execute(t_word *args)
 {
 	char *input;
 
+	//ft_printf("BEFORE: %s\n", args->value);
 	input = ft_args_to_line(args);
+	//ft_printf("AFTER: %s\n", input);
 	ft_exec_input(input);
 }

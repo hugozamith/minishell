@@ -71,6 +71,7 @@ int main(int argc, char **argv, char **envp)
 		{
 			ft_printf("exit\n");
 			ft_free_all(my_env, &args);
+			//printf("FINISHED FREE\n");
 			break ;
 		}
 		if (strlen(line) > 0)
