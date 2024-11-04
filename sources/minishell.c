@@ -108,6 +108,59 @@ int main(int argc, char **argv, char **envp)
     }
     return 0;
 }
+// =======
+// 	argc = 0;
+// 	argv = NULL;
+// 	my_env = env_init(envp);
+// 	if (!my_env)
+// 		return (0);
+// 	signal(SIGINT, ft_handlesignal);
+// 	signal(SIGQUIT, SIG_IGN);
+// 	while (1)
+// 	{
+// 		line = readline("minishell$ ");
+// 		if (line == NULL)
+// 		{
+// 			ft_printf("exit\n");
+// 			ft_free_all(my_env, &args);
+// 			//printf("FINISHED FREE\n");
+// 			break ;
+// 		}
+// 		if (strlen(line) > 0)
+// 			add_history(line);
+// 		if (line)
+// 		{
+// 			lexer(line, &args);
+// 			temp = args;
+// 			while (temp)
+// 			{
+// 				printf("Token Type: %s, Value: %s\n",
+// 					token_type_to_str(temp->type), temp->value);
+// 				temp = temp->next;
+// 			}
+// 		}
+// 		/* if (strcmp(line, "clear") == 0)
+// 		{
+// 			system("clear");
+//     		return (0);
+// 		} */
+// 			//ft_clear_screen();
+// 		if (is_bt(args->value, args, &my_env))
+// 		{
+// 			ft_auto_execute(args);
+// 		}
+// 		free(line);
+// 		while (args)
+// 		{
+// 			next = args->next;
+// 			free(args->value);
+// 			free(args);
+// 			args = next;
+// 		}
+// 	}
+// 	return (0);
+// >>>>>>> 8cb5b18e94af2b779b7dd5fd01b5608b698c7b3f
+// }
 
 // =======
 
