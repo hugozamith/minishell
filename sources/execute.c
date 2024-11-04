@@ -61,7 +61,7 @@ char	*ft_args_to_line(t_word *args)
 		result = ft_strjoin(result, " ");
 		args = args->next;
 	}
-	//ft_printf("RESULT: %s\n", result);
+
 	return (result);
 }
 
@@ -77,18 +77,16 @@ static void	ft_exec_input(char *input)
 		command_path = args[0];
 	if (fork() == 0)// Child process
 	{
-		if (execve(command_path, args, NULL) == -1)
+		if (execve(command_path, args, __environ) == -1)
 		{
 			ft_printf("%s: command not found\n", args[0]);
 			exit(EXIT_FAILURE);
 		}
 		
 	}
-	else
-	{
-		// Parent process
+	else // Parent process
 		wait(NULL); // Wait for the child process to finish
-	} //free(input);
+ 		//free(input);
 }
 
 void	ft_auto_execute(t_word *args)

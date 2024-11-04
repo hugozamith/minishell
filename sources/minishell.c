@@ -86,8 +86,12 @@ int main(int argc, char **argv, char **envp)
 				temp = temp->next;
 			}
 		}
-		if (strcmp(line, "clear") == 0)
-			ft_clear_screen();
+		/* if (strcmp(line, "clear") == 0)
+		{
+			system("clear");
+    		return (0);
+		} */
+			//ft_clear_screen();
 		if (is_bt(args->value, args, &my_env))
 		{
 			ft_auto_execute(args);

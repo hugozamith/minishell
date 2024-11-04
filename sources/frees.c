@@ -16,16 +16,16 @@ void	ft_free_env(char **env)
 	i = -1;
 	if(env && env[0])
 	{
-		ft_printf("HELLO\n");
+		//ft_printf("HELLO\n");
 		while (env[++i])
 		{
 			free(env[i]);
 		}
-		ft_printf("After: %s\n", env[i]);
+		//ft_printf("After: %s\n", env[i]);
 		free(env);
 		env = NULL;
 	}
-	ft_printf("After: %d\n", i);
+	//ft_printf("After: %d\n", i);
 }
 void	ft_free_args(t_word **args)
 {

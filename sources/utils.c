@@ -51,7 +51,7 @@ void	ft_free_split(char ***split)
 	*split = NULL;
 }
 
-int ft_clear_screen(void)
+/* int ft_clear_screen(void)
 {
     char *term_type;
     char buffer[2048]; // Buffer para armazenar o conteúdo do termcap
@@ -84,7 +84,7 @@ int ft_clear_screen(void)
     tputs(clear_cmd, 1, putchar);
 	printf("\033[3J");
     return (0);
-}
+} */
 
 char	*ft_strndup(const char *s, int n)
 {
