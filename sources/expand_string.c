@@ -56,12 +56,11 @@ char	*handle_double_quotes(char *str)
 		{
 			if (*(str + 2) == '\0')
 				return (handle_shenanigans(result));
-			expanded = expand_variable(str);
+			expanded = expand_variable(str++);
+			//printf ("Expanded: -%s-       -%zu\n", expanded, ft_strlen(expanded));
+			while (*str && (ft_isalnum(*str) || *str == '_'))
+				str++;
 			result = ft_strjoin_free(result, expanded);
-			str += ft_strlen(expanded);
-			if (*(str + 2) == '\'')
-				result = add_char(result, '\'');
-			return (result);
 		}
 		else
 		{
