@@ -65,7 +65,7 @@ int main(int argc, char **argv, char **envp)
     char ***my_env;
     argc = 0;
     argv = NULL;
-    my_env = &envp;
+	my_env = env_init(envp);
     signal(SIGINT, ft_handlesignal);
     signal(SIGQUIT, SIG_IGN);
     char *line = NULL;

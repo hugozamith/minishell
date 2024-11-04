@@ -14,8 +14,8 @@ void	ft_free_env(char **env)
 	int	i;
 
 	i = -1;
-	//ft_printf("FREEING ENV\n");
-	if(env && env[0])
+	ft_printf("FREEING ENV\n");
+	if(env && *env)
 	{
 		//ft_printf("HELLO\n");
 		while (env[++i])
@@ -32,7 +32,7 @@ void	ft_free_args(t_word *args)
 {
 	t_word *old_args;
 
-	//ft_printf("FREEING ARGS\n");
+	ft_printf("FREEING ARGS\n");
 	while(args->next)
 	{
 		old_args = args;
