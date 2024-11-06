@@ -24,6 +24,7 @@ void	ft_put_in_my_env(char ***envp, char *cwd)
 			(*envp)[i] = ft_strjoin("OLDPWD=", old_pwd[1]);
 		}
 	}
+	ft_free_argvs(old_pwd);
 }
 
 int	bt_cd(t_word *args, char ***envp)

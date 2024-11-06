@@ -56,7 +56,7 @@ int is_bt(char *word, t_word *args, char ***envp)
 	if (!ft_strncmp(word, "env", 4))
 		return (bt_env(*envp));
 	if (!ft_strncmp(word, "exit", 5))
-		return (ft_free_all(*envp, &args), bt_exit(args));
+		return (bt_exit(args, envp));
 	return (1);
 }
 
@@ -76,6 +76,7 @@ int main(int argc, char **argv, char **envp)
         line = readline("minishell$ ");
         if (line == NULL) {
             ft_printf("exit\n");
+			ft_free_all(my_env, &args);
             break;
         }
         if (strlen(line) > 0)
