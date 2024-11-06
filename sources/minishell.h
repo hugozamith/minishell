@@ -78,7 +78,7 @@ int	split_count(char **split);
 int	print_error(char *s1, char *s2, char *s3, char *message);
 void	ft_free_split(char ***split);
 void print_env(char **envp);
-char	**env_init(char **envp);
+char	***env_init(char **envp);
 char	*add_char(char *str, char c);
 void	delete_token_list(t_word **token_list);
 char	*ft_strjoin_free(char *s1, char *s2);

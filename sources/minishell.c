@@ -65,7 +65,7 @@ int main(int argc, char **argv, char **envp)
     char ***my_env;
     argc = 0;
     argv = NULL;
-    my_env = &envp;
+	my_env = env_init(envp);
     signal(SIGINT, ft_handlesignal);
     signal(SIGQUIT, SIG_IGN);
     char *line = NULL;
@@ -74,10 +74,11 @@ int main(int argc, char **argv, char **envp)
     while (1)
     {
         line = readline("minishell$ ");
-        // if (line == NULL) {
-        //     ft_printf("exit\n");
-        //     break;
-        // }
+        if (line == NULL) {
+            ft_printf("exit\n");
+			ft_free_all(my_env, &args);
+            break;
+        }
         if (strlen(line) > 0)
             add_history(line);
 

@@ -9,7 +9,8 @@ int	bt_exit(t_word *args, char ***envp)
 	if (!ft_strncmp(args->next->value, "END", 3))
 	{
 		printf("exit\n");
-		ft_free_all(envp, &args), 
+
+		ft_free_all(envp, &args);
 		exit(EXIT_SUCCESS);
 	}
 	arg = args->next->value;
@@ -27,6 +28,6 @@ int	bt_exit(t_word *args, char ***envp)
 	}
 	exit_status = atoi(args->next->value);
 	printf("exit\n");
-	ft_free_all(envp, &args), 
+	ft_free_all(envp, &args);
 	exit(exit_status);
 }
