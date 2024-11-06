@@ -25,8 +25,11 @@ int	bt_echo(t_word *args, int fd)
         ft_putstr_fd(expanded, fd);
         free(expanded);
 
-        if (!(current->next && (*(current->next->value) == '\'' || *(current->next->value) == '"')))
-            ft_putchar_fd(' ', fd);
+	if (current->next->type != END &&
+		!(current->next->value[0] == '\'' || current->next->value[0] == '"') &&
+		!(current->value[0] == '\'' || current->value[0] == '"'))
+		ft_putchar_fd(' ', fd);
+
         current = current->next;
     }
 

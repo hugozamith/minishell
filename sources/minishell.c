@@ -56,7 +56,7 @@ int is_bt(char *word, t_word *args, char ***envp)
 	if (!ft_strncmp(word, "env", 4))
 		return (bt_env(*envp));
 	if (!ft_strncmp(word, "exit", 5))
-		return (ft_free_all(*envp, &args), bt_exit(args));
+		return (bt_exit(args, envp));
 	return (1);
 }
 
@@ -74,30 +74,31 @@ int main(int argc, char **argv, char **envp)
     while (1)
     {
         line = readline("minishell$ ");
-        if (line == NULL) {
-            ft_printf("exit\n");
-            break;
-        }
+        // if (line == NULL) {
+        //     ft_printf("exit\n");
+        //     break;
+        // }
         if (strlen(line) > 0)
             add_history(line);
-        
-        if (line)
+
+
+        if (*line && *line != ' ')
         {
             lexer(line, &args);
-			// while (temp)
-			// {
-			// 	printf("Token Type: %s, Value: %s\n", token_type_to_str(temp->type), temp->value);
-			// 	temp = temp->next;
-			// }
+			t_word *temp = args;
+			while (temp)
+			{
+				//printf("Token Type: %s, Value: %s\n", token_type_to_str(temp->type), temp->value);
+				temp = temp->next;
+			}
 			//printf("line 		: %s\n", line);
             if (has_pipe(args)) {
                 pipe_execution(args, my_env);
             } else if (is_bt(args->value, args, my_env)) {
                 ft_auto_execute(args);
             }
+        	free(line);
         }
-        
-        free(line);
         while (args)
         {
             t_word *next = args->next;
