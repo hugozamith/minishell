@@ -40,7 +40,7 @@ static char	*ft_find_command(char *command)
 		if (full_path && access(full_path, X_OK) == 0)
 		{
 			free(path_copy);
-			return (ft_free_argvs(dir),free(full_path), full_path);
+			return (ft_free_argvs(dir), full_path);
 		}
 		free(full_path);
 	}
@@ -86,10 +86,12 @@ static void	ft_exec_input(char *input)
 		command_path = args[0];
 	if (fork() == 0)// Child process
 	{
+		//printf("input: %s \n", command_path);
 		if (execve(command_path, args, __environ) == -1)
 		{
 			ft_printf("%s: command not found\n", args[0]);
-			ft_free_argvs(args);
+			ft_free_argvs(args); // todo 
+			free(command_path);
 			//free(input);
 			exit(EXIT_FAILURE);
 		}
@@ -98,6 +100,7 @@ static void	ft_exec_input(char *input)
 		wait(NULL); // Wait for the child process to finish
  		//free(input);
 	ft_free_argvs(args);
+	free(command_path);
 	//free(input);
 }
 

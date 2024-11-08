@@ -81,7 +81,7 @@ char *command_to_str (t_word *command)
 	while (temp)
 	{
 	//	if temp
-		str = ft_strjoin_free(str, " ");
+		str = ft_strjoin_free(str, ft_strdup(" "));
 		str = ft_strjoin_free(str, temp->value);
 		temp = temp->next;
 	}
@@ -99,7 +99,7 @@ void execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2
 		//printf("\nAAAAAA\n");
 		line = command_to_str(command);
         handle_pipe_redirection(i, pipe_count, pipes);
-		printf("line: %s  pid: %d\n", line, pid);
+		//printf("line: %s  pid: %d\n", line, pid);
         if (is_bt(command->value, command, envp))
             ft_auto_execute(command);
 		free(line);
