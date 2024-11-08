@@ -73,7 +73,7 @@ char	*ft_args_to_line(t_word *args)
 	return (result);
 }
 
-static void	ft_exec_input(char *input)
+static void	ft_exec_input(char *input, t_word *arg, char ***env)
 {
 	char	*command_path;
 	char	**args;
@@ -83,7 +83,7 @@ static void	ft_exec_input(char *input)
 	if (!ft_strchr(args[0], '/'))
 		command_path = ft_find_command(args[0]);
 	else
-		command_path = args[0];
+		command_path = ft_strdup(args[0]);
 	if (fork() == 0)// Child process
 	{
 		//printf("input: %s \n", command_path);
@@ -93,6 +93,7 @@ static void	ft_exec_input(char *input)
 			ft_free_argvs(args); // todo 
 			free(command_path);
 			//free(input);
+			ft_free_all(env, &arg);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -101,15 +102,17 @@ static void	ft_exec_input(char *input)
  		//free(input);
 	ft_free_argvs(args);
 	free(command_path);
+	/* if (command_path)
+		free(command_path); */
 	//free(input);
 }
 
-void	ft_auto_execute(t_word *args)
+void	ft_auto_execute(t_word *args, char ***env)
 {
 	char *input;
 
 	//ft_printf("BEFORE: %s\n", args->value);
 	input = ft_args_to_line(args);
 	//ft_printf("AFTER: %s\n", input);
-	ft_exec_input(input);
+	ft_exec_input(input, args, env);
 }

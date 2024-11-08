@@ -20,6 +20,9 @@ char	***env_init(char **envp)
 	char	***str;
 
 	i = 0;
+	/* ft_printf("start here\n");
+	if (!envp[i])
+		ft_printf("NOOO ENV\n"); */
 	str = malloc(sizeof(char **) * 1);
 	while (envp[i])
 		i++;
@@ -34,12 +37,8 @@ char	***env_init(char **envp)
 		if (!str[0][i])  // Check for allocation failure
 		{
 			while (i > 0)
-			{
 				free(str[0][--i]);
-			}
-			free(str[0]);
-			free(str);
-			return (NULL);
+			return (free(str[0]), free(str), NULL);
 		}
 	}
 	str[0][i] = NULL;

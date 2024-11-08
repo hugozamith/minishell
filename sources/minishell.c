@@ -97,9 +97,10 @@ int main(int argc, char **argv, char **envp)
             if (has_pipe(args)) {
                 pipe_execution(args, my_env);
             } else if (is_bt(args->value, args, my_env)) {
-                ft_auto_execute(args);
+                ft_auto_execute(args, my_env);
             }
         	free(line);
+			//ft_free_args(args);
         }
         while (args)
         {
