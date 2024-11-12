@@ -30,6 +30,7 @@
 # include <termios.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <limits.h>
 
 #include "../libraries/libft/get_next_line_bonus.h"
 #include "../libraries/libft/libft.h"
@@ -67,6 +68,7 @@ typedef struct s_word
 //	char *args;
 //}	t_command;int	env_init(void)
 
+void reset_fd(int saved_fd_in, int saved_fd_out);
 void pipe_execution(t_word *args, char ***rara);
 int bt_exit(t_word *args, char ***envp);
 int bt_pwd(void);

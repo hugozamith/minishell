@@ -1,14 +1,20 @@
 #include "minishell.h"
 
-char *handle_shenanigans(char *result)
+char *handle_shenanigans(char *result, char *current)
 {
 	char *expanded;
 
+	//write(1, "m", 1);
+	if (current)
+		if (*(current + 1) == '?')
+		{
+			free(result);
+			return (ft_strdup("0\0"));
+		}
 	expanded = ft_strdup("$\0");
 	free(result);
 	return (expanded);
 }
-
 
 // Function to expand variables like `$VAR`
 char	*expand_variable(char *str)
@@ -16,14 +22,19 @@ char	*expand_variable(char *str)
 	char	*var_name;
 	char	*value;
 	char	*var;
-
 	// Skip the '$' character
 	str++;
-	// if (*str == '$')
+	// zif (*str == '$')
 	// {
 	// 	str++;
 	// 	return (ft_strdup("937709979"));
 	// }
+
+	if (*str == '?')
+	{
+		str++;
+		return (ft_itoa(0));//          to do!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	}
 	// if (*str == '?')
 	// {
 	// 	str++;
@@ -52,14 +63,15 @@ char	*handle_double_quotes(char *str)
 	result = ft_strdup("");  // Initialize result string
 	while (*str && *str != '"')
 	{
-		if (*str == '$')  // Expand variables inside double quotes
+		if (*str == '$' && *(str + 1) != ' ')  // Expand variables inside double quotes
 		{
 			if (*(str + 2) == '\0')
-				return (handle_shenanigans(result));
+				return (handle_shenanigans(result, NULL));
 			expanded = expand_variable(str++);
 			//printf ("Expanded: -%s-       -%zu\n", expanded, ft_strlen(expanded));
-			while (*str && (ft_isalnum(*str) || *str == '_'))
-				str++;
+			if (*str++ != '?')
+				while (*str && (ft_isalnum(*str) || *str == '_' || *str == '?'))
+					str++;
 			result = ft_strjoin_free(result, expanded);
 		}
 		else
@@ -117,14 +129,16 @@ char	*expand_string(t_word *input)
 			//if (*current == '\'')
 			//	current++;  // Skip closing single quote
 		}
-		else if (*current == '$')  // Expand variables inside double quotes
+		else if (*current == '$' && *(current + 1) != ' ')  // Expand variables inside double quotes
 		{
-			if (*(current + 2) == '\0')
-				return (handle_shenanigans(result));
-			expanded = expand_variable(current);
+			if (*(current + 1) == '\0')
+				return (handle_shenanigans(result, NULL));
+			expanded = expand_variable(current++);
+			//printf ("Expanded: -%s-       -%zu\n", expanded, ft_strlen(expanded));
+			if (*current++ != '?')
+				while (*current && (ft_isalnum(*current) || *current == '_' || *current == '?'))
+					current++;
 			result = ft_strjoin_free(result, expanded);
-			current += ft_strlen(expanded);  // Move past the expanded variable
-			return (result);
 		}
 		else if (*current != '\'' && *current != '"'
 			&& *current != '$') // Normal character handling
