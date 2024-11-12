@@ -75,6 +75,7 @@ int main(int argc, char **argv, char **envp)
     {
         line = readline("minishell$ ");
         if (line == NULL) {
+			//ft_printf("VALUE before: %s\n", args->value);
             ft_printf("exit\n");
 			ft_free_all(my_env, &args);
 			//exit (0);
@@ -102,13 +103,14 @@ int main(int argc, char **argv, char **envp)
         	free(line);
 			//ft_free_args(args);
         }
+		//ft_free_args(args);
         while (args)
-        {
-            t_word *next = args->next;
-            free(args->value);
-            free(args);
-            args = next;
-        }
+		{
+			t_word *next = args->next;
+			free(args->value);
+			free(args);
+			args = next;
+		}
     }
     return (0);
 }

@@ -184,3 +184,13 @@ char *add_char(char *str, char c)
 	free(str);
 	return (new_str);
 }
+
+/* char	*ft_getenv(char *var)
+{
+	char	**path;
+	int		i;
+
+	i = -1
+	ft_printf("\nVAR: %s\n\n", var);
+	return (NULL);
+} */

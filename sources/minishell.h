@@ -98,5 +98,8 @@ int	ft_strcmp(const char *s1, const char *s2);
 void    ft_free_all(char ***env, t_word **args);
 void	ft_free_argvs(char **argv);
 void    ft_free_args(t_word *args);
+void	ft_free_env(char ***env);
+char	*ft_getenv(char *var);
+char	*ft_args_to_line(t_word *args);
 
 #endif

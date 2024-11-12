@@ -64,6 +64,7 @@ int	bt_export(t_word *args, char ***envp)
 		}
 	}
 	ft_free_argvs(argv);
+	//ft_printf("VALUE: %s\n", args->next->value);
 	*envp = (ft_realloc(*envp, (i + 2)));
 	(*envp)[i] = ft_strdup(args->next->value);
 	(*envp)[i + 1] = NULL;

@@ -18,7 +18,7 @@ int	bt_echo(t_word *args, int fd)
         newline = 0;
         current = current->next;
     }
-
+	//ft_printf("VALUE before: %s\n", args->value);
     while (current && current->type == ARGUMENT)
     {
         expanded = expand_string(current);
@@ -34,8 +34,10 @@ int	bt_echo(t_word *args, int fd)
     }
 
     if (newline)
+	{
         ft_putchar_fd('\n', fd);
-
+	}
+	//ft_printf("VALUE after: %s\n", args->value);
     if (fd != STDOUT_FILENO)
         close(fd);
 

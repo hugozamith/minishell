@@ -37,6 +37,7 @@ char	*expand_variable(char *str)
 	var = ft_strndup(var_name, str - var_name);
 	// Use getenv or custom function to fetch the variable value
 	value = getenv(var);
+	//ft_getenv(var);
 	free(var);  // Free the variable name string
 	if (!value)
 		return (ft_strdup(""));  // If variable not found, return empty string

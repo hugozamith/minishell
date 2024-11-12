@@ -87,7 +87,7 @@ static void	ft_exec_input(char *input, t_word *arg, char ***env)
 	if (fork() == 0)// Child process
 	{
 		//printf("input: %s \n", command_path);
-		if (execve(command_path, args, __environ) == -1)
+		if (execve(command_path, args, *env) == -1)
 		{
 			ft_printf("%s: command not found\n", args[0]);
 			ft_free_argvs(args); // todo 
