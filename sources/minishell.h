@@ -30,6 +30,7 @@
 # include <termios.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <limits.h>
 
 #include "../libraries/libft/get_next_line_bonus.h"
 #include "../libraries/libft/libft.h"
@@ -67,6 +68,7 @@ typedef struct s_word
 //	char *args;
 //}	t_command;int	env_init(void)
 
+void reset_fd(int saved_fd_in, int saved_fd_out);
 void pipe_execution(t_word *args, char ***rara);
 int bt_exit(t_word *args, char ***envp);
 int bt_pwd(void);
@@ -101,5 +103,17 @@ void    ft_free_args(t_word *args);
 void	ft_free_env(char ***env);
 char	*ft_getenv(char *var);
 char	*ft_args_to_line(t_word *args);
+int		ft_printf_fd(int fd, const char *s, ...);
+int	ft_printfnumlen(int n);
+int	ft_printfputchar_fd(char c, int fd);
+int	ft_printfint_puthex_fd(unsigned int n, char c, int fd);
+int	ft_printfputnbr_base_fd(unsigned int nbr, char *base, int fd);
+int	ft_printfputnbr_fd(int nb, int fd);
+int	ft_printfputptr_fd(unsigned long ptr, int fd);
+int	ft_printfputstr_fd(char *str, int fd);
+size_t	ft_printfstrlcpy(char *dst, const char *src, size_t size);
+size_t	ft_printfstrlen(const char *str);
+int	ft_printfstrncmp(const char *s1, const char *s2, size_t n);
+
 
 #endif

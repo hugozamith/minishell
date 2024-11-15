@@ -73,11 +73,16 @@ char	*ft_args_to_line(t_word *args)
 	return (result);
 }
 
-static void	ft_exec_input(char *input, t_word *arg, char ***env)
+
+static void	ft_exec_input(char *input, t_word *orgs, char ***env)
 {
 	char	*command_path;
 	char	**args;
+    int     fds[2];
 
+    fds[0] = dup(STDIN_FILENO);
+    fds[1] = dup(STDOUT_FILENO);
+	handle_redirections(orgs);
 	args = ft_split(input, ' ');
 	free(input);
 	if (!ft_strchr(args[0], '/'))
@@ -93,7 +98,7 @@ static void	ft_exec_input(char *input, t_word *arg, char ***env)
 			ft_free_argvs(args); // todo 
 			free(command_path);
 			//free(input);
-			ft_free_all(env, &arg);
+			//ft_free_all(env, &arg);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -102,9 +107,7 @@ static void	ft_exec_input(char *input, t_word *arg, char ***env)
  		//free(input);
 	ft_free_argvs(args);
 	free(command_path);
-	/* if (command_path)
-		free(command_path); */
-	//free(input);
+	reset_fd(fds[0], fds[1]);
 }
 
 void	ft_auto_execute(t_word *args, char ***env)

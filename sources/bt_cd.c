@@ -45,10 +45,16 @@ int	bt_cd(t_word *args, char ***envp)
 	{
 		path = args->next->value;// Get the path from the next argument
 	}
+	//ft_printf("Value %s", args->next->next->value);
+	if (ft_strcmp(args->next->next->value, "END"))
+		ft_printf_fd(STDERR_FILENO, " too many arguments\n");
+	if (!ft_strcmp(path, "$PWD"))
+		return (0);
 	if (chdir(path) != 0) // Change directory
 	{
 		perror("cd");
-		return (1);
+		//ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
+		return (0);
 	}
 	if (getcwd(cwd, sizeof(cwd)) != NULL) // Print new directory
 	{

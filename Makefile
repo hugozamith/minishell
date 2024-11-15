@@ -8,7 +8,8 @@ READLINE_FLAGS	=	-lreadline
 NCURSES_FLAGS	=	-lncurses  # Adicionamos ncurses aqui
 
 SOURCES_DIR		=	sources
-SOURCES_FILES	=	$(wildcard $(SOURCES_DIR)/*.c)
+FT_PRINTF_FD_DIR=	$(SOURCES_DIR)/ft_printf_fd
+SOURCES_FILES	=	$(wildcard $(SOURCES_DIR)/*.c) $(wildcard $(FT_PRINTF_FD_DIR)/*.c)
 
 HEADER			=	$(SOURCES_DIR)/minishell.h
 

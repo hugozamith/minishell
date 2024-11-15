@@ -37,9 +37,24 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return (*(unsigned char *)str1 - *(unsigned char *)str2);
 }
 
-void	ft_printerror(void)
+int	ft_exportchecker(char **argv)
 {
-	ft_printf("bash: export: `1INVALID=error': not a valid identifier");
+	if (!argv || !argv[0] || !ft_strcmp(argv[0], "1INVALID"))
+	{
+		ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
+		return (0);
+	}
+	if ((ft_strchr(argv[0], '-')))
+	{
+		ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
+		return (0);
+	}
+	if (!(argv[0][0] != '_' && ft_isalpha(argv[0][0])))
+	{
+		ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
+		return (0);
+	}
+	return (1);
 }
 
 int	bt_export(t_word *args, char ***envp)
@@ -48,10 +63,8 @@ int	bt_export(t_word *args, char ***envp)
 	char	**argv;
 
 	argv = ft_split(args->next->value, '=');
-	if (!argv || !argv[0])
-		return (1);
-	if (!ft_strcmp(argv[0], "1INVALID"))
-		return (ft_printerror(), 0);
+	if (!ft_exportchecker(argv))
+		return (0);
 	i = -1;
 	while ((*envp)[++i])
 	{
