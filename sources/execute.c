@@ -53,7 +53,7 @@ char	*ft_args_to_line(t_word *args)
 {
 	char	*result;
 	char	*old_str;
-	char	*expand_str;
+	//char	*expand_str;
 	int		i;
 
 	result = ft_strdup("");
@@ -61,13 +61,13 @@ char	*ft_args_to_line(t_word *args)
 	while (args->type == COMMAND || args->type == ARGUMENT)
 	{
 		old_str = result;
-		expand_str = expand_string(args);
-		result = ft_strjoin(result, expand_str);
+		//expand_str = expand_string(args);
+		result = ft_strjoin(result, args->value);
 		free(old_str);
 		old_str = result;
 		result = ft_strjoin(result, " ");
 		free(old_str);
-		free(expand_str);
+		//free(expand_str);
 		args = args->next;
 	}
 	return (result);
@@ -88,6 +88,8 @@ static void	ft_exec_input(char *input, t_word *orgs)
 		command_path = ft_find_command(args[0]);
 	else
 		command_path = args[0];
+	//printf("args[0]: %s\n", args[0]);
+	//printf("args[1]: %s\n", args[1]);
 	if (fork() == 0)// Child process
 	{
 		//printf("input: %s \n", command_path);
@@ -108,11 +110,29 @@ static void	ft_exec_input(char *input, t_word *orgs)
 	reset_fd(fds[0], fds[1]);
 }
 
+void expand_args(t_word *args)
+{
+	t_word *temp = args;
+
+	while (temp)
+	{
+		if (temp->type == ARGUMENT)
+		{
+			//printf("temp->value: %s\n", temp->value);	
+			temp->value = expand_string(temp);
+			//printf("temp->value: %s\n", temp->value);
+		}
+		temp = temp->next;
+	}
+}
+
 void	ft_auto_execute(t_word *args)
 {
 	char *input;
 
-	//ft_printf("BEFORE: %s\n", args->value);
+	//printf("args->value: %s\n", args->next->value);
+	expand_args(args);
+	//printf("args->value: %s\n", args->next->value);
 	input = ft_args_to_line(args);
 	//ft_printf("AFTER: %s\n", input);
 	ft_exec_input(input, args);

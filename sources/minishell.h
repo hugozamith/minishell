@@ -47,8 +47,10 @@ typedef enum e_tokens
 	//QUOTE,
 	//VARIABLE,
 	PIPE,
-	REDIRECT_IN,
-	REDIRECT_OUT,
+    REDIRECT_OUT,
+//    REDIRECT_APPEND,
+    REDIRECT_IN,
+//    HEREDOC,
 	END
 }	t_tokens;
 

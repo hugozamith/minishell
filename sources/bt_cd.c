@@ -43,7 +43,9 @@ int	bt_cd(t_word *args, char ***envp)
 	}
 	else
 	{
-		path = args->next->value;// Get the path from the next argument
+		args = args->next;
+		path = expand_string(args);
+		//printf("path: %s\n", path);
 	}
 	if (chdir(path) != 0) // Change directory
 	{
@@ -53,7 +55,7 @@ int	bt_cd(t_word *args, char ***envp)
 	if (getcwd(cwd, sizeof(cwd)) != NULL) // Print new directory
 	{
 		ft_put_in_my_env(envp, cwd);
-		printf("Directory changed to: %s\n", cwd);
+		//printf("Directory changed to: %s\n", cwd);
 	}
 	else
 	{
