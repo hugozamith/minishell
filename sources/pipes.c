@@ -1,7 +1,4 @@
 #include "minishell.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 // Count the number of pipes in the argument list
 int count_pipes(t_word *args)
@@ -92,9 +89,8 @@ char *command_to_str (t_word *command)
 }
 
 
-
 // Execute a command with pipes
-void execute_piped_command(t_word **command, int i, int pipe_count, int pipes[][2], char ***envp)
+void execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2], char ***envp)
 {
     int pid = fork();
     if (pid == 0) // Child process
@@ -102,24 +98,13 @@ void execute_piped_command(t_word **command, int i, int pipe_count, int pipes[][
 		//printf("\nAAAAAA\n");
         handle_pipe_redirection(i, pipe_count, pipes);
 		//printf("command: %s\n", command->value);
-        if (is_bt((*command)->value, *command, envp))
-            ft_auto_execute(*command, envp);
-		ft_free_all(envp, command);
+        if (is_bt(command->value, command, envp))
+            ft_auto_execute(command, envp);
 		//free(line);
         exit(EXIT_SUCCESS);
     }
     else if (pid < 0)
-	{
-    	perror("fork error");
-	}
-	else
-	{
-		wait(NULL);
-	}
-	//ft_free_args(command);
-	//ft_free_all(envp, &command);
-	//ft_free_env(envp);
-	//printf("Command-value: %s\n", (*command)->value);
+        perror("fork error");
 }
 
 // Close all pipes after fork
@@ -137,20 +122,17 @@ void close_pipes(int pipe_count, int pipes[][2])
 // Execute the full pipeline
 void pipe_execution(t_word *args, char ***envp)
 {
-	t_word *command;
     int pipe_count = count_pipes(args);
     //printf("pipe count: %d\n", pipe_count);
     int pipes[pipe_count][2];
     create_pipes(pipe_count, pipes);
 	//printf("pipe count\n");
     int i = 0;
-    while (i <= pipe_count - 1)
+    while (i <= pipe_count)
     {
-
-		//execute_daddy(&args, i, pipe_count, pipes, envp);
-        command = get_next_command(&args);
-        execute_piped_command(&command, i, pipe_count, pipes, envp);
-			//printf("i: %d\n", i);
+        t_word *command = get_next_command(&args);
+        execute_piped_command(command, i, pipe_count, pipes, envp);
+		//printf("i: %d\n", i);
         i++;
     }
     close_pipes(pipe_count, pipes);
