@@ -124,10 +124,15 @@ int lexer(char *input, t_word **token_list)
 		{
 			char *start = input++; // Start of double-quoted string
 			while (*input && *input != '"') input++; // Skip until closing double quote
-			
-			if (*input == '"') {
-				input++;  // Skip the closing quote
+			if (*input == '"')
+			{
+
+				input++;
+				if  (*input == '$')
+					input++;
 				char *value = ft_strndup(start, input - start);
+//					if (*(input + 1) == '$')
+//					value = add_char(value, *(input++ + 1));
 				add_token(token_list, ARGUMENT, value); // Include quotes
 				free(value);
 			} else {

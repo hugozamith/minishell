@@ -96,24 +96,16 @@ char *command_to_str (t_word *command)
 // Execute a command with pipes
 void execute_piped_command(t_word **command, int i, int pipe_count, int pipes[][2], char ***envp)
 {
-	write(1, "AAAA", 4);
-    
-	write(1, "pipe\n", 5);
-	int pid = fork();
-	write(1, "\n", 1);
+    int pid = fork();
     if (pid == 0) // Child process
     {
 		//printf("\nAAAAAA\n");
-		//line = command_to_str(command);
         handle_pipe_redirection(i, pipe_count, pipes);
-		//printf("line: %s  pid: %d\n", line, pid);
-        if (is_bt((*command)->value, *command, envp))
+		//printf("command: %s\n", command->value);
+        if (is_bt((*command)->value, command, envp))
             ft_auto_execute(*command, envp);
-		//free(line);
 		ft_free_all(envp, command);
-		//printf("Command-value2: %s\n", command->value);
-		//ft_free_env(envp);
-		//ft_free_args(command);
+		//free(line);
         exit(EXIT_SUCCESS);
     }
     else if (pid < 0)

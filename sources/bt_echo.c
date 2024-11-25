@@ -53,8 +53,8 @@ int bt_echo(t_word *args, int fd, char ***envp)
     current = args->next;
 
     // Handle any redirection
-	while (tokensrch(args, REDIRECT_OUT) || tokensrch(args->prev, REDIRECT_OUT))
-		args = args->next;
+//	while (tokensrch(args, REDIRECT_OUT) || tokensrch(args->prev, REDIRECT_OUT))
+//		args = args->next;
     if (handle_redirections(args) < 0)
     {
 		ft_put_exitcode(envp, 1);

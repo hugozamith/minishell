@@ -5,12 +5,14 @@ int handle_redirections(t_word *args)
     t_word *current;
     int fd;
 
+	//write(1, "handle_redirections\n", 20);
     current = args;
     while (current)
     {
+		//printf("current->value: %s\n", current->value);
         if (current->type == REDIRECT_OUT)
         {
-            write(1, "REDIRECT_OUT\n", 13);
+            //write(1, "REDIRECT_OUT\n", 13);
             fd = open(current->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
             if (fd < 0)
             {
@@ -32,7 +34,7 @@ int handle_redirections(t_word *args)
             {
                 perror("open");
                 return (-1);
-            }
+            }	
             if (dup2(fd, STDIN_FILENO) == -1)
             {
                 perror("dup2");

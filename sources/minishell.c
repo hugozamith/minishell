@@ -116,12 +116,12 @@ int main(int argc, char **argv, char **envp)
         if (*line && *line != ' ')
         {
             lexer(line, &args);
-			/* t_word *temp = args;
+			t_word *temp = args;
 			while (temp)
 			{
-				printf("Token Type: %s, Value: %s\n", token_type_to_str(temp->type), temp->value);
+				//printf("Token Type: %s, Value: %s\n", token_type_to_str(temp->type), temp->value);
 				temp = temp->next;
-			} */
+			}
 			//printf("line 		: %s\n", line);
             if (has_pipe(args)) {
                 pipe_execution(args, my_env);

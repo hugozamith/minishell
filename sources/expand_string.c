@@ -139,13 +139,23 @@ char	*expand_string(t_word *input, char ***envp)
 		//printf("Current: %s\n", current);
 		if (*current == '"')  // Handle double quotes
 		{
+			//printf("Current: %s\n", current);
 			current++;
 			expanded = handle_double_quotes(current, envp);
 			result = ft_strjoin_free(result, expanded);
 			while (*current && *current != '"')
 				current++;
+			//printf("Current: %s\n", current);
 			if (*current == '"')
 				current++;  // Skip closing double quote
+			//printf("Current: %s\n", current);
+			if(*current == '$')
+			{
+			//	printf("result: %s\n", result);
+				result = add_char(result, *current);
+				return (result);
+			}
+				//return (add_char(result, *current));
 		}
 		else if (*current == '\'')  // Handle single quotes (no expansion)
 		{
