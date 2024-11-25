@@ -38,34 +38,62 @@ const char *token_type_to_str(t_tokens type)
 			return "UNKNOWN";
 	}
 }
+/* 
+int ft_extras(t_word *args, char **envp)
+{
+	if (!ft_strncmp(args->value, "$PWD", 1))
+	{
+		ft_printf_fd(STDERR_FILENO, " Is a directory\n");
+		ft_put_exitcode(&envp, 126);
+	}
+	else if ()
+	return (1);
+} */
 
 
-
-int is_bt(char *word, t_word *args, char ***envp)
+int is_bt(char *word, t_word *args, char ***envp, t_shelly **mini)
 {
 	if (!ft_strncmp(word, "echo", 5))
-		return (bt_echo(args, 1));
+		return (bt_echo(args, 1, envp));
 	if (!ft_strncmp(word, "cd", 3))
 		return (bt_cd(args, envp));
 	if (!ft_strncmp(word, "pwd", 4))
 		return (bt_pwd());
 	if (!ft_strncmp(word, "export", 7))
-		return (bt_export(args, envp));
+		return (bt_export(args, envp, mini));
 	if (!ft_strncmp(word, "unset", 6))
 		return (bt_unset(args, envp));
 	if (!ft_strncmp(word, "env", 4))
 		return (bt_env(*envp));
 	if (!ft_strncmp(word, "exit", 5))
-		return (bt_exit(args, envp));
+		return (bt_exit(args, envp, mini));
+	//ft_extras(args, *envp);
 	return (1);
+}
+
+void ft_init_shelly(t_shelly **mini)
+{
+	*mini = malloc(sizeof(t_shelly));
+	if (!(*mini))
+		return ;
+	(*mini)->exit_code = 1;
+	(*mini)->i = -1;
+	(*mini)->j = -1;
+	(*mini)->k = -1;
+	(*mini)->l = -1;
 }
 
 int main(int argc, char **argv, char **envp)
 {
+	t_shelly **mini;
     char ***my_env;
-    argc = 0;
+
+	argc = 0;
     argv = NULL;
+	mini = malloc(sizeof(t_shelly));
 	my_env = env_init(envp);
+	ft_init_shelly(mini);
+	//printf("VALUE %d\n", (*mini)->exit_code);
     signal(SIGINT, ft_handlesignal);
     signal(SIGQUIT, SIG_IGN);
     char *line = NULL;
@@ -97,7 +125,7 @@ int main(int argc, char **argv, char **envp)
 			//printf("line 		: %s\n", line);
             if (has_pipe(args)) {
                 pipe_execution(args, my_env);
-            } else if (is_bt(args->value, args, my_env)) {
+            } else if (is_bt(args->value, args, my_env, mini)) {
                 ft_auto_execute(args, my_env);
             }
         	free(line);

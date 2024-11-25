@@ -1,5 +1,30 @@
 #include "minishell.h"
 
+char	*ft_getenv(char *var, char ***envp)
+{
+	int		i;
+	char	**str;
+	char	*result;
+
+	i = -1;
+	//ft_printf("VALUE: %s\n", var);
+	while ((*envp)[++i])
+	{
+		//ft_printf("ENV VALUE: %s\n", (*envp)[i]);
+		str = ft_split((*envp)[i], '=');
+		if (!ft_strcmp(str[0], var))
+		{
+			/* ft_printf("ENV VALUE: %s\n", var);
+			ft_printf("ENV VALUE: %s\n", (*envp)[i]); */
+			result = ft_strdup(str[1]);
+			free(str);
+			return (result);
+		}
+		free(str);
+	}
+	return (NULL);
+}
+
 char *handle_shenanigans(char *result, char *current)
 {
 	char *expanded;
@@ -17,7 +42,7 @@ char *handle_shenanigans(char *result, char *current)
 }
 
 // Function to expand variables like `$VAR`
-char	*expand_variable(char *str)
+char	*expand_variable(char *str, char ***envp)
 {
 	char	*var_name;
 	char	*value;
@@ -32,31 +57,33 @@ char	*expand_variable(char *str)
 
 	if (*str == '?')
 	{
-		str++;
-		return (ft_itoa(0));//          to do!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		value = ft_getenv(str, envp);
 	}
-	// if (*str == '?')
-	// {
-	// 	str++;
-	// 	return (ft_itoa(0));//          to do!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// }
-	// Extract the variable name
-	var_name = str;
-	while (*str && (ft_isalnum(*str) || *str == '_'))
-		str++;
-	// Create a null-terminated variable name string
-	var = ft_strndup(var_name, str - var_name);
-	// Use getenv or custom function to fetch the variable value
-	value = getenv(var);
-	//ft_getenv(var);
-	free(var);  // Free the variable name string
+	else
+	{
+		// if (*str == '?')
+		// {
+		// 	str++;
+		// 	return (ft_itoa(0));//          to do!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		// }
+		// Extract the variable name
+		var_name = str;
+		while (*str && (ft_isalnum(*str) || *str == '_'))
+			str++;
+		// Create a null-terminated variable name string
+		var = ft_strndup(var_name, str - var_name);
+		// Use getenv or custom function to fetch the variable value
+		value = ft_getenv(var, envp);
+		//ft_getenv(var);
+		free(var);  // Free the variable name string
+	}
 	if (!value)
 		return (ft_strdup(""));  // If variable not found, return empty string
 	return (ft_strdup(value));  // Return the value as a new string
 }
 
 // Handle double-quoted string
-char	*handle_double_quotes(char *str)
+char	*handle_double_quotes(char *str, char ***envp)
 {
 	char	*expanded;
 	char	*result;
@@ -68,7 +95,7 @@ char	*handle_double_quotes(char *str)
 		{
 			if (*(str + 2) == '\0')
 				return (handle_shenanigans(result, NULL));
-			expanded = expand_variable(str++);
+			expanded = expand_variable(str++, envp);
 			//printf ("Expanded: -%s-       -%zu\n", expanded, ft_strlen(expanded));
 			if (*str++ != '?')
 				while (*str && (ft_isalnum(*str) || *str == '_' || *str == '?'))
@@ -99,7 +126,7 @@ char	*handle_single_quotes(char *str)
 }
 
 // Expander function
-char	*expand_string(t_word *input)
+char	*expand_string(t_word *input, char ***envp)
 {
 	char	*result;
 	char	*current;
@@ -113,7 +140,7 @@ char	*expand_string(t_word *input)
 		if (*current == '"')  // Handle double quotes
 		{
 			current++;
-			expanded = handle_double_quotes(current);
+			expanded = handle_double_quotes(current, envp);
 			result = ft_strjoin_free(result, expanded);
 			while (*current && *current != '"')
 				current++;
@@ -134,7 +161,7 @@ char	*expand_string(t_word *input)
 		{
 			if (*(current + 1) == '\0')
 				return (handle_shenanigans(result, NULL));
-			expanded = expand_variable(current++);
+			expanded = expand_variable(current++, envp);
 			//printf ("Expanded: -%s-       -%zu\n", expanded, ft_strlen(expanded));
 			if (*current++ != '?')
 				while (*current && (ft_isalnum(*current) || *current == '_' || *current == '?'))

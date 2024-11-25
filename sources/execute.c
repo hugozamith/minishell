@@ -49,7 +49,7 @@ static char	*ft_find_command(char *command)
 	return (NULL);
 }
 
-char	*ft_args_to_line(t_word *args)
+char	*ft_args_to_line(t_word *args, char ***envp)
 {
 	char	*result;
 	char	*old_str;
@@ -61,7 +61,7 @@ char	*ft_args_to_line(t_word *args)
 	while (args->type == COMMAND || args->type == ARGUMENT)
 	{
 		old_str = result;
-		expand_str = expand_string(args);
+		expand_str = expand_string(args, envp);
 		result = ft_strjoin(result, expand_str);
 		free(old_str);
 		old_str = result;
@@ -115,7 +115,7 @@ void	ft_auto_execute(t_word *args, char ***env)
 	char *input;
 
 	//ft_printf("BEFORE: %s\n", args->value);
-	input = ft_args_to_line(args);
+	input = ft_args_to_line(args, env);
 	//ft_printf("AFTER: %s\n", input);
 	ft_exec_input(input, args, env);
 }

@@ -31,18 +31,28 @@ int	ft_is_many_arguments(t_word *args)
 	return (atoi(arguments[1]));
 }
 
-int	bt_exit(t_word *args, char ***envp)
+int	bt_exit(t_word *args, char ***envp, t_shelly **mini)
 {
 	int		exit_status;
 	char	*arg;
+	int		exit_code;
 
 	//printf("exit\n");
 	//printf("Value: %s\n", args->next->next->value);
+	//printf("Value: %d\n", (*mini)->exit_code);
+	mini = NULL;
 	if (!ft_strncmp(args->next->value, "END", 3))
 	{
 		printf("exit\n");
+		//ft_printf("FIRST\n");
+		arg = ft_getenv("?", envp);
+		if (!arg)
+			exit(0);
+		//ft_printf("SECOND\nVALUE: %s\n", arg);
+		exit_code = ft_atoi(arg);
+		//ft_printf("THIRD\n");
 		ft_free_all(envp, &args);
-		exit(EXIT_SUCCESS);
+		exit(exit_code);
 	}
 	exit_status = ft_is_many_arguments(args);
 	if (!exit_status)
@@ -59,7 +69,7 @@ int	bt_exit(t_word *args, char ***envp)
 	{
 		if (!ft_isdigit(*arg))
 		{
-			arg = expand_string(args->next);
+			arg = expand_string(args->next, envp);
 			//printf("Value: %s\n", arg);
 			if(!ft_atoi(arg))
 			{

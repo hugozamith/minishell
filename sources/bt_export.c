@@ -37,35 +37,69 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return (*(unsigned char *)str1 - *(unsigned char *)str2);
 }
 
-int	ft_exportchecker(char **argv)
+int	ft_exportchecker(char **argv, t_shelly **mini)
 {
 	if (!argv || !argv[0] || !ft_strcmp(argv[0], "1INVALID"))
 	{
+		(*mini)->exit_code = 1;
 		ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
 		return (0);
 	}
 	if ((ft_strchr(argv[0], '-')))
 	{
+		(*mini)->exit_code = 1;
 		ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
 		return (0);
 	}
 	if (!(argv[0][0] != '_' && ft_isalpha(argv[0][0])))
 	{
+		(*mini)->exit_code = 1;
 		ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
 		return (0);
 	}
 	return (1);
 }
 
-int	bt_export(t_word *args, char ***envp)
+void ft_put_exitcode(char ***envp, int nbr)
+{
+	int		i;
+	char	*str;
+
+	i = -1;
+	str = ft_strjoin("?=", ft_itoa(nbr));
+	//ft_printf("VALUE: %s\n", str);
+	while ((*envp)[++i])
+	{
+		if (!ft_strcmp((*envp)[i], "?"))
+		{
+			free((*envp)[i]);
+			(*envp)[i] = str/* ft_strdup(args->next->value) */;
+			//ft_printf("FOUND IT!!!");
+			ft_printf("Value %s\n", (*envp)[i]);
+			return ;
+		}
+	}
+	*envp = (ft_realloc(*envp, (i + 2)));
+	(*envp)[i] = str/* ft_strdup(args->next->value) */;
+	(*envp)[i + 1] = NULL;
+	//ft_printf("Value %s\n", (*envp)[i]);
+}
+
+int	bt_export(t_word *args, char ***envp, t_shelly **mini)
 {
 	int		i;
 	char	**argv;
 
 	argv = ft_split(args->next->value, '=');
-	if (!ft_exportchecker(argv))
+	*mini = *mini;
+	if (!ft_exportchecker(argv, mini))
+	{
+		//ft_printf("HELLO THERE\n");
+		ft_put_exitcode(envp, 1);
 		return (0);
+	}
 	i = -1;
+	ft_put_exitcode(envp, 0);
 	while ((*envp)[++i])
 	{
 		if (!ft_strcmp((*envp)[i], argv[0]))
