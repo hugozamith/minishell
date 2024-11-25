@@ -1,11 +1,11 @@
 #include "minishell.h"
 
-int	ft_is_many_arguments(t_word *args)
+int	ft_is_many_arguments(t_word *args, char ***envp)
 {
 	char	*line;
 	char	**arguments;
 
-	line = ft_args_to_line(args);
+	line = ft_args_to_line(args, envp);
 	//ft_printf("FIRST\n");
 	//printf("Value: %s\n", line);
 	arguments = ft_split(line, ' ');
@@ -31,7 +31,7 @@ int	ft_is_many_arguments(t_word *args)
 	return (atoi(arguments[1]));
 }
 
-int	bt_exit(t_word *args, char ***envp, t_shelly **mini)
+int	bt_exit(t_word *args, char ***envp)
 {
 	int		exit_status;
 	char	*arg;
@@ -40,7 +40,6 @@ int	bt_exit(t_word *args, char ***envp, t_shelly **mini)
 	//printf("exit\n");
 	//printf("Value: %s\n", args->next->next->value);
 	//printf("Value: %d\n", (*mini)->exit_code);
-	mini = NULL;
 	if (!ft_strncmp(args->next->value, "END", 3))
 	{
 		printf("exit\n");
@@ -54,7 +53,7 @@ int	bt_exit(t_word *args, char ***envp, t_shelly **mini)
 		ft_free_all(envp, &args);
 		exit(exit_code);
 	}
-	exit_status = ft_is_many_arguments(args);
+	exit_status = ft_is_many_arguments(args, envp);
 	if (!exit_status)
 	{
 		ft_printf_fd(STDERR_FILENO, " too many arguments\n");

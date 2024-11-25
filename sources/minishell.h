@@ -80,12 +80,12 @@ typedef struct s_shelly
 
 void reset_fd(int saved_fd_in, int saved_fd_out);
 void pipe_execution(t_word *args, char ***rara);
-int bt_exit(t_word *args, char ***envp, t_shelly **mini);
+int bt_exit(t_word *args, char ***envp);
 int bt_pwd(void);
 int	bt_cd(t_word *args, char ***envp);
 int bt_env(char **envp);
 int bt_unset(t_word *args, char ***envp);
-int is_bt(char *word, t_word *args, char ***envp, t_shelly **mini);
+int is_bt(char *word, t_word *args, char ***envp);
 int	split_count(char **split);
 int	print_error(char *s1, char *s2, char *s3, char *message);
 void	ft_free_split(char ***split);
@@ -105,7 +105,7 @@ int		lexer(char *input, t_word **token_list);
 char	*ft_strndup(const char *s, int n);
 void ft_handlesignal(int sigur);
 void	ft_auto_execute(t_word *args, char ***env);
-int	bt_export(t_word *args, char ***envp, t_shelly **mini);
+int	bt_export(t_word *args, char ***envp);
 int	ft_strcmp(const char *s1, const char *s2);
 void    ft_free_all(char ***env, t_word **args);
 void	ft_free_argvs(char **argv);

@@ -37,23 +37,20 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return (*(unsigned char *)str1 - *(unsigned char *)str2);
 }
 
-int	ft_exportchecker(char **argv, t_shelly **mini)
+int	ft_exportchecker(char **argv)
 {
 	if (!argv || !argv[0] || !ft_strcmp(argv[0], "1INVALID"))
 	{
-		(*mini)->exit_code = 1;
 		ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
 		return (0);
 	}
 	if ((ft_strchr(argv[0], '-')))
 	{
-		(*mini)->exit_code = 1;
 		ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
 		return (0);
 	}
 	if (!(argv[0][0] != '_' && ft_isalpha(argv[0][0])))
 	{
-		(*mini)->exit_code = 1;
 		ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
 		return (0);
 	}
@@ -85,14 +82,13 @@ void ft_put_exitcode(char ***envp, int nbr)
 	//ft_printf("Value %s\n", (*envp)[i]);
 }
 
-int	bt_export(t_word *args, char ***envp, t_shelly **mini)
+int	bt_export(t_word *args, char ***envp)
 {
 	int		i;
 	char	**argv;
 
 	argv = ft_split(args->next->value, '=');
-	*mini = *mini;
-	if (!ft_exportchecker(argv, mini))
+	if (!ft_exportchecker(argv))
 	{
 		//ft_printf("HELLO THERE\n");
 		ft_put_exitcode(envp, 1);

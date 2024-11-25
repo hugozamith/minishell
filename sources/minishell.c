@@ -51,7 +51,7 @@ int ft_extras(t_word *args, char **envp)
 } */
 
 
-int is_bt(char *word, t_word *args, char ***envp, t_shelly **mini)
+int is_bt(char *word, t_word *args, char ***envp)
 {
 	if (!ft_strncmp(word, "echo", 5))
 		return (bt_echo(args, 1, envp));
@@ -60,13 +60,13 @@ int is_bt(char *word, t_word *args, char ***envp, t_shelly **mini)
 	if (!ft_strncmp(word, "pwd", 4))
 		return (bt_pwd());
 	if (!ft_strncmp(word, "export", 7))
-		return (bt_export(args, envp, mini));
+		return (bt_export(args, envp));
 	if (!ft_strncmp(word, "unset", 6))
 		return (bt_unset(args, envp));
 	if (!ft_strncmp(word, "env", 4))
 		return (bt_env(*envp));
 	if (!ft_strncmp(word, "exit", 5))
-		return (bt_exit(args, envp, mini));
+		return (bt_exit(args, envp));
 	//ft_extras(args, *envp);
 	return (1);
 }
@@ -125,7 +125,7 @@ int main(int argc, char **argv, char **envp)
 			//printf("line 		: %s\n", line);
             if (has_pipe(args)) {
                 pipe_execution(args, my_env);
-            } else if (is_bt(args->value, args, my_env, mini)) {
+            } else if (is_bt(args->value, args, my_env)) {
                 ft_auto_execute(args, my_env);
             }
         	free(line);
