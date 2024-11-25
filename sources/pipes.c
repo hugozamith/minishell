@@ -102,7 +102,7 @@ void execute_piped_command(t_word **command, int i, int pipe_count, int pipes[][
 		//printf("\nAAAAAA\n");
         handle_pipe_redirection(i, pipe_count, pipes);
 		//printf("command: %s\n", command->value);
-        if (is_bt((*command)->value, command, envp))
+        if (is_bt((*command)->value, *command, envp))
             ft_auto_execute(*command, envp);
 		ft_free_all(envp, command);
 		//free(line);

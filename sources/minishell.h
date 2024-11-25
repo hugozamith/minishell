@@ -114,7 +114,7 @@ void	ft_free_argvs(char **argv);
 void    ft_free_args(t_word *args);
 void	ft_free_env(char ***env);
 char	*ft_getenv(char *var, char ***envp);
-char	*ft_args_to_line(t_word *args, char ***envp);
+char	*ft_args_to_line(t_word *args);
 int		ft_printf_fd(int fd, const char *s, ...);
 int	ft_printfnumlen(int n);
 int	ft_printfputchar_fd(char c, int fd);
@@ -128,5 +128,6 @@ size_t	ft_printfstrlen(const char *str);
 int	ft_printfstrncmp(const char *s1, const char *s2, size_t n);
 void ft_put_exitcode(char ***envp, int nbr);
 char	*ft_getenv(char *var, char ***envp);
+void expand_args(t_word *args, char ***envp);
 
 #endif

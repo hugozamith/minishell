@@ -32,6 +32,8 @@ int	bt_cd(t_word *args, char ***envp)
 	char	*path;
 	char	cwd[1024];
 
+	/* ft_printf("FIRST\n");
+	ft_printf("Value: %s\n", args->next->next->value); */
 	if (!args->next) // No argument after "cd"
 	{
 		path = getenv("HOME");
@@ -44,16 +46,19 @@ int	bt_cd(t_word *args, char ***envp)
 	else
 	{
 		args = args->next;
-		path = expand_string(args);
+		path = expand_string(args, envp);
 		//printf("path: %s\n", path);
 	}
-	//ft_printf("Value %s", args->next->next->value);
-	if (ft_strcmp(args->next->next->value, "END"))
+	/* ft_printf("SECOND\n");
+	ft_printf("Value: %s\n", args->next->value);
+	ft_printf("THIRD\n"); */
+	if (ft_strcmp(args->next->value, "END"))
 	{
 		ft_put_exitcode(envp, 1);
 		ft_printf_fd(STDERR_FILENO, " too many arguments\n");
 		return (0);
 	}
+	//ft_printf("THIRD\n");
 	if (!ft_strcmp(path, "$PWD"))
 		return (0);
 	if (chdir(path) != 0) // Change directory

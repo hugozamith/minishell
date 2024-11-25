@@ -5,7 +5,8 @@ int	ft_is_many_arguments(t_word *args, char ***envp)
 	char	*line;
 	char	**arguments;
 
-	line = ft_args_to_line(args, envp);
+	expand_args(args, envp);
+	line = ft_args_to_line(args);
 	//ft_printf("FIRST\n");
 	//printf("Value: %s\n", line);
 	arguments = ft_split(line, ' ');
@@ -38,7 +39,6 @@ int	bt_exit(t_word *args, char ***envp)
 	int		exit_code;
 
 	//printf("exit\n");
-	//printf("Value: %s\n", args->next->next->value);
 	//printf("Value: %d\n", (*mini)->exit_code);
 	if (!ft_strncmp(args->next->value, "END", 3))
 	{

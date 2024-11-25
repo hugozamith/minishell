@@ -49,7 +49,7 @@ static char	*ft_find_command(char *command)
 	return (NULL);
 }
 
-char	*ft_args_to_line(t_word *args, char ***envp)
+char	*ft_args_to_line(t_word *args)
 {
 	char	*result;
 	char	*old_str;
@@ -137,7 +137,7 @@ void	ft_auto_execute(t_word *args, char ***envp)
 	//printf("args->value: %s\n", args->next->value);
 	expand_args(args, envp);
 	//printf("args->value: %s\n", args->next->value);
-	input = ft_args_to_line(args, envp);
+	input = ft_args_to_line(args);
 	//ft_printf("AFTER: %s\n", input);
 	ft_exec_input(input, args, envp);
 }
