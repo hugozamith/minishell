@@ -106,7 +106,7 @@ int		ft_clear_screen(void);
 int		lexer(char *input, t_word **token_list);
 char	*ft_strndup(const char *s, int n);
 void ft_handlesignal(int sigur);
-void	ft_auto_execute(t_word *args, char ***env);
+int	ft_auto_execute(t_word *args, char ***env);
 int	bt_export(t_word *args, char ***envp);
 int	ft_strcmp(const char *s1, const char *s2);
 void    ft_free_all(char ***env, t_word **args);

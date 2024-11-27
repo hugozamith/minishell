@@ -64,7 +64,7 @@ void ft_put_exitcode(char ***envp, int nbr)
 
 	i = -1;
 	str = ft_strjoin("?=", ft_itoa(nbr));
-	//ft_printf("VALUE: %s\n", str);
+	//ft_printf("VALUE: %s \n", str);
 	while ((*envp)[++i])
 	{
 		if (!ft_strcmp((*envp)[i], "?"))
@@ -72,7 +72,7 @@ void ft_put_exitcode(char ***envp, int nbr)
 			free((*envp)[i]);
 			(*envp)[i] = str/* ft_strdup(args->next->value) */;
 			//ft_printf("FOUND IT!!!");
-			ft_printf("Value %s\n", (*envp)[i]);
+			//ft_printf("Value %s\n", (*envp)[i]);
 			return ;
 		}
 	}
