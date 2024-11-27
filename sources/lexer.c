@@ -24,6 +24,8 @@ void free_tokens(t_word **token_list)
 void add_token(t_word **token_list, t_tokens type, char *value)
 {
 	t_word *new_token = malloc(sizeof(t_word));
+	if (!new_token)
+		exit(EXIT_FAILURE); // Garantir que o malloc foi bem-sucedido
 	new_token->type = type;
 	new_token->value = ft_strdup(value);
 	new_token->next = NULL;
@@ -86,23 +88,27 @@ int lexer(char *input, t_word **token_list)
 		{
 			if (*(input + 1) == '>')
 			{
-				add_token(token_list, REDIRECT_OUT, ">>");
-				input++;
+				add_token(token_list, REDIRECT_APPEND, ">>");
+				input += 2; // Pula ">>"
 			}
 			else
+			{
 				add_token(token_list, REDIRECT_OUT, ">");
-			input++;
+				input++;
+			}
 		}
 		else if (*input == '<')
 		{
 			if (*(input + 1) == '<')
 			{
-				add_token(token_list, REDIRECT_IN, "<<");
-				input++;
+				add_token(token_list, HEREDOC, "<<");
+				input += 2; // Pula "<<"
 			}
 			else
+			{
 				add_token(token_list, REDIRECT_IN, "<");
-			input++;
+				input++;
+			}
 		}
 		else if (*input == '\'')
 		{

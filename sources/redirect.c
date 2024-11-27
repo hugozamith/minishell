@@ -1,52 +1,82 @@
 #include "minishell.h"
 
+int handle_heredoc(const char *delimiter)
+{
+    char *line;
+    int pipefd[2];
+
+    if (pipe(pipefd) == -1)
+    {
+        perror("pipe");
+        return -1;
+    }
+
+    while (1)
+    {
+        write(STDOUT_FILENO, "> ", 2); // Prompt for heredoc input
+        line = get_next_line(STDIN_FILENO); // Use uma função similar para obter a linha
+        if (!line || ft_strcmp(line, delimiter) == 0)
+        {
+            free(line);
+            break;
+        }
+        write(pipefd[1], line, ft_strlen(line));
+		if (line[ft_strlen(line) - 1] != '\n')
+			write(pipefd[1], "\n", 1);
+        free(line);
+    }
+    close(pipefd[1]);
+    return pipefd[0]; // Retorna o descritor de leitura do pipe
+}
+
 int handle_redirections(t_word *args)
 {
     t_word *current;
     int fd;
 
-	//write(1, "handle_redirections\n", 20);
     current = args;
     while (current)
     {
-		//printf("current->value: %s\n", current->value);
         if (current->type == REDIRECT_OUT)
         {
-            //write(1, "REDIRECT_OUT\n", 13);
             fd = open(current->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
             if (fd < 0)
-            {
-                perror("open");
-                return (-1);
-            }
+                return (perror("open"), -1);
             if (dup2(fd, STDOUT_FILENO) == -1)
-            {
-                perror("dup2");
-                close(fd);
-                return (-1);
-            }
-            close(fd); // Close the file descriptor after redirecting
+                return (perror("dup2"), close(fd), -1);
+            close(fd);
+        }
+        else if (current->type == REDIRECT_APPEND)
+        {
+            fd = open(current->next->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
+            if (fd < 0)
+                return (perror("open"), -1);
+            if (dup2(fd, STDOUT_FILENO) == -1)
+                return (perror("dup2"), close(fd), -1);
+            close(fd);
         }
         else if (current->type == REDIRECT_IN)
         {
             fd = open(current->next->value, O_RDONLY);
             if (fd < 0)
-            {
-                perror("open");
-                return (-1);
-            }	
+                return (perror("open"), -1);
             if (dup2(fd, STDIN_FILENO) == -1)
-            {
-                perror("dup2");
-                close(fd);
-                return (-1);
-            }
-            close(fd); // Close the file descriptor after redirecting
+                return (perror("dup2"), close(fd), -1);
+            close(fd);
+        }
+        else if (current->type == HEREDOC)
+        {
+            fd = handle_heredoc(current->next->value);
+            if (fd == -1)
+                return -1;
+            if (dup2(fd, STDIN_FILENO) == -1)
+                return (perror("dup2"), close(fd), -1);
+            close(fd);
         }
         current = current->next;
     }
 
-    return 0; // Success
+    return 0;
 }
 
 void reset_fd(int saved_fd_in, int saved_fd_out)

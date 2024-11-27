@@ -34,6 +34,10 @@ const char *token_type_to_str(t_tokens type)
 			return "REDIRECT_OUT";
 		case END:
 			return "END";
+		case HEREDOC:
+			return "HEREDOC";
+		case REDIRECT_APPEND:
+			return "REDIRECT_APPEND";
 		default:
 			return "UNKNOWN";
 	}

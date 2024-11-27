@@ -13,6 +13,7 @@ int tokensrch(t_word *args, t_tokens token)
 
 int	ft_just_exit_code(t_word *args)
 {
+	//printf("args->value: %s\n", args->value);
 	if (!ft_strcmp(args->value, "echo") 
 			&& !ft_strcmp(args->next->value, "$?")
 			&& !ft_strcmp(args->next->next->value, "END"))
@@ -29,9 +30,8 @@ int bt_echo(t_word *args, int fd, char ***envp)
 
 	if (ft_just_exit_code(args))
 	{
-		//printf("Value %s\n", args->next->value);
+		//write(1, "JUST_EXIT_CODE\n", 16);
 		expanded = expand_string(args->next, envp);
-		//printf("Value: s%ss\nResult: %d\n", expanded, (*expanded == '1'));
 		if (*expanded == '1')
 		{
 			ft_printf("%s\n", expanded);
@@ -39,6 +39,7 @@ int bt_echo(t_word *args, int fd, char ***envp)
 			return (0);
 		}
 	}
+	//write(1, "NOT_JUST_EXIT_CODE\n", 20);
     // Save the original file descriptors
     fds[0] = dup(STDIN_FILENO);
     fds[1] = dup(STDOUT_FILENO);
@@ -61,6 +62,13 @@ int bt_echo(t_word *args, int fd, char ***envp)
         return (1);
     }
 
+	//printf("current->type: %s\n", token_type_to_str(current->type));
+
+	if (current->type == HEREDOC || current->type == REDIRECT_APPEND
+		|| current->type == REDIRECT_IN || current->type == REDIRECT_OUT)
+		current = current->next->next;
+
+	//printf("current->value: %s\n", current->value);
     // If there's an error in redirection, return
     if (fd < 0)
     {
@@ -84,7 +92,7 @@ int bt_echo(t_word *args, int fd, char ***envp)
         ft_putstr_fd(expanded, fd);
         free(expanded);
 
-        if (current->next && current->next->type != END &&
+        if (current->next && current->next->type != END && current->next->type == ARGUMENT &&
             !(current->next->value[0] == '\'' || current->next->value[0] == '"') &&
             !(current->value[0] == '\'' || current->value[0] == '"'))
         {

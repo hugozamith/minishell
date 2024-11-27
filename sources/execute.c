@@ -140,4 +140,4 @@ void	ft_auto_execute(t_word *args, char ***envp)
 	input = ft_args_to_line(args);
 	//ft_printf("AFTER: %s\n", input);
 	ft_exec_input(input, args, envp);
-}
+}	

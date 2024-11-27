@@ -72,7 +72,7 @@ void ft_put_exitcode(char ***envp, int nbr)
 			free((*envp)[i]);
 			(*envp)[i] = str/* ft_strdup(args->next->value) */;
 			//ft_printf("FOUND IT!!!");
-			ft_printf("Value %s\n", (*envp)[i]);
+			//ft_printf("Value %s\n", (*envp)[i]);
 			return ;
 		}
 	}

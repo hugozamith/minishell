@@ -48,9 +48,9 @@ typedef enum e_tokens
 	//VARIABLE,
 	PIPE,
     REDIRECT_OUT,
-//    REDIRECT_APPEND,
+    REDIRECT_APPEND,
     REDIRECT_IN,
-//    HEREDOC,
+    HEREDOC,
 	END
 }	t_tokens;
 
@@ -100,6 +100,7 @@ char	*expand_string(t_word *input, char ***envp);
 char	*extract_string(char *input, int *len);
 char	*remove_quotations(char *str);
 //char	remove_quotations(char **str);
+const char	*token_type_to_str(t_tokens type);
 int		handle_redirections(t_word *args);
 int		bt_echo(t_word *args, int fd, char ***envp);
 int		ft_clear_screen(void);
