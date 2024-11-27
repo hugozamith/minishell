@@ -42,21 +42,118 @@ const char *token_type_to_str(t_tokens type)
 			return "UNKNOWN";
 	}
 }
-/* 
-int ft_extras(t_word *args, char **envp)
+int check_path(const char *path,  char ***envp) {
+    struct stat path_stat;
+
+    // Call stat to get the file information
+    if (stat(path, &path_stat) == -1) {
+        // Print an error if the path is invalid
+		if (errno == EACCES) {
+            fprintf(stderr, "Error: %s: Permission denied\n", path);
+		}
+		else
+        {	
+			ft_printf_fd(STDERR_FILENO, " %s\n", strerror(errno));
+			ft_put_exitcode(envp, 127);
+		}
+		return (0);
+    }
+
+	if (access(path, R_OK | W_OK | X_OK | F_OK) == -1)
+	{
+		ft_printf_fd(STDERR_FILENO, " Permission denied\n");
+		ft_put_exitcode(envp, 126);
+		return (0);
+	}
+    // Check the type of the file
+    if (S_ISREG(path_stat.st_mode)) {
+        return (1);//ft_printf_fd(STDERR_FILENO, "%s is a regular file.\n", path);
+    } else if (S_ISDIR(path_stat.st_mode)) {
+        ft_printf_fd(STDERR_FILENO, " Is a directory\n");
+		ft_put_exitcode(envp, 126);
+		return (0);
+    } else {
+        ft_printf_fd(STDERR_FILENO, " Is neither a file nor a directory.\n");
+		ft_put_exitcode(envp, 127);
+		return (0);
+	}
+	return (1);
+}
+
+int ft_extras(char **word, t_word **args, char ***envp)
 {
-	if (!ft_strncmp(args->value, "$PWD", 1))
+	//struct 	stat path_stat;
+	//int		file_stat;
+
+	/* file_stat = stat(*word, &path_stat);
+	if (file_stat == -1)
+	{
+		if(ft_strcmp(strerror(errno), " No such file or directory"))
+		{
+			ft_printf_fd(STDERR_FILENO, " %s\n", strerror(errno));
+			ft_put_exitcode(envp, 127);
+			return (0);
+		}
+	} */
+
+	//ft_printf("Value: %d", stat((*args)->value, &path_stat));
+	/* if (!ft_strncmp((*args)->value, "/", 1) || !ft_strncmp((*args)->value, "./", 2) || ft_strchr((*args)->value, '.'))
+	{
+		if (stat((*args)->value, &path_stat) == -1)
+		{
+			if (!ft_strncmp((*args)->value, "/", 1) || !ft_strncmp((*args)->value, "./", 2))
+				ft_printf_fd(STDERR_FILENO, " %s\n", strerror(errno));
+			else if (ft_strchr((*args)->value, '.'))
+				ft_printf_fd(STDERR_FILENO, " command not found\n");
+			ft_put_exitcode(envp, 127);
+			return (0);
+		}
+	} */
+	if (!ft_strncmp((*args)->value, "$PWD", 4))
 	{
 		ft_printf_fd(STDERR_FILENO, " Is a directory\n");
-		ft_put_exitcode(&envp, 126);
+		ft_put_exitcode(envp, 126);
+		return (0);
 	}
-	else if ()
+	else if (!ft_strncmp((*args)->value, "$", 2) || !ft_strncmp((*args)->value, "$?", 3))
+	{
+		ft_printf_fd(STDERR_FILENO, " command not found\n");
+		ft_put_exitcode(envp, 127);
+		return (0);
+	}
+	else if(!ft_strncmp((*args)->value, "$EMPTY", 6))
+	{
+		//ft_printf("VALUE: %s\n", args->next->value);
+		if (ft_strncmp((*args)->next->value, "END", 3))
+		{
+			*args = (*args)->next;
+			*word = (*args)->value;
+			//ft_printf("VALUE BEFORE: %s\n", (*args)->value);
+			return (1);
+		}
+		ft_put_exitcode(envp, 0);
+		return (0);
+	}
+	else if (!ft_strncmp((*args)->value, "/", 1) || !ft_strncmp((*args)->value, "./", 2) /* || ft_strchr((*args)->value, '.') */)
+	{
+		if (!check_path(*word, envp))
+			return (0);
+	}
+	/* if (stat((*args)->value, &path_stat) == -1)
+	{
+		//ft_printf_fd(STDERR_FILENO, " %s\n", strerror(errno));
+		ft_put_exitcode(envp, 127);
+		return (0);
+	} */
 	return (1);
-} */
+}
 
 
 int is_bt(char *word, t_word *args, char ***envp)
 {
+	if (!ft_extras(&word, &args, envp))
+		return (0);
+	//ft_printf("VALUE AFTER: %s\n", (args)->value);	
 	if (!ft_strncmp(word, "echo", 5))
 		return (bt_echo(args, 1, envp));
 	if (!ft_strncmp(word, "cd", 3))
@@ -71,7 +168,6 @@ int is_bt(char *word, t_word *args, char ***envp)
 		return (bt_env(*envp));
 	if (!ft_strncmp(word, "exit", 5))
 		return (bt_exit(args, envp));
-	//ft_extras(args, *envp);
 	return (1);
 }
 

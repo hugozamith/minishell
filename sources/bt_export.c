@@ -64,7 +64,7 @@ void ft_put_exitcode(char ***envp, int nbr)
 
 	i = -1;
 	str = ft_strjoin("?=", ft_itoa(nbr));
-	//ft_printf("VALUE: %s\n", str);
+	//ft_printf("VALUE: %s \n", str);
 	while ((*envp)[++i])
 	{
 		if (!ft_strcmp((*envp)[i], "?"))

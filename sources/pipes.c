@@ -93,18 +93,53 @@ char *command_to_str (t_word *command)
 void execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2], char ***envp)
 {
     int pid = fork();
+	int status = 0;
     if (pid == 0) // Child process
     {
 		//printf("\nAAAAAA\n");
         handle_pipe_redirection(i, pipe_count, pipes);
 		//printf("command: %s\n", command->value);
-        if (is_bt(command->value, command, envp))
-            ft_auto_execute(command, envp);
+		status = is_bt(command->value, command, envp);
+        if (status)
+            status = ft_auto_execute(command, envp);
 		//free(line);
-        exit(EXIT_SUCCESS);
+		//printf("VALUE: %d\n", status);
+        exit(status);
+		//ft_put_exitcode(envp, 1);
     }
     else if (pid < 0)
+	{
         perror("fork error");
+		//ft_put_exitcode(envp, 1);
+	}
+	//printf("VALUE: %d\n", status);
+	/* else // Parent process
+    {
+		// Wait for the child to finish and retrieve its exit status
+        if (waitpid(pid, &status, 0) == -1)
+        {
+            perror("waitpid");
+            ft_put_exitcode(envp, 1);
+            return;
+        }
+
+        // WIFEXITED checks if the child exited normally
+        if (WIFEXITED(status))
+        {
+            int child_exit_code = WEXITSTATUS(status);
+            printf("Parent: Child exited with code %d\n", child_exit_code);
+
+            // Pass the child's exit code to ft_put_exitcode
+            ft_put_exitcode(envp, child_exit_code);
+        }
+        else
+        {
+            printf("Parent: Child did not exit normally\n");
+            ft_put_exitcode(envp, 1);
+        }
+	} */
+	//reset_fd(pipes[0], pipes[1]);
+	ft_put_exitcode(envp, status);
 }
 
 // Close all pipes after fork
