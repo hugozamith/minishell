@@ -136,7 +136,6 @@ char	*expand_string(t_word *input, char ***envp)
 	current = input->value;
 	while (*current)
 	{
-		//printf("Current: %s\n", current);
 		if (*current == '"')  // Handle double quotes
 		{
 			//printf("Current: %s\n", current);

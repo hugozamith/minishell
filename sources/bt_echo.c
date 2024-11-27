@@ -21,6 +21,43 @@ int	ft_just_exit_code(t_word *args)
 	return(0);
 }
 
+t_word *rm_redir_node(t_word *args)
+{
+	t_word *current;
+	t_word *next;
+
+	current = args;
+	while (current)
+	{
+		next = current->next;
+		if (current->type == REDIRECT_IN || current->type == REDIRECT_OUT
+			|| current->type == REDIRECT_APPEND || current->type == HEREDOC)
+		{
+			if (current->prev)
+				current->prev->next = current->next->next;
+			if (current->next->next)
+				current->next->next->prev = current->prev;
+			free(current->value);
+			free(current);
+			return (next);
+		}
+		current = current->next;
+	}
+	return (args);
+}
+
+int has_redir(t_word *args)
+{
+	while (args)
+	{
+		if (args->type == REDIRECT_IN || args->type == REDIRECT_OUT
+			|| args->type == REDIRECT_APPEND || args->type == HEREDOC)
+			return (1);
+		args = args->next;
+	}
+	return (0);
+}
+
 int bt_echo(t_word *args, int fd, char ***envp)
 {
     int     newline;
@@ -58,15 +95,16 @@ int bt_echo(t_word *args, int fd, char ***envp)
 //		args = args->next;
     if (handle_redirections(args) < 0)
     {
-		ft_put_exitcode(envp, 1);
+        ft_put_exitcode(envp, 1);
         return (1);
     }
 
+    // Remove all redirection nodes from the argument list
+    while (has_redir(args))
+        args = rm_redir_node(args);
 	//printf("current->type: %s\n", token_type_to_str(current->type));
 
-	if (current->type == HEREDOC || current->type == REDIRECT_APPEND
-		|| current->type == REDIRECT_IN || current->type == REDIRECT_OUT)
-		current = current->next->next;
+
 
 	//printf("current->value: %s\n", current->value);
     // If there's an error in redirection, return
@@ -83,11 +121,12 @@ int bt_echo(t_word *args, int fd, char ***envp)
         newline = 0;
         current = current->next;
     }
-
+	
 	ft_put_exitcode(envp, 0);
     // Print all arguments with expansion
     while (current && current->type == ARGUMENT)
     {
+		//printf("current->value: %s\n", current->value);
         expanded = expand_string(current, envp);
         ft_putstr_fd(expanded, fd);
         free(expanded);
@@ -100,6 +139,7 @@ int bt_echo(t_word *args, int fd, char ***envp)
         }
 
         current = current->next;
+
     }
 
     // Print newline if required

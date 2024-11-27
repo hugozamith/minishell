@@ -21,8 +21,8 @@ int handle_heredoc(const char *delimiter)
             break;
         }
         write(pipefd[1], line, ft_strlen(line));
-		if (line[ft_strlen(line) - 1] != '\n')
-			write(pipefd[1], "\n", 1);
+        if (line[ft_strlen(line) - 1] != '\n')
+            write(pipefd[1], "\n", 1);
         free(line);
     }
     close(pipefd[1]);
@@ -41,36 +41,66 @@ int handle_redirections(t_word *args)
         {
             fd = open(current->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
             if (fd < 0)
-                return (perror("open"), -1);
+            {
+                perror("open");
+                return -1;  // Retorna erro se não puder abrir o arquivo
+            }
             if (dup2(fd, STDOUT_FILENO) == -1)
-                return (perror("dup2"), close(fd), -1);
+            {
+                perror("dup2");
+                close(fd);
+                return -1;
+            }
             close(fd);
         }
         else if (current->type == REDIRECT_APPEND)
         {
             fd = open(current->next->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
             if (fd < 0)
-                return (perror("open"), -1);
+            {
+                perror("open");
+                return -1;  // Retorna erro se não puder abrir o arquivo
+            }
             if (dup2(fd, STDOUT_FILENO) == -1)
-                return (perror("dup2"), close(fd), -1);
+            {
+                perror("dup2");
+                close(fd);
+                return -1;
+            }
             close(fd);
         }
         else if (current->type == REDIRECT_IN)
         {
             fd = open(current->next->value, O_RDONLY);
             if (fd < 0)
-                return (perror("open"), -1);
+            {
+                if (errno == EACCES)
+                    fprintf(stderr, "minishell: permission denied: %s\n", current->next->value);
+                else if (errno == ENOENT)
+                    fprintf(stderr, "minishell: no such file or directory: %s\n", current->next->value);
+                else
+                    perror("open");
+                return -1;  // Retorna erro se não puder abrir o arquivo
+            }
             if (dup2(fd, STDIN_FILENO) == -1)
-                return (perror("dup2"), close(fd), -1);
+            {
+                perror("dup2");
+                close(fd);
+                return -1;
+            }
             close(fd);
         }
         else if (current->type == HEREDOC)
         {
             fd = handle_heredoc(current->next->value);
             if (fd == -1)
-                return -1;
+                return -1;  // Retorna erro se o heredoc falhar
             if (dup2(fd, STDIN_FILENO) == -1)
-                return (perror("dup2"), close(fd), -1);
+            {
+                perror("dup2");
+                close(fd);
+                return -1;
+            }
             close(fd);
         }
         current = current->next;
