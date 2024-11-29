@@ -41,17 +41,20 @@ int	ft_exportchecker(char **argv)
 {
 	if (!argv || !argv[0] || !ft_strcmp(argv[0], "1INVALID"))
 	{
-		ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
+		//ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
+		ft_print_error(3);
 		return (0);
 	}
 	if ((ft_strchr(argv[0], '-')))
 	{
-		ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
+		//ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
+		ft_print_error(3);
 		return (0);
 	}
 	if (!(argv[0][0] != '_' && ft_isalpha(argv[0][0])))
 	{
-		ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
+		//ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
+		ft_print_error(3);
 		return (0);
 	}
 	return (1);
@@ -65,17 +68,24 @@ void ft_put_exitcode(char ***envp, int nbr)
 	i = -1;
 	str = ft_strjoin("?=", ft_itoa(nbr));
 	//ft_printf("VALUE: %s \n", str);
+	//ft_printf("GOT IN\n");
+	//ft_printf("Value %s\n", str);
 	while ((*envp)[++i])
 	{
+		//ft_printf("%d\n", i);
 		if (!ft_strcmp((*envp)[i], "?"))
 		{
 			free((*envp)[i]);
 			(*envp)[i] = str/* ft_strdup(args->next->value) */;
 			//ft_printf("FOUND IT!!!");
-			//ft_printf("Value %s\n", (*envp)[i]);
+			//ft_printf("Value %s\n", str);
+			/* ft_printf("OTHER WAY\n");
+			write(1,"e\n",2); */
 			return ;
 		}
 	}
+	/* write(1,"e\n",2);
+	ft_printf("GOING OUT\n"); */
 	*envp = (ft_realloc(*envp, (i + 2)));
 	(*envp)[i] = str/* ft_strdup(args->next->value) */;
 	(*envp)[i + 1] = NULL;

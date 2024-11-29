@@ -55,7 +55,8 @@ int	bt_cd(t_word *args, char ***envp)
 	if (ft_strcmp(args->next->value, "END"))
 	{
 		ft_put_exitcode(envp, 1);
-		ft_printf_fd(STDERR_FILENO, " too many arguments\n");
+		ft_print_error(1);
+		//ft_printf_fd(STDERR_FILENO, " too many arguments\n");
 		return (0);
 	}
 	//ft_printf("THIRD\n");

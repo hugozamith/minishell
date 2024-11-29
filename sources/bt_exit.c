@@ -56,7 +56,8 @@ int	bt_exit(t_word *args, char ***envp)
 	exit_status = ft_is_many_arguments(args, envp);
 	if (!exit_status)
 	{
-		ft_printf_fd(STDERR_FILENO, " too many arguments\n");
+		//ft_printf_fd(STDERR_FILENO, " too many arguments\n");
+		ft_print_error(1);
 		ft_free_all(envp, &args);
 		exit (1);
 	}
@@ -72,7 +73,8 @@ int	bt_exit(t_word *args, char ***envp)
 			//printf("Value: %s\n", arg);
 			if(!ft_atoi(arg))
 			{
-				ft_printf_fd(STDERR_FILENO, " numeric argument required\n");
+				//ft_printf_fd(STDERR_FILENO, " numeric argument required\n");
+				ft_print_error(2);
 				ft_free_all(envp, &args), 
 				exit(2);
 			}

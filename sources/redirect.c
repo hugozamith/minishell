@@ -29,7 +29,7 @@ int handle_heredoc(const char *delimiter)
     return pipefd[0]; // Retorna o descritor de leitura do pipe
 }
 
-int handle_redirections(t_word *args)
+int handle_redirections(t_word *args, char ***envp)
 {
     t_word *current;
     int fd;
@@ -37,8 +37,10 @@ int handle_redirections(t_word *args)
     current = args;
     while (current)
     {
+		//ft_printf("FIRST\n");
         if (current->type == REDIRECT_OUT)
         {
+			//ft_printf("SECOND\n");
             fd = open(current->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
             if (fd < 0)
             {
@@ -55,14 +57,19 @@ int handle_redirections(t_word *args)
         }
         else if (current->type == REDIRECT_APPEND)
         {
+			//ft_printf("THIRD\n");
             fd = open(current->next->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
             if (fd < 0)
             {
-                perror("open");
-                return -1;  // Retorna erro se não puder abrir o arquivo
+				//ft_printf("THIRD1\n");
+                ft_print_error(5);
+				ft_put_exitcode(envp, 1);
+				//ft_printf("HERE1\n");
+                return (-1);  // Retorna erro se não puder abrir o arquivo
             }
             if (dup2(fd, STDOUT_FILENO) == -1)
             {
+				//ft_printf("THIRD2\n");
                 perror("dup2");
                 close(fd);
                 return -1;
@@ -71,16 +78,26 @@ int handle_redirections(t_word *args)
         }
         else if (current->type == REDIRECT_IN)
         {
+			//ft_printf("FOURTH\n");
             fd = open(current->next->value, O_RDONLY);
             if (fd < 0)
             {
                 if (errno == EACCES)
-                    fprintf(stderr, "minishell: permission denied: %s\n", current->next->value);
+				{
+                    ft_print_error(5);
+					//ft_printf("HERE2\n");
+					ft_put_exitcode(envp, 1);
+				}
                 else if (errno == ENOENT)
-                    fprintf(stderr, "minishell: no such file or directory: %s\n", current->next->value);
+				{
+                    ft_print_error(4);
+					ft_put_exitcode(envp, 1);
+				}
                 else
+				{
                     perror("open");
-                return -1;  // Retorna erro se não puder abrir o arquivo
+				}
+                return (-1);  // Retorna erro se não puder abrir o arquivo
             }
             if (dup2(fd, STDIN_FILENO) == -1)
             {
@@ -92,6 +109,7 @@ int handle_redirections(t_word *args)
         }
         else if (current->type == HEREDOC)
         {
+			//ft_printf("FIFTH\n");
             fd = handle_heredoc(current->next->value);
             if (fd == -1)
                 return -1;  // Retorna erro se o heredoc falhar

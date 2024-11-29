@@ -90,7 +90,7 @@ char *command_to_str (t_word *command)
 
 
 // Execute a command with pipes
-void execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2], char ***envp)
+int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2], char ***envp)
 {
     int pid = fork();
 	int status = 0;
@@ -139,7 +139,8 @@ void execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2
         }
 	} */
 	//reset_fd(pipes[0], pipes[1]);
-	ft_put_exitcode(envp, status);
+	//ft_put_exitcode(envp, status);
+	return (pid);
 }
 
 // Close all pipes after fork
@@ -158,25 +159,52 @@ void close_pipes(int pipe_count, int pipes[][2])
 void pipe_execution(t_word *args, char ***envp)
 {
     int pipe_count = count_pipes(args);
+	int status = 0;
     //printf("pipe count: %d\n", pipe_count);
     int pipes[pipe_count][2];
     create_pipes(pipe_count, pipes);
+	int *pid = malloc(sizeof(int) * pipe_count);
 	//printf("pipe count\n");
     int i = 0;
     while (i <= pipe_count)
     {
         t_word *command = get_next_command(&args);
-        execute_piped_command(command, i, pipe_count, pipes, envp);
+        pid[i] = execute_piped_command(command, i, pipe_count, pipes, envp);
 		//printf("i: %d\n", i);
+		//ft_printf("HELLO\n");
+		status = 0;
+		//*pid = 0;
         i++;
     }
+	/* while (i != 0)
+	{ 
+		ft_printf("VALUE: %d\n", pid[i]);
+		if (waitpid(pid[i], &status, 0) == -1) {
+            perror("waitpid");
+            ft_put_exitcode(envp, 1); // Return a failure exit code
+    	}
+		i--;
+	} */
     close_pipes(pipe_count, pipes);
 
     // Wait for all child processes
     i = 0;
     while (i <= pipe_count)
     {
-        wait(NULL);
+        //wait(NULL);
+		//ft_printf("VALUE: %d\n", pid[i]);
+		if (waitpid(pid[i], &status, 0) == -1) {
+            perror("waitpid");
+            ft_put_exitcode(envp, 1); // Return a failure exit code
+    	}
+		if (WIFEXITED(status))
+        {
+            int child_exit_code = WEXITSTATUS(status);
+            //printf("Parent: Child exited with code %d\n", child_exit_code);
+
+            // Pass the child's exit code to ft_put_exitcode
+            ft_put_exitcode(envp, child_exit_code);
+        }
         i++;
     }
 }

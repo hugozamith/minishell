@@ -101,7 +101,7 @@ char	*extract_string(char *input, int *len);
 char	*remove_quotations(char *str);
 //char	remove_quotations(char **str);
 const char	*token_type_to_str(t_tokens type);
-int		handle_redirections(t_word *args);
+int handle_redirections(t_word *args, char ***envp);
 int		bt_echo(t_word *args, int fd, char ***envp);
 int		ft_clear_screen(void);
 int		lexer(char *input, t_word **token_list);
@@ -130,5 +130,6 @@ int	ft_printfstrncmp(const char *s1, const char *s2, size_t n);
 void ft_put_exitcode(char ***envp, int nbr);
 char	*ft_getenv(char *var, char ***envp);
 void expand_args(t_word *args, char ***envp);
+void ft_print_error(int i);
 
 #endif

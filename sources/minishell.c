@@ -14,6 +14,30 @@ int has_pipe(t_word *args)
 	return (0);
 }
 
+void ft_print_error(int i)
+{
+	static int	status;
+	char		*err_msg[6];
+
+	//ft_printf("STATUS BEFORE: %s\n", status);
+	if (!status)
+		status = 1;
+	else if (status == 1)
+		return ;
+	//ft_printf("STATUS AFTER: %s\n", status);
+	err_msg[0] = " command not found\n";
+	err_msg[1] = " too many arguments\n";
+	err_msg[2] = " numeric argument required\n";
+	err_msg[3] = " not a valid identifier\n";
+	err_msg[4] = " No such file or directory\n";
+	err_msg[5] = " Permission denied\n";
+
+	if (i == -1)
+		ft_printf_fd(STDERR_FILENO, "\n");
+	else
+		ft_printf_fd(STDERR_FILENO, err_msg[i]);
+}
+
 const char *token_type_to_str(t_tokens type)
 {
 	switch (type)

@@ -86,7 +86,9 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
     fds[0] = dup(STDIN_FILENO);
     fds[1] = dup(STDOUT_FILENO);
 	status = 0;
-	handle_redirections(orgs);
+	//handle_redirections(orgs);
+	if (handle_redirections(orgs, env) == -1)
+		return (1);
 	args = ft_split(input, ' ');
 	free(input);
 	if (!ft_strchr(args[0], '/'))
@@ -101,10 +103,11 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 	if (pid == 0)// Child process
 	{
 		//printf("input: %s \n", command_path);
+		//ft_printf("FOUR\n VALUE: %s\n Value: %s\n Value: %s\n\n", args[0], args[1], args[2]);
 		if (execve(command_path, args, *env) == -1)
 		{
-			//ft_printf("HERE222\n\n");
-			ft_printf_fd(STDERR_FILENO," command not found\n");
+			ft_print_error(0);
+			//ft_printf_fd(STDERR_FILENO," command not found\n");
 			ft_free_argvs(args); // todo 
 			free(command_path);
 			//free(input);
@@ -121,7 +124,8 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
             return(ft_put_exitcode(env, 1), 1) ; // Return a failure exit code
         }
 		if (WIFEXITED(status)) {
-            return(ft_put_exitcode(env, 127/* WEXITSTATUS(status) */), WEXITSTATUS(status)) ; // Return the exit code of the child process
+			ft_print_error(-1);
+            return(ft_put_exitcode(env, 127), WEXITSTATUS(status)) ; // Return the exit code of the child process
         } else {
             return(ft_put_exitcode(env, 1), 1) ; // Return a failure exit code if the child didn't exit normally
         }
