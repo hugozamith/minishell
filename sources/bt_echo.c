@@ -69,7 +69,7 @@ int bt_echo(t_word *args, int fd, char ***envp)
 	{
 		//write(1, "JUST_EXIT_CODE\n", 16);
 		expanded = expand_string(args->next, envp);
-		if (*expanded == '1')
+		if (*expanded == '1' || *expanded == '2')
 		{
 			ft_printf("%s\n", expanded);
 			free(expanded);

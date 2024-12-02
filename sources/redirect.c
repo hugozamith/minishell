@@ -44,12 +44,15 @@ int handle_redirections(t_word *args, char ***envp)
             fd = open(current->next->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
             if (fd < 0)
             {
-                perror("open");
+                //perror("open");
+				ft_print_error(5);
+				ft_put_exitcode(envp, 1);
                 return -1;  // Retorna erro se não puder abrir o arquivo
             }
             if (dup2(fd, STDOUT_FILENO) == -1)
             {
                 perror("dup2");
+				ft_put_exitcode(envp, 1);
                 close(fd);
                 return -1;
             }
@@ -71,6 +74,7 @@ int handle_redirections(t_word *args, char ***envp)
             {
 				//ft_printf("THIRD2\n");
                 perror("dup2");
+				ft_put_exitcode(envp, 1);
                 close(fd);
                 return -1;
             }
@@ -84,24 +88,31 @@ int handle_redirections(t_word *args, char ***envp)
             {
                 if (errno == EACCES)
 				{
+					//ft_printf("FOURTH.1\n");
                     ft_print_error(5);
 					//ft_printf("HERE2\n");
 					ft_put_exitcode(envp, 1);
 				}
                 else if (errno == ENOENT)
 				{
+					//ft_printf("FOURTH.2\n");
+					//ft_printf("HELLO\n");
                     ft_print_error(4);
 					ft_put_exitcode(envp, 1);
 				}
                 else
 				{
-                    perror("open");
+					//ft_printf("FOURTH.3\n");
+                    //perror("open");
+					ft_print_error(5);
+					ft_put_exitcode(envp, 1);
 				}
                 return (-1);  // Retorna erro se não puder abrir o arquivo
             }
             if (dup2(fd, STDIN_FILENO) == -1)
             {
                 perror("dup2");
+				ft_put_exitcode(envp, 1);
                 close(fd);
                 return -1;
             }
@@ -116,6 +127,7 @@ int handle_redirections(t_word *args, char ***envp)
             if (dup2(fd, STDIN_FILENO) == -1)
             {
                 perror("dup2");
+				ft_put_exitcode(envp, 1);
                 close(fd);
                 return -1;
             }
