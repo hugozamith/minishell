@@ -15,4 +15,11 @@ void ft_handlesignal(int sigur)
 		rl_on_new_line();  // Tell readline we're on a new line
     	rl_redisplay();  // Redisplay the prompt
 	}
+	else 
+	{
+		//ft_printf("\n");
+		rl_on_new_line();  // Tell readline we're on a new line
+    	rl_replace_line("", 0);  // Clear the current input line
+    	rl_redisplay();  // Redisplay the prompt
+	}
 }

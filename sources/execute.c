@@ -88,7 +88,12 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 	status = 0;
 	//handle_redirections(orgs);
 	if (handle_redirections(orgs, env) == -1)
+	{
+		//ft_printf("GOT PROBLEMS\n");
+		ft_put_exitcode(env, 1);
 		return (1);
+	}
+	//ft_printf("FIRST\n");
 	args = ft_split(input, ' ');
 	free(input);
 	if (!ft_strchr(args[0], '/'))
@@ -99,25 +104,29 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 	//ft_printf("HERE\n\n");
 	//printf("args[0]: %s\n", args[0]);
 	//printf("args[1]: %s\n", args[1]);
+	//ft_printf("SECOND\n");
 	pid = fork();
 	if (pid == 0)// Child process
 	{
 		//printf("input: %s \n", command_path);
 		//ft_printf("FOUR\n VALUE: %s\n Value: %s\n Value: %s\n\n", args[0], args[1], args[2]);
+		//ft_printf("THIRD\n");
 		if (execve(command_path, args, *env) == -1)
 		{
+			//ft_printf("GIMME AN ERROR!\n");
 			ft_print_error(0);
 			//ft_printf_fd(STDERR_FILENO," command not found\n");
 			ft_free_argvs(args); // todo 
 			free(command_path);
 			//free(input);
 			//ft_free_all(env, &arg);
-			ft_put_exitcode(env, 1);
+			//ft_put_exitcode(env, 1);
 			exit(EXIT_FAILURE);
 		}
 	}
-	else // Parent process
+	else if (pid > 0) // Parent process
 	{	
+		//ft_printf("FOURTH\n");
 		//wait(&status); // Wait for the child process to finish
 		if (waitpid(pid, &status, 0) == -1) {
             perror("waitpid");
@@ -125,15 +134,34 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
         }
 		if (WIFEXITED(status)) {
 			ft_print_error(-1);
-            return(ft_put_exitcode(env, 127), WEXITSTATUS(status)) ; // Return the exit code of the child process
+			//int exit_code = WEXITSTATUS(status);
+			//ft_free_args(orgs);
+			//orgs = NULL;
+			//ft_printf("VALUE %d\n", WEXITSTATUS(status));
+			if (WEXITSTATUS(status) == 2)
+				ft_put_exitcode(env, 2);
+			else if (WEXITSTATUS(status) == 0)
+				ft_put_exitcode(env, 0);
+			/* else if (WEXITSTATUS(status) == 127)
+				ft_put_exitcode(env, 127); */
+			else
+				ft_put_exitcode(env, 127);
+			//ft_put_exitcode(env, WEXITSTATUS(status));
+			//status = 101;
+			//return exit_code;
+            //return(ft_put_exitcode(env, 127), WEXITSTATUS(status)) ; // Return the exit code of the child process
         } else {
             return(ft_put_exitcode(env, 1), 1) ; // Return a failure exit code if the child didn't exit normally
         }
 	}	//free(input);
+	else
+		ft_put_exitcode(env, 1);
+	//ft_printf("FIFTH\n");
 	ft_free_argvs(args);
 	free(command_path);
 	reset_fd(fds[0], fds[1]);
-	ft_put_exitcode(env, 1);
+	/* if (status != 101)
+		ft_put_exitcode(env, 1); */
 	//ft_printf("VALUE: %d\n", status);
 	//ft_put_exitcode(env, status);
 	return (0);

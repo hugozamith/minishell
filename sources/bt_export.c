@@ -75,10 +75,12 @@ void ft_put_exitcode(char ***envp, int nbr)
 		//ft_printf("%d\n", i);
 		if (!ft_strcmp((*envp)[i], "?"))
 		{
+			/* if (!ft_strcmp((*envp)[i], "?=127"))
+				return ; */
 			free((*envp)[i]);
 			(*envp)[i] = str/* ft_strdup(args->next->value) */;
 			//ft_printf("FOUND IT!!!");
-			//ft_printf("Value %s\n", str);
+			//ft_printf("Value1: %s\n", str);
 			/* ft_printf("OTHER WAY\n");
 			write(1,"e\n",2); */
 			return ;
@@ -89,7 +91,7 @@ void ft_put_exitcode(char ***envp, int nbr)
 	*envp = (ft_realloc(*envp, (i + 2)));
 	(*envp)[i] = str/* ft_strdup(args->next->value) */;
 	(*envp)[i + 1] = NULL;
-	//ft_printf("Value %s\n", (*envp)[i]);
+	//ft_printf("Value2: %s\n", (*envp)[i]);
 }
 
 int	bt_export(t_word *args, char ***envp)

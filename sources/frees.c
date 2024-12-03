@@ -49,7 +49,7 @@ void    ft_free_args(t_word *args)
 	//ft_printf("FOURTH\n");
 	free(args->value);
 	free(args);
-	//args = NULL;
+	args = NULL;
 	/* if (args)
 		free(args); */
 }

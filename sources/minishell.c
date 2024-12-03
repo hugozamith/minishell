@@ -31,9 +31,10 @@ void ft_print_error(int i)
 	err_msg[3] = " not a valid identifier\n";
 	err_msg[4] = " No such file or directory\n";
 	err_msg[5] = " Permission denied\n";
-
 	if (i == -1)
+	{
 		ft_printf_fd(STDERR_FILENO, "\n");
+	}
 	else
 		ft_printf_fd(STDERR_FILENO, err_msg[i]);
 }
@@ -250,18 +251,34 @@ int main(int argc, char **argv, char **envp)
             if (has_pipe(args)) {
                 pipe_execution(args, my_env);
             } else if (is_bt(args->value, args, my_env)) {
-                ft_auto_execute(args, my_env);
+				//ft_auto_execute(args, my_env);
+                if (ft_auto_execute(args, my_env) == 2)
+				{
+					//ft_printf("HERE\n");
+					//ft_printf("Value before: %s\n", args->next->value);
+					ft_handlesignal(0);
+					/* ft_free_args(args);
+					args = NULL; */
+					//ft_put_exitcode(my_env, 2);
+					//args->next = NULL;
+					//break ;
+					//ft_printf("Value after: %s\n", args->next->value);
+				}
             }
         	free(line);
 			//ft_free_args(args);
         }
 		//ft_free_args(args);
-        while (args)
-		{
-			t_word *next = args->next;
-			free(args->value);
-			free(args);
-			args = next;
+		if (args)
+        {
+			//ft_printf("THERES STILL ARG\n");
+			while (args)
+			{
+				t_word *next = args->next;
+				free(args->value);
+				free(args);
+				args = next;
+			}
 		}
     }
     return (0);
