@@ -19,24 +19,26 @@ void ft_print_error(int i)
 	static int	status;
 	char		*err_msg[6];
 
-	//ft_printf("STATUS BEFORE: %s\n", status);
-	if (!status)
-		status = 1;
-	else if (status == 1)
-		return ;
-	//ft_printf("STATUS AFTER: %s\n", status);
 	err_msg[0] = " command not found\n";
 	err_msg[1] = " too many arguments\n";
 	err_msg[2] = " numeric argument required\n";
 	err_msg[3] = " not a valid identifier\n";
 	err_msg[4] = " No such file or directory\n";
 	err_msg[5] = " Permission denied\n";
-	if (i == -1)
+	//ft_printf("STATUS BEFORE: %s\n", status);
+	if (!status)
 	{
-		ft_printf_fd(STDERR_FILENO, "\n");
+		status = 1;
+		/* else if (status == 1)
+			return ; */
+		//ft_printf("STATUS AFTER: %s\n", status);
+		if (i == -1)
+		{
+			ft_printf_fd(STDERR_FILENO, "\n");
+		}
+		else
+			ft_printf_fd(STDERR_FILENO, err_msg[i]);
 	}
-	else
-		ft_printf_fd(STDERR_FILENO, err_msg[i]);
 }
 
 const char *token_type_to_str(t_tokens type)
@@ -217,6 +219,7 @@ int main(int argc, char **argv, char **envp)
     argv = NULL;
 	mini = malloc(sizeof(t_shelly));
 	my_env = env_init(envp);
+	//int status = 0;
 	ft_init_shelly(mini);
 	//printf("VALUE %d\n", (*mini)->exit_code);
     signal(SIGINT, ft_handlesignal);
@@ -237,10 +240,9 @@ int main(int argc, char **argv, char **envp)
         if (strlen(line) > 0)
             add_history(line);
 
-
-        if (*line && *line != ' ')
-        {
-            lexer(line, &args);
+		if (*line && *line != ' ')
+		{
+			lexer(line, &args);
 			t_word *temp = args;
 			while (temp)
 			{
@@ -248,29 +250,23 @@ int main(int argc, char **argv, char **envp)
 				temp = temp->next;
 			}
 			//printf("line 		: %s\n", line);
-            if (has_pipe(args)) {
-                pipe_execution(args, my_env);
-            } else if (is_bt(args->value, args, my_env)) {
-				//ft_auto_execute(args, my_env);
-                if (ft_auto_execute(args, my_env) == 2)
+			if (has_pipe(args)) {
+				pipe_execution(args, my_env);
+			} else if (is_bt(args->value, args, my_env)) {
+				ft_auto_execute(args, my_env);
+				/* if (ft_auto_execute(args, my_env) == 1)
 				{
-					//ft_printf("HERE\n");
-					//ft_printf("Value before: %s\n", args->next->value);
-					ft_handlesignal(0);
-					/* ft_free_args(args);
-					args = NULL; */
-					//ft_put_exitcode(my_env, 2);
-					//args->next = NULL;
-					//break ;
-					//ft_printf("Value after: %s\n", args->next->value);
-				}
-            }
-        	free(line);
+					//ft_printf("PROBLEM\n");
+					status = 1;
+				} */
+			}
+			free(line);
 			//ft_free_args(args);
-        }
+		}
+		//ft_printf("HERE\n");
 		//ft_free_args(args);
 		if (args)
-        {
+		{
 			//ft_printf("THERES STILL ARG\n");
 			while (args)
 			{
@@ -280,6 +276,8 @@ int main(int argc, char **argv, char **envp)
 				args = next;
 			}
 		}
+		/* else
+			ft_free_args(args); */
     }
     return (0);
 }

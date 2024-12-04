@@ -80,7 +80,7 @@ void ft_put_exitcode(char ***envp, int nbr)
 			free((*envp)[i]);
 			(*envp)[i] = str/* ft_strdup(args->next->value) */;
 			//ft_printf("FOUND IT!!!");
-			//ft_printf("Value1: %s\n", str);
+			//ft_printf("Value1: %s\n", (*envp)[i]);
 			/* ft_printf("OTHER WAY\n");
 			write(1,"e\n",2); */
 			return ;

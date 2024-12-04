@@ -42,27 +42,10 @@ int handle_redirections(t_word *args, char ***envp)
         {
 			//ft_printf("SECOND\n");
 			//ft_printf("VALUE: %s\n", current->next->value);
-            fd = open(current->next->value, O_RDONLY | O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            fd = open(current->next->value, O_WRONLY | O_CREAT | O_TRUNC , 0644);
             //ft_printf("FD: %d\n", fd);
 			if (fd < 0)
             {
-                //perror("open");
-				//ft_printf("SECOND.1\n");
-				/* 
-				
-				 THE PROBLEM FOR TEST 102 IS HERE
-				
-				
-				
-				 */
-				if (errno == EACCES)
-				{
-					//ft_printf("FOURTH.1\n");
-                    ft_print_error(5);
-					//ft_printf("HERE2\n");
-					ft_put_exitcode(envp, 1);
-				}
-				ft_put_exitcode(envp, 127);
 				ft_print_error(5);
                 return (-1);  // Retorna erro se não puder abrir o arquivo
             }
@@ -72,11 +55,28 @@ int handle_redirections(t_word *args, char ***envp)
                 perror("dup2");
 				ft_put_exitcode(envp, 1);
                 close(fd);
-                return (/* ft_printf("HERE\n"), */ -1);
+                return (-1);
             }
 			//ft_printf("FOURTH\n");
             close(fd);
 			//ft_printf("SECOND-OUT\n");
+			/* fd = open(current->next->value, O_WRONLY | O_CREAT | O_TRUNC , 0644);
+			if (fd < 0)
+            {
+                ft_print_error(5); // Print "Permission denied"
+                dup2(original_stdout, STDOUT_FILENO); // Restore STDOUT
+                close(original_stdout);
+                return (-1);
+            }
+            if (dup2(fd, STDOUT_FILENO) == -1)
+            {
+                perror("dup2");
+                close(fd);
+                dup2(original_stdout, STDOUT_FILENO); // Restore STDOUT
+                close(original_stdout);
+                return (-1);
+            }
+            close(fd); */
         }
         else if (current->type == REDIRECT_APPEND)
         {
