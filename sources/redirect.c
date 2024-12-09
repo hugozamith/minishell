@@ -1,5 +1,69 @@
 #include "minishell.h"
 
+int ft_is_bt(char *word)
+{
+	if (!ft_strncmp(word, "echo", 5))
+		return (1);
+	if (!ft_strncmp(word, "cd", 3))
+		return (1);
+	if (!ft_strncmp(word, "pwd", 4))
+		return (1);
+	if (!ft_strncmp(word, "export", 7))
+		return (1);
+	if (!ft_strncmp(word, "unset", 6))
+		return (1);
+	if (!ft_strncmp(word, "env", 4))
+		return (1);
+	return (0);
+}
+
+int is_bts_in_pipe(t_word *args)
+{
+	int		i;
+	int		j;
+	int 	pipe;
+	int 	redirect;
+	char	*str;
+
+	i = 0;
+	j = 0;
+	pipe = 0;
+	redirect = 0;
+	str = args->value;
+	while ((args || (pipe == 0 && redirect == 0)) && args->type != PIPE)
+	{
+		//ft_printf_fd(STDERR_FILENO, "VALUE: %s\n", args->value);
+		/* if (!args->type)
+			return (1); */
+		if (args->type == PIPE)
+		{
+			//ft_printf_fd(STDERR_FILENO, "VALUE: %s\n", args->next->value);
+			pipe = i;
+		}
+		if (args->type == REDIRECT_APPEND || args->type == REDIRECT_IN
+				|| args->type == REDIRECT_OUT)
+		{
+			if (redirect)
+				redirect = -1;
+			else
+				redirect = j;
+		}
+		i++;
+		j++;
+		args = args->next;
+	}
+	pipe = i;
+	//ft_printf_fd(STDERR_FILENO, "PIPE: %d\tREDIRECT: %d\tSTR: %s\n", pipe, redirect, str);
+	if (!ft_is_bt(str))
+		return (0);
+	else if (redirect < pipe && pipe && redirect && redirect != -1 )
+	{	
+		ft_print_error(-1);
+		return (1);
+	}
+	return (0);
+}
+
 int handle_heredoc(const char *delimiter)
 {
     char *line;
@@ -38,6 +102,7 @@ int handle_redirections(t_word *args, char ***envp)
     while (current)
     {
 		//ft_printf("FIRST\n");
+		//ft_printf("VALUE: %s\n", current->value);
         if (current->type == REDIRECT_OUT)
         {
 			//ft_printf("SECOND\n");
@@ -59,24 +124,6 @@ int handle_redirections(t_word *args, char ***envp)
             }
 			//ft_printf("FOURTH\n");
             close(fd);
-			//ft_printf("SECOND-OUT\n");
-			/* fd = open(current->next->value, O_WRONLY | O_CREAT | O_TRUNC , 0644);
-			if (fd < 0)
-            {
-                ft_print_error(5); // Print "Permission denied"
-                dup2(original_stdout, STDOUT_FILENO); // Restore STDOUT
-                close(original_stdout);
-                return (-1);
-            }
-            if (dup2(fd, STDOUT_FILENO) == -1)
-            {
-                perror("dup2");
-                close(fd);
-                dup2(original_stdout, STDOUT_FILENO); // Restore STDOUT
-                close(original_stdout);
-                return (-1);
-            }
-            close(fd); */
         }
         else if (current->type == REDIRECT_APPEND)
         {
@@ -117,9 +164,23 @@ int handle_redirections(t_word *args, char ***envp)
                 else if (errno == ENOENT)
 				{
 					//ft_printf("FOURTH.2\n");
-					//ft_printf("HELLO\n");
-                    ft_print_error(4);
+					//ft_printf_fd(STDERR_FILENO, "HERE %d\n", is_bts_in_pipe(args));
+					//ft_printf_fd(STDERR_FILENO, "First Value: %s\t%d\n", current->prev->value, ft_strcmp(current->prev->value, "echo"));
+					//ft_printf_fd(STDERR_FILENO, "Last Value: %s\t%d\n", current->next->next->value, ft_strncmp(current->next->next->value, "END", 3));
+					if (!ft_strcmp(current->prev->value, "echo") && (!ft_strncmp(current->next->next->value, "END", 3) || !handle_redirections(current->next->next, envp)))
+						return (-1);
+					if ((has_pipe(args) && !is_bts_in_pipe(args))
+						|| !has_pipe(args))
+                    	ft_print_error(4);
+					/* else
+					{
+						ft_printf_fd(STDERR_FILENO, "HEREHEHRHHE++EHRHER\n");
+						ft_print_error(2);
+					} */
+
+					//ft_printf_fd(STDERR_FILENO, "\n");
 					ft_put_exitcode(envp, 1);
+					return (-1);
 				}
                 else
 				{

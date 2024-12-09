@@ -92,7 +92,15 @@ char *command_to_str (t_word *command)
 // Execute a command with pipes
 int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2], char ***envp)
 {
-    int pid = fork();
+	//ft_printf("FIRST\n");
+    /* ft_printf("COMMAND: %s\n", command->value);
+	t_word *temp = command;
+	while (temp)
+	{
+		printf("Token Type: %s, Value: %s\n", token_type_to_str(temp->type), temp->value);
+		temp = temp->next;
+	} */
+	int pid = fork();
 	int status = 0;
     if (pid == 0) // Child process
     {
@@ -100,10 +108,11 @@ int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2]
         handle_pipe_redirection(i, pipe_count, pipes);
 		//printf("command: %s\n", command->value);
 		status = is_bt(command->value, command, envp);
+		//printf("VALUE1: %d\n", status);
         if (status)
             status = ft_auto_execute(command, envp);
 		//free(line);
-		//printf("VALUE: %d\n", status);
+		//printf("VALUE2: %d\n", status);
         exit(status);
 		//ft_put_exitcode(envp, 1);
     }
@@ -112,7 +121,8 @@ int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2]
         perror("fork error");
 		//ft_put_exitcode(envp, 1);
 	}
-	//printf("VALUE: %d\n", status);
+	/* else if (pid == 0)
+		printf("VALUE after: %d\n", status); */
 	/* else // Parent process
     {
 		// Wait for the child to finish and retrieve its exit status

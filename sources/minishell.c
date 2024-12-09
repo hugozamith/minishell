@@ -34,7 +34,7 @@ void ft_print_error(int i)
 		//ft_printf("STATUS AFTER: %s\n", status);
 		if (i == -1)
 		{
-			ft_printf_fd(STDERR_FILENO, "\n");
+			ft_printf_fd(STDERR_FILENO, "");
 		}
 		else
 			ft_printf_fd(STDERR_FILENO, err_msg[i]);

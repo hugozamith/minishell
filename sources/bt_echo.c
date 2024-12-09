@@ -65,6 +65,7 @@ int bt_echo(t_word *args, int fd, char ***envp)
     char    *expanded;
     int     fds[2];
 
+	//ft_printf("HEREE\n");
 	if (ft_just_exit_code(args))
 	{
 		//write(1, "JUST_EXIT_CODE\n", 16);
@@ -96,6 +97,7 @@ int bt_echo(t_word *args, int fd, char ***envp)
     if (handle_redirections(args, envp) < 0)
     {
         ft_put_exitcode(envp, 1);
+		reset_fd(fds[0], fds[1]);
         return (1);
     }
 
