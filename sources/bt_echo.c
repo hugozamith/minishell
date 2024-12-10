@@ -76,6 +76,7 @@ int bt_echo(t_word *args, int fd, char ***envp)
 			free(expanded);
 			return (0);
 		}
+		free(expanded);
 	}
 	//write(1, "NOT_JUST_EXIT_CODE\n", 20);
     // Save the original file descriptors

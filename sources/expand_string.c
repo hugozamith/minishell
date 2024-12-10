@@ -17,10 +17,17 @@ char	*ft_getenv(char *var, char ***envp)
 			/* ft_printf("ENV VALUE: %s\n", var);
 			ft_printf("ENV VALUE: %s\n", (*envp)[i]); */
 			result = ft_strdup(str[1]);
-			free(str);
+			/* free(str[0]);
+			free(str[1]);
+			free(str); */
+			ft_free_argvs(str);
+			//ft_free_env(envp);
 			return (result);
 		}
-		free(str);
+		ft_free_argvs(str);
+		/* free(str[0]);
+		free(str[1]);
+		free(str); */
 	}
 	return (NULL);
 }
@@ -79,7 +86,7 @@ char	*expand_variable(char *str, char ***envp)
 	}
 	if (!value)
 		return (ft_strdup(""));  // If variable not found, return empty string
-	return (ft_strdup(value));  // Return the value as a new string
+	return (value);  // Return the value as a new string
 }
 
 // Handle double-quoted string

@@ -64,9 +64,12 @@ void ft_put_exitcode(char ***envp, int nbr)
 {
 	int		i;
 	char	*str;
+	char	*number;
 
 	i = -1;
-	str = ft_strjoin("?=", ft_itoa(nbr));
+	number = ft_itoa(nbr);
+	str = ft_strjoin("?=", number);
+	free(number);
 	//ft_printf("VALUE: %s \n", str);
 	//ft_printf("GOT IN\n");
 	//ft_printf("Value %s\n", str);
