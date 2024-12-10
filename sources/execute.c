@@ -83,14 +83,13 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 	int		pid;
 	//t_word	*arg;
 
-	//ft_printf("HEREREEEEEEE\n");
     fds[0] = dup(STDIN_FILENO);
 	//ft_printf("dup input\n");
     fds[1] = dup(STDOUT_FILENO);
 	//ft_printf("dup output\n");
 	status = 0;
 	//handle_redirections(orgs);
-	//ft_printf("VALUE: %d", handle_redirections(orgs, env));
+	//ft_printf("VALUE: %d\n", handle_redirections(*orgs, env));
 	if (handle_redirections(*orgs, env) == -1)
 	{
 		//ft_printf("GOT PROBLEMS\n");
