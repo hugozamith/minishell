@@ -75,113 +75,133 @@ char *extract_variable(char *input, int *len)
 }
 int lexer(char *input, t_word **token_list)
 {
-	int flag;
-	int pepi;
-	int single_quote_open = 0;
-	int double_quote_open = 0;
+    int flag;
+    int pepi;
+    t_tokens prev_type = END; // Track the previous token type
+    int single_quote_open = 0;
+    int double_quote_open = 0;
 
-	while (*input != '\0')
-	{
-		flag = 0;
-		while (*input == ' ' || *input == '\t')
-			input++;
-		
-		if (*input == '|')
-		{
-			add_token(token_list, PIPE, "|", 0);
-			input++;
-			pepi = 1;
-		}
-		else if (*input == '>')
-		{
-			if (*(input + 1) == '>')
-			{
-				add_token(token_list, REDIRECT_APPEND, ">>", 0);
-				input += 2; // Pula ">>"
-			}
-			else
-			{
-				add_token(token_list, REDIRECT_OUT, ">", 0);
-				input++;
-			}
-		}
-		else if (*input == '<')
-		{
-			if (*(input + 1) == '<')
-			{
-				add_token(token_list, HEREDOC, "<<", 0);
-				input += 2; // Pula "<<"
-			}
-			else
-			{
-				add_token(token_list, REDIRECT_IN, "<", 0);
-				input++;
-			}
-		}
-		else if (*input == '\'')
-		{
-			char *start = input++; // Start of single-quoted string
-			while (*input && *input != '\'') input++; // Skip until closing single quote
-			
-			if (*input == '\'') {
-				input++;  // Skip the closing quote
-				char *value = ft_strndup(start, input - start);
-				add_token(token_list, ARGUMENT, value, 0); // Include quotes
-				free(value);
-			} else {
-				free_tokens(token_list);  // Free tokens if no closing quote
-				bigproblem();
-				return (1);
-			}
-		}
-		else if (*input == '"')
-		{
-			char *start = input++; // Start of double-quoted string
-			while (*input && *input != '"') input++; // Skip until closing double quote
-			if (*input == '"')
-			{
-				input++;
-				if  (*input == '$')
-					input++;
-				if (*input == '"')
-				{
-					flag = 1;					
-				}
+    while (*input != '\0')
+    {
+        flag = 0;
+        while (*input == ' ' || *input == '\t')
+            input++;
 
-				char *value = ft_strndup(start, input - start);
-//					if (*(input + 1) == '$')
-//					value = add_char(value, *(input++ + 1));
-				add_token(token_list, ARGUMENT, value, flag); // Include quotes
-				free(value);
-			} else {
-				free_tokens(token_list);  // Free tokens if no closing quote
-				bigproblem();
-				return (1);
-			}
-		}
-		else
-		{
-			int len;
-			char *word = extract_word(input, &len);
-			if (*token_list == NULL || pepi)
-			{
-				add_token(token_list, COMMAND, word, 0);
-				pepi = 0;
-			}
-			else
-				add_token(token_list, ARGUMENT, word,0);
-			free(word);
-			input += len;
-		}
-	}
-	// Check if quotes are unclosed
-	if (single_quote_open || double_quote_open)
-	{
-		free_tokens(token_list);  // Free the tokens if quotes are unclosed
-		bigproblem();             // Call bigproblem if quotes are unclosed
-		return (1);               // Return 1 to indicate an error
-	}
+        if (*input == '|')
+        {
+            add_token(token_list, PIPE, "|", 0);
+            input++;
+            pepi = 1;
+            prev_type = PIPE; // Update previous token type
+        }
+        else if (*input == '>')
+        {
+            if (*(input + 1) == '>')
+            {
+                add_token(token_list, REDIRECT_APPEND, ">>", 0);
+                input += 2; // Skip ">>"
+            }
+            else
+            {
+                add_token(token_list, REDIRECT_OUT, ">", 0);
+                input++;
+            }
+            prev_type = REDIRECT_OUT; // Update previous token type
+        }
+        else if (*input == '<')
+        {
+            if (*(input + 1) == '<')
+            {
+                add_token(token_list, HEREDOC, "<<", 0);
+                input += 2; // Skip "<<"
+            }
+            else
+            {
+                add_token(token_list, REDIRECT_IN, "<", 0);
+                input++;
+            }
+            prev_type = REDIRECT_IN; // Update previous token type
+        }
+        else if (*input == '\'')
+        {
+            char *start = input++; // Start of single-quoted string
+            while (*input && *input != '\'') input++; // Skip until closing single quote
 
-	add_token(token_list, END, "END", 0);
-	return (0); // Return 0 for success
+            if (*input == '\'')
+            {
+                input++; // Skip the closing quote
+                char *value = ft_strndup(start, input - start);
+                add_token(token_list, ARGUMENT, value, 0); // Include quotes
+                free(value);
+            }
+            else
+            {
+                free_tokens(token_list); // Free tokens if no closing quote
+                bigproblem();
+                return (1);
+            }
+            prev_type = ARGUMENT; // Update previous token type
+        }
+        else if (*input == '"')
+        {
+            char *start = input++; // Start of double-quoted string
+            while (*input && *input != '"') input++; // Skip until closing double quote
+            if (*input == '"')
+            {
+                input++;
+                if (*input == '$')
+                    input++;
+                if (*input == '"')
+                {
+                    flag = 1;
+                }
+
+                char *value = ft_strndup(start, input - start);
+                add_token(token_list, ARGUMENT, value, flag); // Include quotes
+                free(value);
+            }
+            else
+            {
+                free_tokens(token_list); // Free tokens if no closing quote
+                bigproblem();
+                return (1);
+            }
+            prev_type = ARGUMENT; // Update previous token type
+        }
+        else
+        {
+            int len;
+            char *word = extract_word(input, &len);
+
+            if (prev_type == REDIRECT_OUT || prev_type == REDIRECT_APPEND || 
+                prev_type == REDIRECT_IN || prev_type == HEREDOC)
+            {
+                add_token(token_list, ARGUMENT, word, 0);
+            }
+            else if (*token_list == NULL || pepi)
+            {
+                add_token(token_list, COMMAND, word, 0);
+                pepi = 0;
+            }
+            else
+            {
+                add_token(token_list, ARGUMENT, word, 0);
+            }
+
+            free(word);
+            input += len;
+            prev_type = ARGUMENT; // Update previous token type
+        }
+    }
+
+    // Check if quotes are unclosed
+    if (single_quote_open || double_quote_open)
+    {
+        free_tokens(token_list); // Free the tokens if quotes are unclosed
+        bigproblem(); // Call bigproblem if quotes are unclosed
+        return (1); // Return 1 to indicate an error
+    }
+
+    add_token(token_list, END, "END", 0);
+    return (0); // Return 0 for success
 }

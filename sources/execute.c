@@ -104,8 +104,10 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 		//ft_free_args(orgs);
 		return (1);
 	}
+	if (has_redir((*orgs)->next))
+		(*orgs)->next = rm_redir_node((*orgs)->next);
 	//ft_printf("FIRST\n");else
-	//ft_free_args(args);
+	input = ft_args_to_line(*orgs);
 	args = ft_split(input, ' ');
 	free(input);
 	if (!ft_strchr(args[0], '/'))

@@ -64,13 +64,18 @@ int handle_redirections(t_word *args, char ***envp)
 	char	*filename;
 
     current = args;
+	//write(1, "a\n", 2);
+
+	//printf("current->value: %s\n", token_type_to_str(current->next->type));
     while (current)
     {
+
 		//ft_printf("FIRST\n");
         if (current->type == REDIRECT_OUT)
         {
+			//write(1, "b\n", 2);
 			filename = merge_filename(current->next);
-			//ft_printf("SECOND\n");
+			//printf("filename: %s\n", filename);
 			//ft_printf("VALUE: %s\n", current->next->value);
             fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC , 0644);
             //ft_printf("FD: %d\n", fd);
@@ -87,6 +92,7 @@ int handle_redirections(t_word *args, char ***envp)
                 close(fd);
                 return (-1);
             }
+
 			//ft_printf("FOURTH\n");
             close(fd);
 			//ft_printf("SECOND-OUT\n");
