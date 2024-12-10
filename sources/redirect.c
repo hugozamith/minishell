@@ -29,10 +29,39 @@ int handle_heredoc(const char *delimiter)
     return pipefd[0]; // Retorna o descritor de leitura do pipe
 }
 
+char *merge_filename(t_word *node)
+{
+    char *new_value;
+	int i;
+
+	new_value = ft_strdup("");
+	while (node->type == ARGUMENT)
+	{
+		i = 0;
+		if (node->value[i] == '"')
+			i++;
+		while (node->value[i] != '"' && node->value[i])
+		{
+			new_value = add_char(new_value, node->value[i]);
+			i++;
+		}
+		if (node->O == 1)
+		{
+			//write(1, "aqui\n", 5);
+			node = node->next;
+		}
+		else
+			break;
+	}
+
+    return new_value;
+}
+
 int handle_redirections(t_word *args, char ***envp)
 {
     t_word *current;
     int fd;
+	char	*filename;
 
     current = args;
     while (current)
@@ -40,9 +69,10 @@ int handle_redirections(t_word *args, char ***envp)
 		//ft_printf("FIRST\n");
         if (current->type == REDIRECT_OUT)
         {
+			filename = merge_filename(current->next);
 			//ft_printf("SECOND\n");
 			//ft_printf("VALUE: %s\n", current->next->value);
-            fd = open(current->next->value, O_WRONLY | O_CREAT | O_TRUNC , 0644);
+            fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC , 0644);
             //ft_printf("FD: %d\n", fd);
 			if (fd < 0)
             {
@@ -80,8 +110,9 @@ int handle_redirections(t_word *args, char ***envp)
         }
         else if (current->type == REDIRECT_APPEND)
         {
+			filename = merge_filename(current->next);
 			//ft_printf("THIRD\n");
-            fd = open(current->next->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
+            fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
             if (fd < 0)
             {
 				//ft_printf("THIRD1\n");
@@ -102,8 +133,9 @@ int handle_redirections(t_word *args, char ***envp)
         }
         else if (current->type == REDIRECT_IN)
         {
+			filename = merge_filename(current->next);
 			//ft_printf("FOURTH\n");
-            fd = open(current->next->value, O_RDONLY);
+            fd = open(filename, O_RDONLY);
             if (fd < 0)
             {
 				//ft_printf("FOURTH-IN\n");
@@ -130,7 +162,7 @@ int handle_redirections(t_word *args, char ***envp)
 				}
                 return (-1);  // Retorna erro se não puder abrir o arquivo
             }
-            if (dup2(fd, STDIN_FILENO) == -1)
+            if (dup2(fd, STDIN_FILENO) == -1)	
             {
 				//ft_printf("FOURTH.4\n");
                 perror("dup2");
@@ -143,6 +175,7 @@ int handle_redirections(t_word *args, char ***envp)
         }
         else if (current->type == HEREDOC)
         {
+			filename = merge_filename(current->next);
 			//ft_printf("FIFTH\n");
             fd = handle_heredoc(current->next->value);
             if (fd == -1)

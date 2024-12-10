@@ -38,7 +38,6 @@
 
 extern char	**g_env;
 
-
 typedef enum e_tokens
 {
 	COMMAND,
@@ -61,6 +60,7 @@ typedef struct s_word
 	char				*value;
 	struct s_word		*next;
 	struct s_word		*prev;
+	int					O;
 }	t_word;
 
 

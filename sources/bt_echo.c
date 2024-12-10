@@ -24,22 +24,24 @@ int	ft_just_exit_code(t_word *args)
 t_word *rm_redir_node(t_word *args)
 {
 	t_word *current;
-	t_word *next;
+//	t_word this;
 
 	current = args;
 	while (current)
 	{
-		next = current->next;
 		if (current->type == REDIRECT_IN || current->type == REDIRECT_OUT
 			|| current->type == REDIRECT_APPEND || current->type == HEREDOC)
 		{
-			if (current->prev)
-				current->prev->next = current->next->next;
-			if (current->next->next)
-				current->next->next->prev = current->prev;
-			free(current->value);
-			free(current);
-			return (next);
+			if (current->prev->type == COMMAND)
+			{
+				while (current->next->O == 1)
+					current = current->next;	
+				return (current->next->next);			
+			}
+			while (current->next->O == 1)
+				current = current->next;
+			current->prev->next = current->next->next;
+			return (current->prev);
 		}
 		current = current->next;
 	}
@@ -100,10 +102,9 @@ int bt_echo(t_word *args, int fd, char ***envp)
     }
 
     // Remove all redirection nodes from the argument list
-    while (has_redir(args))
-        args = rm_redir_node(args);
+    if (has_redir(current))
+		current = rm_redir_node(current);
 	//printf("current->type: %s\n", token_type_to_str(current->type));
-
 
 
 	//printf("current->value: %s\n", current->value);
@@ -123,7 +124,7 @@ int bt_echo(t_word *args, int fd, char ***envp)
     }
 	
 	ft_put_exitcode(envp, 0);
-    // Print all arguments with expansion
+
     while (current && current->type == ARGUMENT)
     {
 		//printf("current->value: %s\n", current->value);

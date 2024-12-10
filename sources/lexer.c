@@ -21,7 +21,7 @@ void free_tokens(t_word **token_list)
 	*token_list = NULL; // Set the token list pointer to NULL
 	}
 
-void add_token(t_word **token_list, t_tokens type, char *value)
+void add_token(t_word **token_list, t_tokens type, char *value, int flag)
 {
 	t_word *new_token = malloc(sizeof(t_word));
 	if (!new_token)
@@ -29,8 +29,14 @@ void add_token(t_word **token_list, t_tokens type, char *value)
 	new_token->type = type;
 	new_token->value = ft_strdup(value);
 	new_token->next = NULL;
-	new_token->prev = NULL;  // Initialize prev to NULL
-
+	new_token->prev = NULL;  // Initialize prev to NULL=
+	if (flag == 1)
+	{
+		//write(1, "aqui2\n", 6);
+		new_token->O = 1;
+	}
+	else
+		new_token->O = 0;
 	if (*token_list == NULL)
 		*token_list = new_token;
 	else
@@ -69,18 +75,20 @@ char *extract_variable(char *input, int *len)
 }
 int lexer(char *input, t_word **token_list)
 {
+	int flag;
 	int pepi;
 	int single_quote_open = 0;
 	int double_quote_open = 0;
 
 	while (*input != '\0')
 	{
+		flag = 0;
 		while (*input == ' ' || *input == '\t')
 			input++;
 		
 		if (*input == '|')
 		{
-			add_token(token_list, PIPE, "|");
+			add_token(token_list, PIPE, "|", 0);
 			input++;
 			pepi = 1;
 		}
@@ -88,12 +96,12 @@ int lexer(char *input, t_word **token_list)
 		{
 			if (*(input + 1) == '>')
 			{
-				add_token(token_list, REDIRECT_APPEND, ">>");
+				add_token(token_list, REDIRECT_APPEND, ">>", 0);
 				input += 2; // Pula ">>"
 			}
 			else
 			{
-				add_token(token_list, REDIRECT_OUT, ">");
+				add_token(token_list, REDIRECT_OUT, ">", 0);
 				input++;
 			}
 		}
@@ -101,12 +109,12 @@ int lexer(char *input, t_word **token_list)
 		{
 			if (*(input + 1) == '<')
 			{
-				add_token(token_list, HEREDOC, "<<");
+				add_token(token_list, HEREDOC, "<<", 0);
 				input += 2; // Pula "<<"
 			}
 			else
 			{
-				add_token(token_list, REDIRECT_IN, "<");
+				add_token(token_list, REDIRECT_IN, "<", 0);
 				input++;
 			}
 		}
@@ -118,7 +126,7 @@ int lexer(char *input, t_word **token_list)
 			if (*input == '\'') {
 				input++;  // Skip the closing quote
 				char *value = ft_strndup(start, input - start);
-				add_token(token_list, ARGUMENT, value); // Include quotes
+				add_token(token_list, ARGUMENT, value, 0); // Include quotes
 				free(value);
 			} else {
 				free_tokens(token_list);  // Free tokens if no closing quote
@@ -132,14 +140,18 @@ int lexer(char *input, t_word **token_list)
 			while (*input && *input != '"') input++; // Skip until closing double quote
 			if (*input == '"')
 			{
-
 				input++;
 				if  (*input == '$')
 					input++;
+				if (*input == '"')
+				{
+					flag = 1;					
+				}
+
 				char *value = ft_strndup(start, input - start);
 //					if (*(input + 1) == '$')
 //					value = add_char(value, *(input++ + 1));
-				add_token(token_list, ARGUMENT, value); // Include quotes
+				add_token(token_list, ARGUMENT, value, flag); // Include quotes
 				free(value);
 			} else {
 				free_tokens(token_list);  // Free tokens if no closing quote
@@ -153,11 +165,11 @@ int lexer(char *input, t_word **token_list)
 			char *word = extract_word(input, &len);
 			if (*token_list == NULL || pepi)
 			{
-				add_token(token_list, COMMAND, word);
+				add_token(token_list, COMMAND, word, 0);
 				pepi = 0;
 			}
 			else
-				add_token(token_list, ARGUMENT, word);
+				add_token(token_list, ARGUMENT, word,0);
 			free(word);
 			input += len;
 		}
@@ -170,6 +182,6 @@ int lexer(char *input, t_word **token_list)
 		return (1);               // Return 1 to indicate an error
 	}
 
-	add_token(token_list, END, "END");
+	add_token(token_list, END, "END", 0);
 	return (0); // Return 0 for success
 }
