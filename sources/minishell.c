@@ -34,7 +34,7 @@ void ft_print_error(int i)
 		//ft_printf("STATUS AFTER: %s\n", status);
 		if (i == -1)
 		{
-			ft_printf_fd(STDERR_FILENO, "\n");
+			ft_printf_fd(STDERR_FILENO, "");
 		}
 		else
 			ft_printf_fd(STDERR_FILENO, err_msg[i]);
@@ -212,15 +212,15 @@ void ft_init_shelly(t_shelly **mini)
 
 int main(int argc, char **argv, char **envp)
 {
-	t_shelly **mini;
+	//t_shelly **mini;
     char ***my_env;
 
 	argc = 0;
     argv = NULL;
-	mini = malloc(sizeof(t_shelly));
+	//mini = malloc(sizeof(t_shelly));
 	my_env = env_init(envp);
 	//int status = 0;
-	ft_init_shelly(mini);
+	//ft_init_shelly(mini);
 	//printf("VALUE %d\n", (*mini)->exit_code);
     signal(SIGINT, ft_handlesignal);
     signal(SIGQUIT, SIG_IGN);

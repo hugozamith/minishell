@@ -56,10 +56,16 @@ void    ft_free_args(t_word *args)
 
 void	ft_free_all(char ***env, t_word **args)
 {
+	/* ft_printf("VALUE: %s\n", *args);
+	ft_printf("VALUE: %s\n", args[1]); */
 	//ft_printf("FIRST\n");
 	if (env && *env)
 		ft_free_env(env);
 	//ft_printf("SECOND\n");
 	if (args && *args)
 		ft_free_args(*args);
+	/* else if (!args)
+		ft_printf("HEERE\n");
+	else if (!*args)
+		ft_printf("HEERE1\n"); */
 }

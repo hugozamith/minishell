@@ -36,7 +36,7 @@ int	bt_cd(t_word *args, char ***envp)
 	ft_printf("Value: %s\n", args->next->next->value); */
 	if (!args->next) // No argument after "cd"
 	{
-		path = getenv("HOME");
+		path = ft_getenv("HOME", envp);
 		if (!path)
 		{
 			perror("cd: HOME not set");
@@ -54,6 +54,7 @@ int	bt_cd(t_word *args, char ***envp)
 	ft_printf("THIRD\n"); */
 	if (ft_strcmp(args->next->value, "END"))
 	{
+		free(path);
 		ft_put_exitcode(envp, 1);
 		ft_print_error(1);
 		//ft_printf_fd(STDERR_FILENO, " too many arguments\n");
@@ -61,9 +62,13 @@ int	bt_cd(t_word *args, char ***envp)
 	}
 	//ft_printf("THIRD\n");
 	if (!ft_strcmp(path, "$PWD"))
+	{
+		free(path);
 		return (0);
+	}
 	if (chdir(path) != 0) // Change directory
 	{
+		free(path);
 		ft_put_exitcode(envp, 1);
 		perror("cd");
 		//ft_printf_fd(STDERR_FILENO, " not a valid identifier\n");
@@ -71,13 +76,16 @@ int	bt_cd(t_word *args, char ***envp)
 	}
 	if (getcwd(cwd, sizeof(cwd)) != NULL) // Print new directory
 	{
+		//free(path);
 		ft_put_in_my_env(envp, cwd);
 		//printf("Directory changed to: %s\n", cwd);
 	}
 	else
 	{
+		free(path);
 		perror("getcwd");
 		return (1);
 	}
+	free(path);
 	return (0);
 }
