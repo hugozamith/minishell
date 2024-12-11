@@ -80,6 +80,8 @@ typedef struct s_shelly
 //	char *args;
 //}	t_command;int	env_init(void)
 
+int		has_redir(t_word *args);
+t_word *rm_redir_node(t_word *args);
 void reset_fd(int saved_fd_in, int saved_fd_out);
 void pipe_execution(t_word *args, char ***rara);
 int bt_exit(t_word *args, char ***envp);

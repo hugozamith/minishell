@@ -89,12 +89,13 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 	//ft_printf("dup output\n");
 	status = 0;
 	//handle_redirections(orgs);
-	//ft_printf("VALUE: %d\n", handle_redirections(*orgs, env));
-	//ft_printf("VALUE1: %s\n", orgs->value);
-	if (handle_redirections(orgs, env) == -1)
+	if (handle_redirections(*orgs, env) == -1 || handle_redirections(*orgs, env) == -2)
 	{
 		//ft_printf("GOT PROBLEMS\n");
-		ft_put_exitcode(env, 1);
+		if (handle_redirections(*orgs, env) == -2)
+			ft_put_exitcode(env, 2);
+		else
+			ft_put_exitcode(env, 1);
 		//ft_printf("BEFORE FREE\n");
 		/* free(orgs->value);
 		free(orgs); */
@@ -104,9 +105,10 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 		///ft_free_(orgs);
 		return (1);
 	}
-	//ft_printf("VALUE2: %s\n", orgs->value);
+	if (has_redir((*orgs)->next))
+		(*orgs)->next = rm_redir_node((*orgs)->next);
 	//ft_printf("FIRST\n");else
-	//ft_free_args(args);
+	input = ft_args_to_line(*orgs);
 	args = ft_split(input, ' ');
 	free(input);
 	if (!ft_strchr(args[0], '/'))

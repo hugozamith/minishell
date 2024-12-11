@@ -92,17 +92,20 @@ int bt_echo(t_word *args, int fd, char ***envp)
     }
 
     newline = 1;
-    current = args->next;
 
-    // Handle any redirection
-//	while (tokensrch(args, REDIRECT_OUT) || tokensrch(args->prev, REDIRECT_OUT))
-//		args = args->next;
     if (handle_redirections(args, envp) < 0)
     {
         ft_put_exitcode(envp, 1);
 		reset_fd(fds[0], fds[1]);
         return (1);
     }
+
+    current = args->next;
+
+    // Handle any redirection
+//	while (tokensrch(args, REDIRECT_OUT) || tokensrch(args->prev, REDIRECT_OUT))
+//		args = args->next;
+
 
     // Remove all redirection nodes from the argument list
     if (has_redir(current))
