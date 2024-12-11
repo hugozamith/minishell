@@ -126,12 +126,14 @@ int handle_redirections(t_word *args, char ***envp)
     t_word *current;
     int fd;
 	char	*filename;
+	char	*first;
 
     current = args;
 	//write(1, "a\n", 2);
 
 	//printf("current->value: %s\n", token_type_to_str(current->next->type));
-    while (current)
+    first = args->value;
+	while (current)
     {
 
 		//ft_printf("FIRST\n");
@@ -184,8 +186,8 @@ int handle_redirections(t_word *args, char ***envp)
             }
             close(fd);
         }
-        else if (current->type == REDIRECT_IN)
-        {
+        else if (current->type == REDIRECT_IN || (ft_strchr(current->value, '<') && ft_strcmp(first, "echo")))
+        {	
 			filename = merge_filename(current->next);
 			//ft_printf("FOURTH\n");
             fd = open(filename, O_RDONLY);
@@ -217,7 +219,11 @@ int handle_redirections(t_word *args, char ***envp)
 					} */
 
 					//ft_printf_fd(STDERR_FILENO, "\n");
-					ft_put_exitcode(envp, 1);
+					//ft_printf("Length: %d\n", ft_strlen(current->value));
+					if (ft_strchr(current->value, '<') && ft_strlen(current->value) > 1)
+						return (-2);
+					else
+						ft_put_exitcode(envp, 1);
 					return (-1);
 				}
                 else

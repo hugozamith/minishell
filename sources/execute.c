@@ -89,11 +89,13 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 	//ft_printf("dup output\n");
 	status = 0;
 	//handle_redirections(orgs);
-	//ft_printf("VALUE: %d\n", handle_redirections(*orgs, env));
-	if (handle_redirections(*orgs, env) == -1)
+	if (handle_redirections(*orgs, env) == -1 || handle_redirections(*orgs, env) == -2)
 	{
 		//ft_printf("GOT PROBLEMS\n");
-		ft_put_exitcode(env, 1);
+		if (handle_redirections(*orgs, env) == -2)
+			ft_put_exitcode(env, 2);
+		else
+			ft_put_exitcode(env, 1);
 		//ft_printf("BEFORE FREE\n");
 		/* free(orgs->value);
 		free(orgs); */
