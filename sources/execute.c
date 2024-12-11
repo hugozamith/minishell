@@ -74,7 +74,7 @@ char	*ft_args_to_line(t_word *args)
 }
 
 
-static int	ft_exec_input(char *input, t_word **orgs, char ***env)
+static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 {
 	char	*command_path;
 	char	**args;
@@ -90,7 +90,8 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 	status = 0;
 	//handle_redirections(orgs);
 	//ft_printf("VALUE: %d\n", handle_redirections(*orgs, env));
-	if (handle_redirections(*orgs, env) == -1)
+	//ft_printf("VALUE1: %s\n", orgs->value);
+	if (handle_redirections(orgs, env) == -1)
 	{
 		//ft_printf("GOT PROBLEMS\n");
 		ft_put_exitcode(env, 1);
@@ -100,9 +101,10 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 		//ft_free_args(*orgs);
 		reset_fd(fds[0], fds[1]);
 		//ft_printf("AFTER FREE\n");
-		//ft_free_args(orgs);
+		///ft_free_(orgs);
 		return (1);
 	}
+	//ft_printf("VALUE2: %s\n", orgs->value);
 	//ft_printf("FIRST\n");else
 	//ft_free_args(args);
 	args = ft_split(input, ' ');
@@ -128,9 +130,10 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 			ft_print_error(0);
 			//ft_printf_fd(STDERR_FILENO," command not found\n");
 			ft_free_argvs(args); // todo 
+			//ft_free_args(orgs);
 			free(command_path);
 			//free(input);
-			//ft_free_all(env, &arg);
+			//ft_free_all(env, &orgs);
 			//ft_put_exitcode(env, 1);
 			exit(EXIT_FAILURE);
 		}
@@ -174,11 +177,13 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 	ft_free_argvs(args);
 	free(command_path);
 	reset_fd(fds[0], fds[1]);
+	//ft_free_args(*orgs);
 	/* if (status != 101)
 		ft_put_exitcode(env, 1); */
 	//ft_put_exitcode(env, 1); 
 	//ft_printf("VALUE: %d\n", status);
 	//ft_put_exitcode(env, status);
+	//ft_printf("VALUE3: %s\n", orgs->value);
 	return (0);
 }
 
@@ -197,16 +202,17 @@ void expand_args(t_word *args, char ***envp)
 		}
 		temp = temp->next;
 	}
+	//ft_free_args(temp);
 }
 
 int	ft_auto_execute(t_word *args, char ***envp)
 {
 	char *input;
 
-	//printf("args->value: %s\n", args->next->value);
+	//printf("args->value: %s\n", args->value);
 	expand_args(args, envp);
 	//printf("args->value: %s\n", args->next->value);
 	input = ft_args_to_line(args);
 	//ft_printf("AFTER: %s\n", input);
-	return(ft_exec_input(input, &args, envp));
+	return(ft_exec_input(input, args, envp));
 }

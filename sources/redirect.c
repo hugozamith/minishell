@@ -252,7 +252,15 @@ int handle_redirections(t_word *args, char ***envp)
         }
         current = current->next;
     }
-
+	// while (current)
+	// {
+	// 	//ft_printf("VALUE: %s\n", (current)->value);
+	// 	//ft_printf("THERES STILL ARG\n");
+	// 	t_word *next = current;
+	// 	current = next->next;
+	// 	free(next->value);
+	// 	free(next);
+	// }
     return 0;
 }
 

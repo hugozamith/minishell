@@ -265,17 +265,20 @@ int main(int argc, char **argv, char **envp)
 		}
 		//ft_printf("HERE\n");
 		//ft_free_args(args);
-		if (args)
-		{
+		//if (args)
+		//{
 			//ft_printf("THERES STILL ARG\n");
-			while (args)
-			{
-				t_word *next = args->next;
-				free(args->value);
-				free(args);
-				args = next;
-			}
+		while (args)
+		{
+			//ft_printf("VALUE: %s\n", (args)->value);
+		 	//ft_printf("THERES STILL ARG\n");
+		 	t_word *next = args;
+		 	args = next->next;
+		 	free(next->value);
+		 	free(next);
 		}
+		//ft_free_args(args)
+		//}
 		/* else
 			ft_free_args(args); */
     }
