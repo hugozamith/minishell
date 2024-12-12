@@ -17,6 +17,8 @@ int count_pipes(t_word *args)
 t_word *get_next_command(t_word **args)
 {
     t_word *command = *args;
+	/* t_word *pipe_token;
+	pipe_token = NULL; */
     while (*args && (*args)->type != PIPE)
         *args = (*args)->next;
 
@@ -27,6 +29,7 @@ t_word *get_next_command(t_word **args)
         pipe_token->next = NULL;
     }
 	//printf("command: %s\n", command->value);
+	//ft_free_args(pipe_token);
     return command;
 }
 
@@ -88,9 +91,20 @@ char *command_to_str (t_word *command)
 	return (str);
 }
 
+// Close all pipes after fork
+void close_pipes(int pipe_count, int pipes[][2])
+{
+    int i = 0;
+    while (i < pipe_count)
+    {
+        close(pipes[i][0]);
+        close(pipes[i][1]);
+        i++;
+    }
+}
 
 // Execute a command with pipes
-int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2], char ***envp)
+int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2], char ***envp, t_word *args)
 {
 	//ft_printf("FIRST\n");
     /* ft_printf("COMMAND: %s\n", command->value);
@@ -102,6 +116,8 @@ int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2]
 	} */
 	int pid = fork();
 	int status = 0;
+	//t_word *old_args;
+	(void) args;
     if (pid == 0) // Child process
     {
 		//printf("\nAAAAAA\n");
@@ -112,8 +128,22 @@ int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2]
         if (status)
             status = ft_auto_execute(command, envp);
 		//free(line);
-		//printf("VALUE2: %d\n", status);
+		while (command->prev)
+			command = command->prev;
+		/* ft_free_all(envp, &args);
+		ft_free_args(command); */
+		ft_free_env(envp);
+		ft_free_args(command);
+		/* while(args->type != PIPE)
+		{
+			old_args = args;
+			args = args->next;
+			free(old_args->value);
+			free(old_args);
+		} */
+		//ft_free_args(args);
         exit(status);
+		//ft_free_args(args);
 		//ft_put_exitcode(envp, 1);
     }
     else if (pid < 0)
@@ -121,6 +151,7 @@ int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2]
         perror("fork error");
 		//ft_put_exitcode(envp, 1);
 	}
+	//ft_free_args(args);
 	/* else if (pid == 0)
 		printf("VALUE after: %d\n", status); */
 	/* else // Parent process
@@ -130,7 +161,7 @@ int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2]
         {
             perror("waitpid");
             ft_put_exitcode(envp, 1);
-            return;
+            return (pid);
         }
 
         // WIFEXITED checks if the child exited normally
@@ -153,18 +184,6 @@ int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2]
 	return (pid);
 }
 
-// Close all pipes after fork
-void close_pipes(int pipe_count, int pipes[][2])
-{
-    int i = 0;
-    while (i < pipe_count)
-    {
-        close(pipes[i][0]);
-        close(pipes[i][1]);
-        i++;
-    }
-}
-
 // Execute the full pipeline
 void pipe_execution(t_word *args, char ***envp)
 {
@@ -173,19 +192,26 @@ void pipe_execution(t_word *args, char ***envp)
     //printf("pipe count: %d\n", pipe_count);
     int pipes[pipe_count][2];
     create_pipes(pipe_count, pipes);
-	int *pid = malloc(sizeof(int) * pipe_count);
+	int *pid = malloc(sizeof(int) * (pipe_count + 1));
 	//printf("pipe count\n");
     int i = 0;
     while (i <= pipe_count)
     {
         t_word *command = get_next_command(&args);
-        pid[i] = execute_piped_command(command, i, pipe_count, pipes, envp);
+		//ft_free_all(NULL, &args);
+        pid[i] = execute_piped_command(command, i, pipe_count, pipes, envp, args);
 		//printf("i: %d\n", i);
 		//ft_printf("HELLO\n");
 		status = 0;
 		//*pid = 0;
         i++;
+		//free(command);
+		//ft_free_args(args);
+		/* while (command->prev)
+			command = command->prev;
+		ft_free_args(command); */
     }
+	//ft_free_args(args);
 	/* while (i != 0)
 	{ 
 		ft_printf("VALUE: %d\n", pid[i]);
@@ -216,5 +242,6 @@ void pipe_execution(t_word *args, char ***envp)
             ft_put_exitcode(envp, child_exit_code);
         }
         i++;
-    }
+	}
+	free(pid);
 }

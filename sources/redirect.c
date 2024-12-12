@@ -161,6 +161,7 @@ int handle_redirections(t_word *args, char ***envp)
             }
 
 			//ft_printf("FOURTH\n");
+			free(filename);
             close(fd);
         }
         else if (current->type == REDIRECT_APPEND)

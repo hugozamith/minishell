@@ -63,8 +63,8 @@ void	ft_free_all(char ***env, t_word **args)
 	if (env && *env)
 		ft_free_env(env);
 	//ft_printf("SECOND\n");
-	// if (args && *args)
-	// 	ft_free_args(*args);
+	if (args && *args)
+	 	ft_free_args(*args);
 	/* else if (!args)
 		ft_printf("HEERE\n");
 	else if (!*args)
