@@ -125,6 +125,7 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 		reset_fd(fds[0], fds[1]);
         return (0);
     }
+	free(input);
 	input = ft_args_to_line(orgs);
 	args = ft_split(input, ' ');
 	free(input);

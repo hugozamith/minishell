@@ -120,6 +120,53 @@ void close_pipes(int pipe_count, int pipes[][2])
     }
 }
 
+
+void	ft_special_free(t_word *args)
+{
+	t_word *old;
+	//t_word *main;
+	t_word *dummy;
+
+	//main = args;
+	//ft_printf_fd(0, "VALUE1: %s\n", args->next->value);
+	dummy = args->prev;
+	//ft_printf_fd(0, "VALUE2: %s\n", dummy->value);
+	while (dummy)
+	{
+		old = dummy->prev;
+		free(dummy->value);
+		free(dummy);
+		dummy = old;
+	}
+	/* free(args->value);
+	free(args); */
+	//args = main;
+	args->prev = NULL;
+	/* if (!args->prev)
+		ft_printf_fd(0, "GOT HERE\n");
+	ft_printf_fd(0, "VALUE3: %s\n", args->next->value); */
+}
+
+/* void	ft_special_free(t_word *args)
+{
+	t_word *next;
+	t_word *main;
+
+	//ft_printf_fd(0, "SEE HERE\n");
+	ft_printf_fd(0, "VALUE: %s\n", args->value);
+	main = args->next;
+	while (args->next)
+	{
+		next = main->next;
+		free(main->value);
+		free(main);
+		main = next;
+	}
+	//free(main->value);
+	//free(main);
+	args->next = NULL;
+} */
+
 // Execute a command with pipes
 int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2], char ***envp, t_word *args, int *pidummy)
 {
@@ -135,6 +182,15 @@ int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2]
     if (pid == 0) // Child process
     {
 		//write(1, "oi", 2);
+		//ft_printf_fd(0, "I before: %d\n", i);
+		//ft_printf_fd(0, "VALUE: %s\t %d\n", command->value, i);
+		/* if (i > 0)
+		{ */
+			//ft_printf_fd(0, "HEREEEE\n");
+			if (command->prev)
+				ft_special_free(command);
+			//ft_printf_fd(0, "VALUE: %s\t %d\n", args->value, i);
+		//}
 		//ft_printf_fd(0, "HEREEEE\n");
 		//ft_free_args(args);
         handle_pipe_redirection(i, pipe_count, pipes);
@@ -147,6 +203,12 @@ int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2]
 		ft_printf("--%s--\n", args->next->value);
 		ft_printf("ooooo"); */
 		//ft_printf_fd(0, "HERE\n");
+		/* ft_printf_fd(0, "I after: %d\n", i);
+		if (i == 1)
+		{
+			ft_printf_fd(0, "HEREEEE\n");
+			ft_special_free(command, i);
+		} */
 		ft_free_args(command);
 		/* if (i == 0)
 		{
@@ -188,11 +250,6 @@ int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2]
 	}
 	return (pid);
 }
-/* 
-void	ft_free_prev_args(void)
-{
-	ft_printf_fd(0, "Im here!!\n");
-} */
 
 // Execute the full pipeline
 void pipe_execution(t_word *args, char ***envp)
@@ -212,6 +269,15 @@ void pipe_execution(t_word *args, char ***envp)
 			command = args;
 		else */
 		command = get_next_command(&args);
+		/* if (command->prev)
+				//ft_printf_fd(0, "VALUE: %s\n", command->value);
+				ft_special_free(command); */
+		/* if (i > 0)
+		{
+			//ft_printf_fd(0, "VALUE: %s\n", args->value);
+			if (!args)
+				ft_printf_fd(0, "SEE HERE\n");
+		} */
 		//ft_free_prev_args();
 		/* if (i == 0)
 			break ; */
@@ -230,8 +296,9 @@ void pipe_execution(t_word *args, char ***envp)
 		//ft_free_args(args);
 		/* while (command->prev)
 			command = command->prev;
-		ft_free_args(command); */
+			ft_free_args(command); */
     }
+	//ft_printf_fd(0, "IT GOT OUT\n");
 	//ft_free_args(args);
 	/* while (i != 0)
 	{ 
@@ -242,6 +309,8 @@ void pipe_execution(t_word *args, char ***envp)
     	}
 		i--;
 	} */
+	//ft_special_free(command);
+	ft_free_args(command);
     close_pipes(pipe_count, pipes);
 
     // Wait for all child processes

@@ -57,10 +57,74 @@ int has_redir(t_word *args)
 	{
 		if (args->type == REDIRECT_IN || args->type == REDIRECT_OUT
 			|| args->type == REDIRECT_APPEND || args->type == HEREDOC)
-			return (1);
+		{
+			//ft_printf_fd(0, "VALUE: %s\tTYPE: %s\n",args->value, token_type_to_str(args->type));
+			if (args->type == REDIRECT_OUT)
+				return (2);
+			else
+				return (1);
+		}
 		args = args->next;
 	}
 	return (0);
+}
+
+void ft_redirect_free(t_word *current)
+{
+	t_word *dummy;
+	t_word *current_dummy;
+	int	i;
+
+	(void) current;
+	//dummy = NULL;
+	dummy = current;
+	i = 0;
+	/* if (dummy->type == END)
+	{ */
+		/* while (dummy->type != REDIRECT_OUT && dummy->type != REDIRECT_APPEND && dummy->type != REDIRECT_IN)
+			dummy = dummy->prev; */
+	/* }
+	else
+	{ */
+		/* dummy = current;
+		current_dummy = dummy;
+		while (current_dummy->type != PIPE && current_dummy->type != END)
+		{
+			if (current_dummy->type == REDIRECT_OUT)
+				dummy = current_dummy;
+			current_dummy = current_dummy->next;
+		} */
+	//}
+	current_dummy = current;
+	while (current_dummy->prev)
+	{
+		if (current_dummy->type == REDIRECT_OUT /* && current_dummy->type == REDIRECT_APPEND && current_dummy->type == REDIRECT_IN */)
+			dummy = current_dummy;
+		current_dummy = current_dummy->prev;
+	}
+	/* while (dummy->type != PIPE && dummy->type != END)
+	{
+		dummy = dummy->next;
+	} */
+	/* if (dummy->type != END && dummy->next->type != END)
+	{
+		ft_printf_fd(0, "VALUE: %s\n", dummy->value);
+		dummy = dummy->next->next;
+	} */
+	/* if (current->prev->prev->type == REDIRECT_OUT)
+	{ */
+		//ft_printf_fd(0, "VALUE: %s\n", current->next->value);
+		//ft_put_exitcode(envp, 0);
+	//ft_printf_fd(0, "VALUE after: %s\n", dummy->next->value);
+	while (i <= 1)
+	{
+		t_word *next = dummy->next;
+		free(dummy->value);
+		free(dummy);
+		dummy = next;
+		i++;
+	}
+	//} 
 }
 
 int bt_echo(t_word *args, int fd, char ***envp)
@@ -118,9 +182,10 @@ int bt_echo(t_word *args, int fd, char ***envp)
 //		args = args->next;
 
     // Remove all redirection nodes from the argument list
-    if (has_redir(current))
+	redir = has_redir(current);
+    if (redir)
 	{
-		redir = 1;
+		//redir = 1;
 		current = rm_redir_node(current);
 		//ft_printf_fd(0, "VALUE after: %s\n", current->value);
 	}
@@ -179,8 +244,19 @@ int bt_echo(t_word *args, int fd, char ***envp)
 	/* if (args->prev)
 		ft_printf_fd(0, "I CAN GO BACK!\n"); */
 	//ft_printf_fd(0, "VALUE before: %s\n", token_type_to_str(current->prev->prev->type));
-	if (current->prev->prev->type == REDIRECT_OUT && redir)
+	//ft_printf_fd(0, "REDIR: %d\n", redir);
+	if (redir == 2)
 	{
+		ft_redirect_free(current);
+		/* while (current->type != PIPE && current->type != END)
+			current = current->next;
+		while (current->type != REDIRECT_OUT)
+			current = current->prev; */
+	}
+	//ft_printf_fd(0, "VALUE: %s\n", current->next->value);
+	/* if (current->prev->prev->type == REDIRECT_OUT && redir)
+	{
+		//ft_printf_fd(0, "VALUE: %s\n", current->next->value);
 		while (current->type != REDIRECT_OUT && current->type != REDIRECT_APPEND && current->type != REDIRECT_IN)
 			current = current->prev;
 		//ft_put_exitcode(envp, 0);
@@ -192,7 +268,7 @@ int bt_echo(t_word *args, int fd, char ***envp)
 			free(current);
 			current = next;
 		}
-	}
+	} */
 	//current = current->prev;
 	//ft_printf_fd(0, "VALUE after: %s\n", current->value);
     return (0);
