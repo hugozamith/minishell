@@ -132,37 +132,56 @@ int handle_redirections(t_word *args, char ***envp)
 	//write(1, "a\n", 2);
 
 	//printf("current->value: %s\n", token_type_to_str(current->next->type));
-    first = args->value;
+	/* ft_printf_fd(0, "HERE\n");
+	ft_printf("HERE\n"); */
+	first = args->value;
 	while (current)
     {
-
-		//ft_printf("FIRST\n");
+		//ft_printf_fd(0, "VALUE: %s\n", current->value);
+		//ft_printf("FIRrrST\n");
 		//ft_printf("VALUE: %s\n", current->value);
         if (current->type == REDIRECT_OUT)
         {
-			//write(1, "b\n", 2);
+			//write(1, "SECOND\n", 7);
+			//ft_printf("HERE\n");
 			filename = merge_filename(current->next);
+			//ft_printf("HERE2\n");
 			//printf("filename: %s\n", filename);
 			//ft_printf("VALUE: %s\n", current->next->value);
+			/* ft_printf_fd(0, "HERE2\n");
+			ft_printf("HERE2\n"); */
             fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC , 0644);
-            //ft_printf("FD: %d\n", fd);
+            /* ft_printf_fd(0, "HERE3\n");
+			ft_printf("HERE3\n"); */
+			//ft_printf("HERE3\n");
+			//ft_printf("FD: %d\n", fd);
 			if (fd < 0)
             {
+				//ft_printf_fd(0, "HERE4\n");
+				//free(current->value);
+				//ft_printf("SECOND.1");
+				/* if (current->)					
+					ft_printf_fd(0, "HERE4\n"); */
+				free(filename);
 				ft_print_error(5);
                 return (-1);  // Retorna erro se não puder abrir o arquivo
             }
+			//ft_printf("HERE4\n");
+			//ft_printf_fd(0, "VALUE: %d\n", dup2(fd, STDOUT_FILENO));
 			if (dup2(fd, STDOUT_FILENO) == -1)
             {
 				//ft_printf("SECOND.2\n");
                 perror("dup2");
 				ft_put_exitcode(envp, 1);
                 close(fd);
+				free(filename);
                 return (-1);
             }
-
-			//ft_printf("FOURTH\n");
-			free(filename);
+			/* ft_printf_fd(0, "HERE4\n");
+			ft_printf("HERE4\n"); */
+			//ft_printf("SECOND_END\n");
             close(fd);
+			free(filename);
         }
         else if (current->type == REDIRECT_APPEND)
         {
@@ -175,6 +194,7 @@ int handle_redirections(t_word *args, char ***envp)
                 ft_print_error(5);
 				ft_put_exitcode(envp, 1);
 				//ft_printf("HERE1\n");
+				free(filename);
                 return (-1);  // Retorna erro se não puder abrir o arquivo
             }
             if (dup2(fd, STDOUT_FILENO) == -1)
@@ -183,6 +203,7 @@ int handle_redirections(t_word *args, char ***envp)
                 perror("dup2");
 				ft_put_exitcode(envp, 1);
                 close(fd);
+				free(filename);
                 return (-1);
             }
             close(fd);
@@ -225,6 +246,7 @@ int handle_redirections(t_word *args, char ***envp)
 						return (-2);
 					else
 						ft_put_exitcode(envp, 1);
+					free(filename);
 					return (-1);
 				}
                 else
@@ -245,6 +267,7 @@ int handle_redirections(t_word *args, char ***envp)
                 return (-1);
             }
             close(fd);
+			free(filename);
 			//ft_printf("FOURTH-OUT\n");
         }
         else if (current->type == HEREDOC)
@@ -259,21 +282,28 @@ int handle_redirections(t_word *args, char ***envp)
                 perror("dup2");
 				ft_put_exitcode(envp, 1);
                 close(fd);
+				free(filename);
                 return (-1);
             }
             close(fd);
+			free(filename);
         }
+		//ft_printf_fd(0, "VALUE: %s\n", current->value);
         current = current->next;
     }
+	//current = current->prev;
+	/* ft_printf_fd(0, "HERE5\n");
+	ft_printf("HERE5\n"); */
 	// while (current)
 	// {
 	// 	//ft_printf("VALUE: %s\n", (current)->value);
 	// 	//ft_printf("THERES STILL ARG\n");
 	// 	t_word *next = current;
 	// 	current = next->next;
-	// 	free(next->value);
-	// 	free(next);
 	// }
+	//ft_printf_fd(0, "VALUE: %s\n", current->value);
+	/* if (current->next)
+		ft_printf("NOTHING HERE!"); */
     return 0;
 }
 

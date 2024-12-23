@@ -263,8 +263,10 @@ int main(int argc, char **argv, char **envp)
 			free(line);
 			//ft_free_args(args);
 		}
+		//ft_printf("VALUE: %s\n", args->value);
 		//ft_printf("HERE\n");
 		//ft_free_args(args);
+		//ft_printf("VALUE: %s\n", args->value);
 		if (args)
 		{
 			//ft_printf("THERES STILL ARG\n");

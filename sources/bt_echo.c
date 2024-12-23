@@ -24,7 +24,7 @@ int	ft_just_exit_code(t_word *args)
 t_word *rm_redir_node(t_word *args)
 {
 	t_word *current;
-//	t_word this;
+	t_word *next;
 
 	current = args;
 	while (current)
@@ -43,7 +43,10 @@ t_word *rm_redir_node(t_word *args)
 			current->prev->next = current->next->next;
 			return (current->prev);
 		}
-		current = current->next;
+		next = current->next;
+		/* free(current->value);
+		free(current); */
+		current = next;
 	}
 	return (args);
 }
@@ -66,6 +69,7 @@ int bt_echo(t_word *args, int fd, char ***envp)
     t_word  *current;
     char    *expanded;
     int     fds[2];
+	int		redir;
 
 	//ft_printf("HEREE\n");
 	if (ft_just_exit_code(args))
@@ -92,24 +96,28 @@ int bt_echo(t_word *args, int fd, char ***envp)
     }
 
     newline = 1;
-
+	//ft_printf("HERE\n");
+	//ft_printf("VALUE: %s\n", args->value);
     if (handle_redirections(args, envp) < 0)
     {
+		//ft_printf("IN HERE\n");
         ft_put_exitcode(envp, 1);
 		reset_fd(fds[0], fds[1]);
         return (1);
     }
 
     current = args->next;
-
     // Handle any redirection
 //	while (tokensrch(args, REDIRECT_OUT) || tokensrch(args->prev, REDIRECT_OUT))
 //		args = args->next;
 
-
     // Remove all redirection nodes from the argument list
     if (has_redir(current))
+	{
+		redir = 1;
 		current = rm_redir_node(current);
+		//ft_printf_fd(0, "VALUE after: %s\n", current->value);
+	}
 	//printf("current->type: %s\n", token_type_to_str(current->type));
 
 
@@ -148,7 +156,6 @@ int bt_echo(t_word *args, int fd, char ***envp)
         current = current->next;
 
     }
-
     // Print newline if required
     if (newline)
 	{
@@ -161,5 +168,26 @@ int bt_echo(t_word *args, int fd, char ***envp)
 
     // Reset file descriptors to their original state
     reset_fd(fds[0], fds[1]);
+	//ft_printf_fd(0, "HERE!\n");
+	//free(current);
+	/* if (args->prev)
+		ft_printf_fd(0, "I CAN GO BACK!\n"); */
+	//ft_printf_fd(0, "VALUE before: %s\n", token_type_to_str(current->prev->prev->type));
+	if (current->prev->prev->type == REDIRECT_OUT && redir)
+	{
+		while (current->type != REDIRECT_OUT && current->type != REDIRECT_APPEND && current->type != REDIRECT_IN)
+			current = current->prev;
+		//ft_put_exitcode(envp, 0);
+		//ft_printf_fd(0, "VALUE after: %s\n", current->value);
+		while (current->type != END)
+		{
+			t_word *next = current->next;
+			free(current->value);
+			free(current);
+			current = next;
+		}
+	}
+	//current = current->prev;
+	//ft_printf_fd(0, "VALUE after: %s\n", current->value);
     return (0);
 }

@@ -81,6 +81,7 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
     int     fds[2];
 	int		status;
 	int		pid;
+	int 	red;
 	//t_word	*arg;
 
     fds[0] = dup(STDIN_FILENO);
@@ -89,10 +90,11 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 	//ft_printf("dup output\n");
 	status = 0;
 	//handle_redirections(orgs);
-	if (handle_redirections(orgs, env) == -1 || handle_redirections(orgs, env) == -2)
+	red = handle_redirections(orgs, env);
+	if (red == -1 || red == -2)
 	{
 		//ft_printf("GOT PROBLEMS\n");
-		if (handle_redirections(orgs, env) == -2)
+		if (red == -2)
 			ft_put_exitcode(env, 2);
 		else
 			ft_put_exitcode(env, 1);
@@ -101,6 +103,7 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 		free(orgs); */
 		//ft_free_args(*orgs);
 		reset_fd(fds[0], fds[1]);
+		free(input);
 		//ft_printf("AFTER FREE\n");
 		///ft_free_(orgs);
 		return (1);
