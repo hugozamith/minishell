@@ -174,7 +174,6 @@ void pipe_execution(t_word *args, char ***envp)
     int pipes[pipe_count][2];
     create_pipes(pipe_count, pipes);
 	int *pid = malloc(sizeof(int) * pipe_count);
-	//printf("pipe count\n");
     int i = 0;
     while (i <= pipe_count)
     {

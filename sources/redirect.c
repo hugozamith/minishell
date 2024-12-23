@@ -120,6 +120,18 @@ char *merge_filename(t_word *node)
 
     return new_value;
 }
+int count_nodes(t_word *head)
+{
+    int count = 0;
+    t_word *current = head;
+
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+
+    return count;
+}
 
 int handle_redirections(t_word *args, char ***envp)
 {
@@ -186,8 +198,10 @@ int handle_redirections(t_word *args, char ***envp)
             }
             close(fd);
         }
-        else if (current->type == REDIRECT_IN || (ft_strchr(current->value, '<') && ft_strcmp(first, "echo")))
-        {	
+        else if ((current->type == REDIRECT_IN) || (ft_strchr(current->value, '<') && ft_strcmp(first, "echo")))
+        {
+			if (!(count_nodes(current) > 2))
+				return(69);
 			filename = merge_filename(current->next);
 			//ft_printf("FOURTH\n");
             fd = open(filename, O_RDONLY);

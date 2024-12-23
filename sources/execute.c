@@ -81,6 +81,7 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
     int     fds[2];
 	int		status;
 	int		pid;
+	int		i = 0;
 	//t_word	*arg;
 
     fds[0] = dup(STDIN_FILENO);
@@ -89,7 +90,9 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 	//ft_printf("dup output\n");
 	status = 0;
 	//handle_redirections(orgs);
-	if (handle_redirections(*orgs, env) == -1 || handle_redirections(*orgs, env) == -2)
+	i = handle_redirections(*orgs, env);
+
+	if (i == -1 || i == -2)
 	{
 		//ft_printf("GOT PROBLEMS\n");
 		if (handle_redirections(*orgs, env) == -2)
@@ -107,7 +110,19 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 	}
 	if (has_redir((*orgs)->next))
 		(*orgs)->next = rm_redir_node((*orgs)->next);
-	//ft_printf("FIRST\n");else
+    if (i)
+    {
+		if (i == 69)
+		{
+			ft_put_exitcode(env, 2);
+			reset_fd(fds[0], fds[1]);
+        	ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", STDERR_FILENO);
+			return (0);
+		}
+        ft_put_exitcode(env, 1);
+		reset_fd(fds[0], fds[1]);
+        return (0);
+    }
 	input = ft_args_to_line(*orgs);
 	args = ft_split(input, ' ');
 	free(input);

@@ -66,6 +66,7 @@ int bt_echo(t_word *args, int fd, char ***envp)
     t_word  *current;
     char    *expanded;
     int     fds[2];
+	int		i = 0;
 
 	//ft_printf("HEREE\n");
 	if (ft_just_exit_code(args))
@@ -93,13 +94,20 @@ int bt_echo(t_word *args, int fd, char ***envp)
 
     newline = 1;
 
-    if (handle_redirections(args, envp) < 0)
+	i = handle_redirections(args, envp);
+    if (i < 0)
     {
         ft_put_exitcode(envp, 1);
 		reset_fd(fds[0], fds[1]);
         return (1);
     }
-
+	if (i == 69)
+	{
+		ft_put_exitcode(envp, 2);
+		reset_fd(fds[0], fds[1]);
+       	ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", STDERR_FILENO);
+		return (0);
+	}
     current = args->next;
 
     // Handle any redirection
