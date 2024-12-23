@@ -21,7 +21,7 @@ NAME			=	minishell
 CC				=	clang
 RM				=	rm -f
 
-CFLAGS			=	-Wall -Wextra -Werror -ggdb
+CFLAGS			=	-Wall -Wextra -Werror -g
 
 .c.o:
 				$(CC) $(CFLAGS) -c $< -o $@

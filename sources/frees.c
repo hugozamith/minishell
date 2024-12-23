@@ -36,11 +36,14 @@ void    ft_free_args(t_word *args)
 
 	//ft_printf("THIRD\n");
 	//ft_printf("FREEING ARGS\n");
+	/* if (args->prev)
+		while (args->prev)
+			args = args->prev; */
 	while(args->next)
 	{
 		//ft_printf("VALUE: %s\n", old_args->value);
 		old_args = args;
-		args = args->next;
+		args = (args)->next;
 		free(old_args->value);
 		free(old_args);
 		/* if (args == NULL)
@@ -56,14 +59,18 @@ void    ft_free_args(t_word *args)
 
 void	ft_free_all(char ***env, t_word **args)
 {
-	/* ft_printf("VALUE: %s\n", *args);
-	ft_printf("VALUE: %s\n", args[1]); */
+	//ft_printf("VALUE: %s\n", (*args)->value);
+	//ft_printf("VALUE: %s\n", args[1]->value);
 	//ft_printf("FIRST\n");
+	//ft_printf_fd(0, "Got in\n");
 	if (env && *env)
 		ft_free_env(env);
 	//ft_printf("SECOND\n");
 	if (args && *args)
-		ft_free_args(*args);
+	{
+		//ft_printf_fd(0, "HEREEEE\n");
+	 	ft_free_args(*args);
+	}
 	/* else if (!args)
 		ft_printf("HEERE\n");
 	else if (!*args)

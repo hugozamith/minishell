@@ -52,7 +52,7 @@ static char	*ft_find_command(char *command)
 char	*ft_args_to_line(t_word *args)
 {
 	char	*result;
-	char	*old_str;
+	//char	*old_str;
 	//char	*expand_str;
 	int		i;
 
@@ -60,13 +60,13 @@ char	*ft_args_to_line(t_word *args)
 	i = 0;
 	while (args->type == COMMAND || args->type == ARGUMENT)
 	{
-		old_str = result;
+		//old_str = result;
 		//expand_str = expand_string(args);
-		result = ft_strjoin(result, args->value);
-		free(old_str);
-		old_str = result;
-		result = ft_strjoin(result, " ");
-		free(old_str);
+		result = ft_strjoin_free(result, ft_strdup(args->value));
+		//free(old_str);
+		//old_str = result;
+		result = ft_strjoin_free(result, ft_strdup(" "));
+		//free(old_str);
 		//free(expand_str);
 		args = args->next;
 	}
@@ -74,7 +74,7 @@ char	*ft_args_to_line(t_word *args)
 }
 
 
-static int	ft_exec_input(char *input, t_word **orgs, char ***env)
+static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 {
 	char	*command_path;
 	char	**args;
@@ -82,6 +82,7 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 	int		status;
 	int		pid;
 	int		i = 0;
+	int 	red;
 	//t_word	*arg;
 
     fds[0] = dup(STDIN_FILENO);
@@ -90,12 +91,12 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 	//ft_printf("dup output\n");
 	status = 0;
 	//handle_redirections(orgs);
-	i = handle_redirections(*orgs, env);
-
-	if (i == -1 || i == -2)
+	red = handle_redirections(orgs, env);
+	i = red;
+	if (red == -1 || red == -2)
 	{
 		//ft_printf("GOT PROBLEMS\n");
-		if (handle_redirections(*orgs, env) == -2)
+		if (red == -2)
 			ft_put_exitcode(env, 2);
 		else
 			ft_put_exitcode(env, 1);
@@ -104,12 +105,13 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 		free(orgs); */
 		//ft_free_args(*orgs);
 		reset_fd(fds[0], fds[1]);
+		free(input);
 		//ft_printf("AFTER FREE\n");
-		//ft_free_args(orgs);
+		///ft_free_(orgs);
 		return (1);
 	}
-	if (has_redir((*orgs)->next))
-		(*orgs)->next = rm_redir_node((*orgs)->next);
+	if (has_redir((orgs)->next))
+		(orgs)->next = rm_redir_node((orgs)->next);
     if (i)
     {
 		if (i == 69)
@@ -123,7 +125,7 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 		reset_fd(fds[0], fds[1]);
         return (0);
     }
-	input = ft_args_to_line(*orgs);
+	input = ft_args_to_line(orgs);
 	args = ft_split(input, ' ');
 	free(input);
 	if (!ft_strchr(args[0], '/'))
@@ -147,9 +149,10 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 			ft_print_error(0);
 			//ft_printf_fd(STDERR_FILENO," command not found\n");
 			ft_free_argvs(args); // todo 
+			//ft_free_args(orgs);
 			free(command_path);
 			//free(input);
-			//ft_free_all(env, &arg);
+			//ft_free_all(env, &orgs);
 			//ft_put_exitcode(env, 1);
 			exit(EXIT_FAILURE);
 		}
@@ -193,11 +196,13 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 	ft_free_argvs(args);
 	free(command_path);
 	reset_fd(fds[0], fds[1]);
+	//ft_free_args(*orgs);
 	/* if (status != 101)
 		ft_put_exitcode(env, 1); */
 	//ft_put_exitcode(env, 1); 
 	//ft_printf("VALUE: %d\n", status);
 	//ft_put_exitcode(env, status);
+	//ft_printf("VALUE3: %s\n", orgs->value);
 	return (0);
 }
 
@@ -205,27 +210,31 @@ static int	ft_exec_input(char *input, t_word **orgs, char ***env)
 void expand_args(t_word *args, char ***envp)
 {
 	t_word *temp = args;
+	char	*str;
 
 	while (temp)
 	{
 		if (temp->type == ARGUMENT)
 		{
-			//printf("temp->value: %s\n", temp->value);	
-			temp->value = expand_string(temp, envp);
+			//printf("temp->value: %s\n", temp->value);
+			str = expand_string(temp, envp);
+			free(temp->value);
+			temp->value = str;
 			//printf("temp->value: %s\n", temp->value);
 		}
 		temp = temp->next;
 	}
+	//ft_free_args(temp);
 }
 
 int	ft_auto_execute(t_word *args, char ***envp)
 {
 	char *input;
 
-	//printf("args->value: %s\n", args->next->value);
+	//printf("args->value: %s\n", args->value);
 	expand_args(args, envp);
 	//printf("args->value: %s\n", args->next->value);
 	input = ft_args_to_line(args);
 	//ft_printf("AFTER: %s\n", input);
-	return(ft_exec_input(input, &args, envp));
+	return(ft_exec_input(input, args, envp));
 }
