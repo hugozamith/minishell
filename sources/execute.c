@@ -31,7 +31,7 @@ static char	*ft_find_command(char *command)
 	i = -1;
 	path_env = getenv("PATH");
 	if (!path_env)
-		return (NULL);
+		return (ft_strdup(""));
 	path_copy = ft_strdup(path_env);
 	dir = ft_split(path_copy, ':');
 	while (dir[++i])
@@ -46,7 +46,7 @@ static char	*ft_find_command(char *command)
 	}
 	ft_free_argvs(dir);
 	free(path_copy);
-	return (NULL);
+	return (ft_strdup(""));
 }
 
 char	*ft_args_to_line(t_word *args)
@@ -110,8 +110,19 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 		///ft_free_(orgs);
 		return (1);
 	}
+	//ft_printf_fd(0, "BEFORE: %s\n", orgs->value);
 	if (has_redir((orgs)->next))
+	{
+		//ft_printf_fd(0, "GOT IN\n");
 		(orgs)->next = rm_redir_node((orgs)->next);
+	}
+	/* while (orgs)
+	{
+		ft_printf("AFTER: %s\n", orgs->value);
+		orgs = orgs->next;
+	} */
+	/* ft_printf_fd(0, "AFTER: %s\n", orgs->value);
+	ft_printf_fd(0, "AFTER: %s\n", orgs->next->value); */
     if (i)
     {
 		if (i == 69)
@@ -153,7 +164,7 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 			//ft_free_args(orgs);
 			free(command_path);
 			//free(input);
-			//ft_free_all(env, &orgs);
+			ft_free_all(env, &orgs);
 			//ft_put_exitcode(env, 1);
 			exit(EXIT_FAILURE);
 		}
@@ -164,8 +175,11 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 		//wait(&status); // Wait for the child process to finish
 		if (waitpid(pid, &status, 0) == -1) {
             perror("waitpid");
+			ft_free_argvs(args);
+			free(command_path);
             return(ft_put_exitcode(env, 1), 1) ; // Return a failure exit code
         }
+		//ft_printf("FIFTH\n");
 		if (WIFEXITED(status)) {
 			//ft_print_error(-1);
 			//int exit_code = WEXITSTATUS(status);
@@ -179,6 +193,8 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 			else if (WEXITSTATUS(status) == 1)
 			{
 				ft_put_exitcode(env, 127);
+				ft_free_argvs(args);
+				free(command_path);
 				return(1) ;
 			}
 			/* else
@@ -188,6 +204,8 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 			//return exit_code;
     		 // Return the exit code of the child process
         } else {
+			ft_free_argvs(args);
+			free(command_path);
             return(ft_put_exitcode(env, 1), 1) ; // Return a failure exit code if the child didn't exit normally
         }
 	}	//free(input);
@@ -195,8 +213,12 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 		ft_put_exitcode(env, 1); */
 	//ft_printf("FIFTH\n");
 	ft_free_argvs(args);
+	//ft_free_args(orgs);
 	free(command_path);
 	reset_fd(fds[0], fds[1]);
+	//ft_redirect_free(orgs, env);
+	/* if (orgs->prev)
+		ft_printf_fd(0,"WE GOT SOMETHING\n"); */
 	//ft_free_args(*orgs);
 	/* if (status != 101)
 		ft_put_exitcode(env, 1); */
@@ -225,6 +247,9 @@ void expand_args(t_word *args, char ***envp)
 		}
 		temp = temp->next;
 	}
+	/* if (temp->prev)
+		ft_printf_fd(0,"WE GOT SOMETHING\n"); */
+	//free(temp);
 	//ft_free_args(temp);
 }
 

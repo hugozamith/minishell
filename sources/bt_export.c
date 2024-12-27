@@ -106,6 +106,7 @@ int	bt_export(t_word *args, char ***envp)
 	if (!ft_exportchecker(argv))
 	{
 		//ft_printf("HELLO THERE\n");
+		ft_free_argvs(argv);
 		ft_put_exitcode(envp, 1);
 		return (0);
 	}

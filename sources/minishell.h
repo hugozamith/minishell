@@ -134,4 +134,5 @@ char	*ft_getenv(char *var, char ***envp);
 void expand_args(t_word *args, char ***envp);
 void ft_print_error(int i);
 int has_pipe(t_word *args);
+void ft_redirect_free(t_word *current, char ***env);
 #endif

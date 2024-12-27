@@ -136,6 +136,7 @@ int count_nodes(t_word *head)
 int handle_redirections(t_word *args, char ***envp)
 {
     t_word *current;
+	t_word *next;
     int fd;
 	char	*filename;
 	char	*first;
@@ -175,7 +176,16 @@ int handle_redirections(t_word *args, char ***envp)
 				/* if (current->)					
 					ft_printf_fd(0, "HERE4\n"); */
 				free(filename);
-				ft_print_error(5);
+				if (errno == EACCES)
+				{
+					//ft_printf("FOURTH.1\n");
+                    ft_print_error(5);
+					//ft_printf("HERE2\n");
+					ft_put_exitcode(envp, 1);
+				}
+				/* free(filename);
+				//ft_put_exitcode(envp, 0);
+				ft_print_error(5); */
                 return (-1);  // Retorna erro se não puder abrir o arquivo
             }
 			//ft_printf("HERE4\n");
@@ -189,6 +199,7 @@ int handle_redirections(t_word *args, char ***envp)
 				free(filename);
                 return (-1);
             }
+			//ft_put_exitcode(envp, 3);
 			/* ft_printf_fd(0, "HERE4\n");
 			ft_printf("HERE4\n"); */
 			//ft_printf("SECOND_END\n");
@@ -218,6 +229,7 @@ int handle_redirections(t_word *args, char ***envp)
 				free(filename);
                 return (-1);
             }
+			free(filename);
             close(fd);
         }
         else if ((current->type == REDIRECT_IN) || (ft_strchr(current->value, '<') && ft_strcmp(first, "echo")))
@@ -229,6 +241,7 @@ int handle_redirections(t_word *args, char ***envp)
             fd = open(filename, O_RDONLY);
             if (fd < 0)
             {
+				free(filename);
 				//ft_printf("FOURTH-IN\n");
                 if (errno == EACCES)
 				{
@@ -253,14 +266,12 @@ int handle_redirections(t_word *args, char ***envp)
 						ft_printf_fd(STDERR_FILENO, "HEREHEHRHHE++EHRHER\n");
 						ft_print_error(2);
 					} */
-
 					//ft_printf_fd(STDERR_FILENO, "\n");
 					//ft_printf("Length: %d\n", ft_strlen(current->value));
 					if (ft_strchr(current->value, '<') && ft_strlen(current->value) > 1)
 						return (-2);
 					else
 						ft_put_exitcode(envp, 1);
-					free(filename);
 					return (-1);
 				}
                 else
@@ -303,11 +314,16 @@ int handle_redirections(t_word *args, char ***envp)
 			free(filename);
         }
 		//ft_printf_fd(0, "VALUE: %s\n", current->value);
-        current = current->next;
+        next = current->next;
+		/* free(current->value);
+		free(current); */
+		current = next;
     }
+	//ft_put_exitcode(envp, 3);
+	//free(current);
 	//current = current->prev;
 	/* ft_printf_fd(0, "HERE5\n");
-	ft_printf("HERE5\n"); */
+	ft_printf("HERE55\n"); */
 	// while (current)
 	// {
 	// 	//ft_printf("VALUE: %s\n", (current)->value);
@@ -315,7 +331,7 @@ int handle_redirections(t_word *args, char ***envp)
 	// 	t_word *next = current;
 	// 	current = next->next;
 	// }
-	//ft_printf_fd(0, "VALUE: %s\n", current->value);
+	//ft_printf_fd(0, "VALUE: %s\n", current->next->value);
 	/* if (current->next)
 		ft_printf("NOTHING HERE!"); */
     return 0;

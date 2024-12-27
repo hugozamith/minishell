@@ -4,12 +4,15 @@ int	ft_is_many_arguments(t_word *args, char ***envp)
 {
 	char	*line;
 	char	**arguments;
+	char	*old_arg;
+	int		exit_number;
 
 	expand_args(args, envp);
 	line = ft_args_to_line(args);
 	//ft_printf("FIRST\n");
 	//printf("Value: %s\n", line);
 	arguments = ft_split(line, ' ');
+	free(line);
 	/* printf("VALUE: %s\n", arguments[0]);
 	printf("VALUE: %s\n", arguments[1]);
 	printf("VALUE: %s\n", arguments[2]);
@@ -17,19 +20,27 @@ int	ft_is_many_arguments(t_word *args, char ***envp)
 	if ((!ft_strcmp(arguments[1], "-") || !ft_strcmp(arguments[1], "+")) && arguments[2])
 	{
 		//printf("BEFORE: %s\n", arguments[1]);
+		old_arg = arguments[1];
 		arguments[1] = ft_strjoin(arguments[1], arguments[2]);
+		free(old_arg);
 		//printf("AFTER: %s\n", arguments[1]);
-		//free(arguments[2]);
+		free(arguments[2]);
 		arguments[2] = NULL;
 	}
 	//ft_printf("THIRD\n");
 	if (arguments[2])
 	{
+		ft_free_argvs(arguments);
 		return (0);
 	}
 	if (!atoi(arguments[1]))
+	{
+		ft_free_argvs(arguments);
 		return (1);
-	return (atoi(arguments[1]));
+	}
+	exit_number = atoi(arguments[1]);
+	ft_free_argvs(arguments);
+	return (exit_number);
 }
 
 int	bt_exit(t_word *args, char ***envp)
@@ -58,8 +69,10 @@ int	bt_exit(t_word *args, char ***envp)
 	{
 		//ft_printf_fd(STDERR_FILENO, " too many arguments\n");
 		ft_print_error(1);
-		ft_free_all(envp, &args);
-		exit (1);
+		//ft_free_all(envp, &args);
+		ft_put_exitcode(envp, 1);
+		return (0);
+		//exit (1);
 	}
 	//printf("Value: %s\n", args->next->next->value);
 	arg = args->next->value;
@@ -75,9 +88,11 @@ int	bt_exit(t_word *args, char ***envp)
 			{
 				//ft_printf_fd(STDERR_FILENO, " numeric argument required\n");
 				ft_print_error(2);
-				ft_free_all(envp, &args), 
+				ft_free_all(envp, &args);
+				free(arg); 
 				exit(2);
 			}
+			free(arg);
 		}
 		arg++;
 	}

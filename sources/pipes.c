@@ -168,7 +168,7 @@ void	ft_special_free(t_word *args)
 } */
 
 // Execute a command with pipes
-int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2], char ***envp, t_word *args, int *pidummy)
+int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2], char ***envp, t_word *args, int *pidummy, t_word **retainer)
 {
 	/* if (i == pipe_count)
 		if (!args)
@@ -232,6 +232,7 @@ int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2]
 			} */
 		ft_free_all(envp, &args);
 		free(pidummy);
+		free(retainer);
 			//ft_printf_fd(0, "HEREEEE\n");
 		/* } else if (i == pipe_count)
 		{
@@ -251,10 +252,39 @@ int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2]
 	return (pid);
 }
 
+void ft_pipe_free(t_word *args)
+{
+	t_word *next;
+
+	while (args->type != PIPE)
+	{
+		next = args->next;
+		free(args->value);
+		free(args);
+		args = next;
+	}
+}
+
+void ft_guarding_args(t_word *args, int i, int pipe_count)
+{
+	static t_word	*dummy;
+	if (i > 1 && i <= pipe_count)
+	{
+		if (!dummy)
+		{
+			ft_printf_fd(0, "NOTHING %d\n", i);
+			return ;
+		}
+		ft_pipe_free(dummy);
+	}
+	dummy = args;
+}
+
 // Execute the full pipeline
 void pipe_execution(t_word *args, char ***envp)
 {
 	t_word *command;
+	t_word **retainer;
     int pipe_count = count_pipes(args);
 	int status = 0;
 	//t_word *first_value = args;
@@ -263,6 +293,9 @@ void pipe_execution(t_word *args, char ***envp)
     create_pipes(pipe_count, pipes);
 	int *pid = malloc(sizeof(int) * (pipe_count + 1));
     int i = 0;
+	retainer = malloc(sizeof(t_word) * (pipe_count + 1));
+	retainer[0] = NULL;
+	retainer[pipe_count] = NULL;
     while (i <= pipe_count)
     {
 		/* if (i == 0)
@@ -286,10 +319,17 @@ void pipe_execution(t_word *args, char ***envp)
 		//ft_free_all(NULL, &args);
 		//if (pipe > 0)
 		//ft_printf_fd(0, "HERERERE: %s", args->next->value);
-        pid[i] = execute_piped_command(command, i, pipe_count, pipes, envp, args, pid);
+        pid[i] = execute_piped_command(command, i, pipe_count, pipes, envp, args, pid, retainer);
 		//printf("i: %d\n", i);
 		//ft_printf("HELLO\n");
 		status = 0;
+		//ft_printf_fd(0, "HERERERE: %d\t%d\n", i, pipe_count);
+		if (i >= 1 && pipe_count > 1 && i < pipe_count)
+		{
+			//ft_printf_fd(0, "I: %d\tPIPE_COUNT: %d\n", i, pipe_count);
+			//ft_printf_fd(0, "Value: %s\n", command->next->value);
+			retainer[i-1] = command;
+		}
 		//*pid = 0;
         i++;
 		//free(command);
@@ -297,7 +337,8 @@ void pipe_execution(t_word *args, char ***envp)
 		/* while (command->prev)
 			command = command->prev;
 			ft_free_args(command); */
-    }
+		//ft_guarding_args(args, i, pipe_count);
+	}
 	//ft_printf_fd(0, "IT GOT OUT\n");
 	//ft_free_args(args);
 	/* while (i != 0)
@@ -310,9 +351,34 @@ void pipe_execution(t_word *args, char ***envp)
 		i--;
 	} */
 	//ft_special_free(command);
-	ft_free_args(command);
+	/* if (pipe_count > 1)
+	{
+		t_word *dummy_command = command;
+		while (dummy_command->prev)
+		{
+			if (dummy_command->type == PIPE)
+				command = dummy_command;
+			dummy_command = dummy_command->prev;
+		}
+		command = command->next;
+	} */
+	/* if (!command)
+		ft_printf_fd(0, "THERES NOTHING HERE\n"); */
+	if (*retainer)
+	{
+		//ft_printf_fd(0, "HEERERERER\n");
+		i = 0;
+		while(i < (pipe_count - 1))
+		{
+			ft_free_args(retainer[i]);
+			i++;
+		}
+		ft_free_args(command);
+	}
+	else
+		ft_free_args(command);
+	free(retainer);
     close_pipes(pipe_count, pipes);
-
     // Wait for all child processes
     i = 0;
     while (i <= pipe_count)
