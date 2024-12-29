@@ -4,9 +4,9 @@
  *  @param str - string
  * 	@param list_va - list of substrings to be formatted
  *  @return Returns the number of characters written        
-*/     
+*/
 static int	ft_check(unsigned char str, va_list list_va, int fd)
-{            
+{
 	int	nbr;
 
 	nbr = 0;
@@ -21,7 +21,8 @@ static int	ft_check(unsigned char str, va_list list_va, int fd)
 	else if (str == 'X')
 		nbr += ft_printfint_puthex_fd(va_arg(list_va, unsigned long), 'X', fd);
 	else if (str == 'u')
-		nbr += ft_printfputnbr_base_fd(va_arg(list_va, unsigned int), "ude", fd);
+		nbr += ft_printfputnbr_base_fd(va_arg(list_va, unsigned int),
+				"ude", fd);
 	else if (str == 'p')
 		nbr += ft_printfputptr_fd(va_arg(list_va, unsigned long), fd);
 	else if (str == '%')
@@ -58,7 +59,6 @@ int	ft_printf_fd(int fd, const char *s, ...)
 		else
 		{
 			ft_putchar_fd(*str, fd);
-			//write(1, &*str, 1);
 			i += 1;
 			str++;
 		}

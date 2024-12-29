@@ -20,12 +20,3 @@ int	ft_printfputstr_fd(char *str, int fd)
 	}
 	return (ft_printfstrlen(str));
 }
-
-/*int	main(void)
-{
-	char	*string;
-
-	string = "LMAO";
-	ft_putstr_fd(string, 1);
-	return (0);
-}*/

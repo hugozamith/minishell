@@ -51,41 +51,6 @@ void	ft_free_split(char ***split)
 	*split = NULL;
 }
 
-/* int ft_clear_screen(void)
-{
-    char *term_type;
-    char buffer[2048]; // Buffer para armazenar o conteúdo do termcap
-    char *clear_cmd;
-
-    // Obtém o tipo de terminal
-    term_type = getenv("TERM");
-    if (term_type == NULL)
-    {
-        perror("TERM environment variable not set");
-        return (1);
-    }
-
-    // Inicializa a base de dados do termcap para o tipo de terminal
-    if (tgetent(buffer, term_type) < 0)
-    {
-        perror("Could not access the termcap database");
-        return (1);
-    }
-
-    // Obtém a sequência de controle para limpar a tela
-    clear_cmd = tgetstr("cl", NULL);
-    if (clear_cmd == NULL)
-    {
-        perror("Could not get clear screen command");
-        return (1);
-    }
-
-    // Envia a sequência para limpar a tela
-    tputs(clear_cmd, 1, putchar);
-	printf("\033[3J");
-    return (0);
-} */
-
 char	*ft_strndup(const char *s, int n)
 {
 	size_t	size;
@@ -104,36 +69,6 @@ char	*ft_strndup(const char *s, int n)
 	*str = '\0';
 	return (ret);
 }
-
-
-/*char remove_quotations(char **str)
-{
-	char	*new;
-	char	*old;
-	int		i;
-	int		j;
-
-	i = 0;
-	j = 0;
-	old = *str;
-	new = malloc(ft_strlen(old) + 1);
-	if (new == NULL)
-		return (1);
-	while (old[i])
-	{
-		if (old[i] != '\'' && old[i] != '\"')
-		{
-			new[j] = old[i];
-			j++;
-		}
-		i++;
-	}
-	new[j] = '\0';
-	free(old);
-	*str = new;
-	return (0);
-}*/
-
 
 char	*ft_strjoin_free(char *s1, char *s2)
 {
@@ -154,43 +89,3 @@ char	*ft_strjoin_free(char *s1, char *s2)
 	free(s2);
 	return (ret);
 }
-
-void delete_token_list(t_word **token_list)
-{
-    t_word *current = *token_list;
-    t_word *next_token;
-
-    while (current)
-    {
-        next_token = current->next;
-        free(current->value);  // Free the value string
-        free(current);  // Free the current token structure
-        current = next_token;
-    }
-    *token_list = NULL;  // Set the list pointer to NULL after deletion
-}
-char *add_char(char *str, char c)
-{
-	char *new_str;
-	int len;
-
-	len = ft_strlen(str);
-	new_str = malloc(len + 2);
-	if (new_str == NULL)
-		return (NULL);
-	ft_memcpy(new_str, str, len);
-	new_str[len] = c;
-	new_str[len + 1] = '\0';
-	free(str);
-	return (new_str);
-}
-
-/* char	*ft_getenv(char *var)
-{
-	char	**path;
-	int		i;
-
-	i = -1
-	ft_printf("\nVAR: %s\n\n", var);
-	return (NULL);
-} */

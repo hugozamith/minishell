@@ -34,20 +34,3 @@ int	ft_printfputnbr_base_fd(unsigned int nbr, char *base, int fd)
 		s++;
 	return (print_base_nb(nbr, str, s, fd));
 }
-
-/*int	main(void)
-{
-	int		nbr = -30;
-	char	*dec = "0123456789";
-	char *bin = "01";
-	char *hex = "0123456789abcdef";
-	char *octal = "01234567";
-	ft_putnbr_base(nbr,dec);
-	write(1, "\n", 1);
-	ft_putnbr_base(nbr,bin);
-	write(1, "\n", 1);
-	ft_putnbr_base(nbr,hex);
-	write(1, "\n", 1);
-	ft_putnbr_base(nbr,octal);
-	return(0);
-}*/

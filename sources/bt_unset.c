@@ -12,8 +12,8 @@ int	bt_unset(t_word *args, char ***envp)
 	while ((*envp)[i])
 		i++;
 	new_envp = malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while ((*envp)[i])
+	i = -1;
+	while ((*envp)[++i])
 	{
 		word = ft_split((*envp)[i], '=');
 		if (ft_strcmp(word[0], args->next->value))
@@ -24,10 +24,7 @@ int	bt_unset(t_word *args, char ***envp)
 		else
 			free((*envp)[i]);
 		ft_free_argvs(word);
-		i++;
 	}
 	new_envp[j] = NULL;
-	free(*envp);
-	*envp = new_envp;
-	return (0);
+	return (free(*envp), *envp = new_envp, 0);
 }

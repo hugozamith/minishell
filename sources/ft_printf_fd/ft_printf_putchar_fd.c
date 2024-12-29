@@ -8,9 +8,3 @@ int	ft_printfputchar_fd(char c, int fd)
 	write(fd, &c, 1);
 	return (1);
 }
-
-/*int	main(void)
-{
-	ft_putchar('t', 1);
-	return (0);
-}*/

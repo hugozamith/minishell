@@ -1,273 +1,39 @@
 #include "minishell.h"
 
-// Count the number of pipes in the argument list
-int count_pipes(t_word *args)
+int	execute_piped_command(t_word *command, int i, int pipe_count,
+		int pipes[][2], char ***envp, t_word *args,
+		int *pidummy, t_word **retainer)
 {
-    int count = 0;
-    while (args)
-    {
-        if (args->type == PIPE)
-            count++;
-        args = args->next;
-    }
-    return count;
-}
+	int	pid;
+	int	status;
 
-// Get the command before a pipe
-t_word *get_next_command(t_word **args)
-{
-    t_word *command = *args;
-	//t_word *next;
-	/* t_word *pipe_token;
-	pipe_token = NULL; */
-    while (*args && (*args)->type != PIPE)
+	pid = fork();
+	status = 0;
+	if (pid == 0)
 	{
-		/* if ((*args)->next->type == PIPE || !(*args)->next)
-			break ;
-		next = (*args)->next;
-		free((*args)->value);
-		free(args); */
-		//ft_printf("VALUE: %s\n", (*args)->value);
-        *args = (*args)->next;
-	}
-    if (*args && (*args)->type == PIPE)
-    {
-        t_word *pipe_token = *args;
-        *args = (*args)->next;
-        pipe_token->next = NULL;
-    }
-	//printf("command: %s\n", command->value);
-	//ft_free_args(pipe_token);
-	//ft_printf("A ROUND PASSED\n");
-    return command;
-}
-
-// Create the pipes for the commands
-void create_pipes(int pipe_count, int pipes[][2])
-{
-    int i = 0;
-    while (i < pipe_count)
-    {
-        if (pipe(pipes[i]) == -1)
-        {
-            perror("pipe error");
-            exit(EXIT_FAILURE);
-        }
-        i++;
-    }
-	//printf("pipe count\n");
-}
-
-// Handle input/output redirection for the pipe execution
-void handle_pipe_redirection(int i, int pipe_count, int pipes[][2])
-{
-    if (i > 0) // Not the first command, needs input from previous pipe
-    {
-		//ft_printf("first\n");
-
-        if (dup2(pipes[i - 1][0], STDIN_FILENO) == -1)
-        {
-			//ft_printf_fd(0, "HIHIHIHI\n");
-            perror("dup2 error");
-            exit(EXIT_FAILURE);
-        }
-    }
-    if (i < pipe_count) // Not the last command, needs output to next pipe
-    {
-		//ft_printf("second\n");
-        if (dup2(pipes[i][1], STDOUT_FILENO) == -1)
-        {
-			//ft_printf_fd(0, "HIHIHIHI\n");
-            perror("dup2 error");
-            exit(EXIT_FAILURE);
-        }
-    }
-    // Close all pipe ends in child process
-    int j = 0;
-    while (j < pipe_count)
-    {
-		//ft_printf("third\n");
-        close(pipes[j][0]);
-        close(pipes[j][1]);
-        j++;
-    }
-	/* close(pipes[i][0]);
-    close(pipes[i][1]); */
-}
-char *command_to_str (t_word *command)
-{
-	char *str = ft_strdup(command->value);
-	t_word *temp = command->next;
-	while (temp)
-	{
-	//	if temp
-		str = ft_strjoin_free(str, ft_strdup(" "));
-		str = ft_strjoin_free(str, temp->value);
-		temp = temp->next;
-	}
-	return (str);
-}
-
-// Close all pipes after fork
-void close_pipes(int pipe_count, int pipes[][2])
-{
-    int i = 0;
-    while (i < pipe_count)
-    {
-        close(pipes[i][0]);
-        close(pipes[i][1]);
-        i++;
-    }
-}
-
-
-void	ft_special_free(t_word *args)
-{
-	t_word *old;
-	//t_word *main;
-	t_word *dummy;
-
-	//main = args;
-	//ft_printf_fd(0, "VALUE1: %s\n", args->next->value);
-	dummy = args->prev;
-	//ft_printf_fd(0, "VALUE2: %s\n", dummy->value);
-	while (dummy)
-	{
-		old = dummy->prev;
-		free(dummy->value);
-		free(dummy);
-		dummy = old;
-	}
-	/* free(args->value);
-	free(args); */
-	//args = main;
-	args->prev = NULL;
-	/* if (!args->prev)
-		ft_printf_fd(0, "GOT HERE\n");
-	ft_printf_fd(0, "VALUE3: %s\n", args->next->value); */
-}
-
-/* void	ft_special_free(t_word *args)
-{
-	t_word *next;
-	t_word *main;
-
-	//ft_printf_fd(0, "SEE HERE\n");
-	ft_printf_fd(0, "VALUE: %s\n", args->value);
-	main = args->next;
-	while (args->next)
-	{
-		next = main->next;
-		free(main->value);
-		free(main);
-		main = next;
-	}
-	//free(main->value);
-	//free(main);
-	args->next = NULL;
-} */
-
-// Execute a command with pipes
-int execute_piped_command(t_word *command, int i, int pipe_count, int pipes[][2], char ***envp, t_word *args, int *pidummy, t_word **retainer)
-{
-	/* if (i == pipe_count)
-		if (!args)
-			ft_printf_fd(0, "HEREEEE\n"); */
-	int pid = fork();
-	int status = 0;
-	(void) pipe_count;
-	(void) i;
-	(void) pipes;
-
-    if (pid == 0) // Child process
-    {
-		//write(1, "oi", 2);
-		//ft_printf_fd(0, "I before: %d\n", i);
-		//ft_printf_fd(0, "VALUE: %s\t %d\n", command->value, i);
-		/* if (i > 0)
-		{ */
-			//ft_printf_fd(0, "HEREEEE\n");
-			if (command->prev)
-				ft_special_free(command);
-			//ft_printf_fd(0, "VALUE: %s\t %d\n", args->value, i);
-		//}
-		//ft_printf_fd(0, "HEREEEE\n");
-		//ft_free_args(args);
-        handle_pipe_redirection(i, pipe_count, pipes);
-		//ft_printf_fd(0, "HEREEEE\n");
-		//ft_printf("--%s--\n", args->next->value);
+		if (command->prev)
+			ft_special_free(command);
+		handle_pipe_redirection(i, pipe_count, pipes);
 		status = is_bt(command->value, command, envp);
-        if (status)
-            status = ft_auto_execute(command, envp);
-		/* write(1, "hola\n", 5);
-		ft_printf("--%s--\n", args->next->value);
-		ft_printf("ooooo"); */
-		//ft_printf_fd(0, "HERE\n");
-		/* ft_printf_fd(0, "I after: %d\n", i);
-		if (i == 1)
-		{
-			ft_printf_fd(0, "HEREEEE\n");
-			ft_special_free(command, i);
-		} */
+		if (status)
+			status = ft_auto_execute(command, envp);
 		ft_free_args(command);
-		/* if (i == 0)
-		{
-			if (command->prev)
-				while (command->prev)
-					command = command->prev;
-			ft_free_args(command);
-		}
-		else
-			ft_free_args(command); */
-		/* if (i == 0)
-		{ */
-		//ft_printf_fd(0, "-------%s--\n", args->next->value);
-		/* if (i == pipe_count)
-			if (args->prev)
-			{
-				while (args->prev)
-					args = args->prev;
-				ft_free_all(envp, &args);
-				ft_printf_fd(0, "HEREEEE\n");
-			} */
 		ft_free_all(envp, &args);
 		free(pidummy);
 		free(retainer);
-			//ft_printf_fd(0, "HEREEEE\n");
-		/* } else if (i == pipe_count)
-		{
-			while (args->prev != NULL)
-				args = args->prev;
-			ft_printf_fd(0, "--%s--\n", args->next->value);
-			ft_free_all(envp, &args);
-			free(pidummy);
-		} */
 		exit(status);
-    }
-    else if (pid < 0)
+	}
+	else if (pid < 0)
 	{
-        perror("fork error");
-		//ft_put_exitcode(envp, 1);
+		perror("fork error");
 	}
 	return (pid);
 }
 
-void ft_pipe_free(t_word *args)
-{
-	t_word *next;
-
-	while (args->type != PIPE)
-	{
-		next = args->next;
-		free(args->value);
-		free(args);
-		args = next;
-	}
-}
-
-void ft_guarding_args(t_word *args, int i, int pipe_count)
+void	ft_guarding_args(t_word *args, int i, int pipe_count)
 {
 	static t_word	*dummy;
+
 	if (i > 1 && i <= pipe_count)
 	{
 		if (!dummy)
@@ -280,95 +46,41 @@ void ft_guarding_args(t_word *args, int i, int pipe_count)
 	dummy = args;
 }
 
-// Execute the full pipeline
-void pipe_execution(t_word *args, char ***envp)
+void	pipe_execution(t_word *args, char ***envp)
 {
-	t_word *command;
-	t_word **retainer;
-    int pipe_count = count_pipes(args);
-	int status = 0;
-	//t_word *first_value = args;
-    //printf("pipe count: %d\n", pipe_count);
-    int pipes[pipe_count][2];
-    create_pipes(pipe_count, pipes);
-	int *pid = malloc(sizeof(int) * (pipe_count + 1));
-    int i = 0;
+	t_word	*command;
+	t_word	**retainer;
+	int		pipe_count;
+	int		status;
+	int		*pid;
+	int		i;
+	int		child_exit_code;
+
+	pipe_count = count_pipes(args);
+	int		pipes[pipe_count][2];
+	status = 0;
+	create_pipes(pipe_count, pipes);
+	pid = malloc(sizeof(int) * (pipe_count + 1));
+	i = 0;
 	retainer = malloc(sizeof(t_word) * (pipe_count + 1));
 	retainer[0] = NULL;
 	retainer[pipe_count] = NULL;
-    while (i <= pipe_count)
-    {
-		/* if (i == 0)
-			command = args;
-		else */
+	while (i <= pipe_count)
+	{
 		command = get_next_command(&args);
-		/* if (command->prev)
-				//ft_printf_fd(0, "VALUE: %s\n", command->value);
-				ft_special_free(command); */
-		/* if (i > 0)
-		{
-			//ft_printf_fd(0, "VALUE: %s\n", args->value);
-			if (!args)
-				ft_printf_fd(0, "SEE HERE\n");
-		} */
-		//ft_free_prev_args();
-		/* if (i == 0)
-			break ; */
-			//ft_printf_fd(0, "NOTHING TO SEE HERE\n");
-		//command = get_next_command(&args);
-		//ft_free_all(NULL, &args);
-		//if (pipe > 0)
-		//ft_printf_fd(0, "HERERERE: %s", args->next->value);
-        pid[i] = execute_piped_command(command, i, pipe_count, pipes, envp, args, pid, retainer);
-		//printf("i: %d\n", i);
-		//ft_printf("HELLO\n");
+		pid[i] = execute_piped_command(command, i, pipe_count,
+				pipes, envp, args, pid, retainer);
 		status = 0;
-		//ft_printf_fd(0, "HERERERE: %d\t%d\n", i, pipe_count);
 		if (i >= 1 && pipe_count > 1 && i < pipe_count)
 		{
-			//ft_printf_fd(0, "I: %d\tPIPE_COUNT: %d\n", i, pipe_count);
-			//ft_printf_fd(0, "Value: %s\n", command->next->value);
-			retainer[i-1] = command;
+			retainer[i - 1] = command;
 		}
-		//*pid = 0;
-        i++;
-		//free(command);
-		//ft_free_args(args);
-		/* while (command->prev)
-			command = command->prev;
-			ft_free_args(command); */
-		//ft_guarding_args(args, i, pipe_count);
+		i++;
 	}
-	//ft_printf_fd(0, "IT GOT OUT\n");
-	//ft_free_args(args);
-	/* while (i != 0)
-	{ 
-		ft_printf("VALUE: %d\n", pid[i]);
-		if (waitpid(pid[i], &status, 0) == -1) {
-            perror("waitpid");
-            ft_put_exitcode(envp, 1); // Return a failure exit code
-    	}
-		i--;
-	} */
-	//ft_special_free(command);
-	/* if (pipe_count > 1)
-	{
-		t_word *dummy_command = command;
-		while (dummy_command->prev)
-		{
-			if (dummy_command->type == PIPE)
-				command = dummy_command;
-			dummy_command = dummy_command->prev;
-		}
-		command = command->next;
-	} */
-	/* if (!command)
-		ft_printf_fd(0, "THERES NOTHING HERE\n"); */
 	if (*retainer)
 	{
-		//ft_printf_fd(0, "HEERERERER\n");
 		i = 0;
-		while(i < (pipe_count - 1))
+		while (i < (pipe_count - 1))
 		{
 			ft_free_args(retainer[i]);
 			i++;
@@ -378,26 +90,21 @@ void pipe_execution(t_word *args, char ***envp)
 	else
 		ft_free_args(command);
 	free(retainer);
-    close_pipes(pipe_count, pipes);
-    // Wait for all child processes
-    i = 0;
-    while (i <= pipe_count)
-    {
-        //wait(NULL);
-		//ft_printf("VALUE: %d\n", pid[i]);
-		if (waitpid(pid[i], &status, 0) == -1) {
-            perror("waitpid");
-            ft_put_exitcode(envp, 1); // Return a failure exit code
-    	}
+	close_pipes(pipe_count, pipes);
+	i = 0;
+	while (i <= pipe_count)
+	{
+		if (waitpid(pid[i], &status, 0) == -1)
+		{
+			perror("waitpid");
+			ft_put_exitcode(envp, 1);
+		}
 		if (WIFEXITED(status))
-        {
-            int child_exit_code = WEXITSTATUS(status);
-            //printf("Parent: Child exited with code %d\n", child_exit_code);
-
-            // Pass the child's exit code to ft_put_exitcode
-            ft_put_exitcode(envp, child_exit_code);
-        }
-        i++;
+		{
+			child_exit_code = WEXITSTATUS(status);
+			ft_put_exitcode(envp, child_exit_code);
+		}
+		i++;
 	}
 	free(pid);
 }

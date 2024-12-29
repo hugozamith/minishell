@@ -52,90 +52,62 @@ static char	*ft_find_command(char *command)
 char	*ft_args_to_line(t_word *args)
 {
 	char	*result;
-	//char	*old_str;
-	//char	*expand_str;
 	int		i;
 
 	result = ft_strdup("");
 	i = 0;
 	while (args->type == COMMAND || args->type == ARGUMENT)
 	{
-		//old_str = result;
-		//expand_str = expand_string(args);
 		result = ft_strjoin_free(result, ft_strdup(args->value));
-		//free(old_str);
-		//old_str = result;
 		result = ft_strjoin_free(result, ft_strdup(" "));
-		//free(old_str);
-		//free(expand_str);
 		args = args->next;
 	}
 	return (result);
 }
 
-
 static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 {
 	char	*command_path;
 	char	**args;
-    int     fds[2];
+	int		fds[2];
 	int		status;
 	int		pid;
-	int		i = 0;
-	int 	red;
-	//t_word	*arg;
+	int		i;
+	int		red;
 
-    fds[0] = dup(STDIN_FILENO);
-	//ft_printf("dup input\n");
-    fds[1] = dup(STDOUT_FILENO);
-	//ft_printf("dup output\n");
+	fds[0] = dup(STDIN_FILENO);
+	fds[1] = dup(STDOUT_FILENO);
 	status = 0;
-	//handle_redirections(orgs);
+	i = 0;
 	red = handle_redirections(orgs, env);
 	i = red;
 	if (red == -1 || red == -2)
 	{
-		//ft_printf("GOT PROBLEMS\n");
 		if (red == -2)
 			ft_put_exitcode(env, 2);
 		else
 			ft_put_exitcode(env, 1);
-		//ft_printf("BEFORE FREE\n");
-		/* free(orgs->value);
-		free(orgs); */
-		//ft_free_args(*orgs);
 		reset_fd(fds[0], fds[1]);
 		free(input);
-		//ft_printf("AFTER FREE\n");
-		///ft_free_(orgs);
 		return (1);
 	}
-	//ft_printf_fd(0, "BEFORE: %s\n", orgs->value);
 	if (has_redir((orgs)->next))
 	{
-		//ft_printf_fd(0, "GOT IN\n");
 		(orgs)->next = rm_redir_node((orgs)->next);
 	}
-	/* while (orgs)
+	if (i)
 	{
-		ft_printf("AFTER: %s\n", orgs->value);
-		orgs = orgs->next;
-	} */
-	/* ft_printf_fd(0, "AFTER: %s\n", orgs->value);
-	ft_printf_fd(0, "AFTER: %s\n", orgs->next->value); */
-    if (i)
-    {
 		if (i == 69)
 		{
 			ft_put_exitcode(env, 2);
 			reset_fd(fds[0], fds[1]);
-        	ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", STDERR_FILENO);
+			ft_print_error(6);
 			return (0);
 		}
-        ft_put_exitcode(env, 1);
+		ft_put_exitcode(env, 1);
 		reset_fd(fds[0], fds[1]);
-        return (0);
-    }
+		return (0);
+	}
 	free(input);
 	input = ft_args_to_line(orgs);
 	args = ft_split(input, ' ');
@@ -144,48 +116,29 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 		command_path = ft_find_command(args[0]);
 	else
 		command_path = ft_strdup(args[0]);
-		//command_path = args[0];
-	//ft_printf("HERE\n\n");
-	//printf("args[0]: %s\n", args[0]);
-	//printf("args[1]: %s\n", args[1]);
-	//ft_printf("SECOND\n");
 	pid = fork();
-	if (pid == 0)// Child process
+	if (pid == 0)
 	{
-		//printf("input: %s \n", command_path);
-		//ft_printf("FOUR\n VALUE: %s\n Value: %s\n Value: %s\n\n", args[0], args[1], args[2]);
-		//ft_printf("THIRD\n");
 		if (execve(command_path, args, *env) == -1)
 		{
-			//ft_printf("GIMME AN ERROR!\n");
 			ft_print_error(0);
-			//ft_printf_fd(STDERR_FILENO," command not found\n");
-			ft_free_argvs(args); // todo 
-			//ft_free_args(orgs);
+			ft_free_argvs(args);
 			free(command_path);
-			//free(input);
 			ft_free_all(env, &orgs);
-			//ft_put_exitcode(env, 1);
 			exit(EXIT_FAILURE);
 		}
 	}
-	else if (pid > 0) // Parent process
-	{	
-		//ft_printf("FOURTH\n");
-		//wait(&status); // Wait for the child process to finish
-		if (waitpid(pid, &status, 0) == -1) {
-            perror("waitpid");
+	else if (pid > 0)
+	{
+		if (waitpid(pid, &status, 0) == -1)
+		{
+			perror("waitpid");
 			ft_free_argvs(args);
 			free(command_path);
-            return(ft_put_exitcode(env, 1), 1) ; // Return a failure exit code
-        }
-		//ft_printf("FIFTH\n");
-		if (WIFEXITED(status)) {
-			//ft_print_error(-1);
-			//int exit_code = WEXITSTATUS(status);
-			//ft_free_args(orgs);
-			//orgs = NULL;
-			//ft_printf("VALUE %d\n", WEXITSTATUS(status));
+			return (ft_put_exitcode(env, 1), 1);
+		}
+		if (WIFEXITED(status))
+		{
 			if (WEXITSTATUS(status) == 2)
 				ft_put_exitcode(env, 2);
 			else if (WEXITSTATUS(status) == 0)
@@ -195,72 +148,45 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 				ft_put_exitcode(env, 127);
 				ft_free_argvs(args);
 				free(command_path);
-				return(1) ;
+				return (1);
 			}
-			/* else
-				ft_put_exitcode(env, 127); */
-			//ft_put_exitcode(env, WEXITSTATUS(status));
-			//status = 101;
-			//return exit_code;
-    		 // Return the exit code of the child process
-        } else {
+		}
+		else
+		{
 			ft_free_argvs(args);
 			free(command_path);
-            return(ft_put_exitcode(env, 1), 1) ; // Return a failure exit code if the child didn't exit normally
-        }
-	}	//free(input);
-	/* else
-		ft_put_exitcode(env, 1); */
-	//ft_printf("FIFTH\n");
+			return (ft_put_exitcode(env, 1), 1);
+		}
+	}
 	ft_free_argvs(args);
-	//ft_free_args(orgs);
 	free(command_path);
 	reset_fd(fds[0], fds[1]);
-	//ft_redirect_free(orgs, env);
-	/* if (orgs->prev)
-		ft_printf_fd(0,"WE GOT SOMETHING\n"); */
-	//ft_free_args(*orgs);
-	/* if (status != 101)
-		ft_put_exitcode(env, 1); */
-	//ft_put_exitcode(env, 1); 
-	//ft_printf("VALUE: %d\n", status);
-	//ft_put_exitcode(env, status);
-	//ft_printf("VALUE3: %s\n", orgs->value);
 	return (0);
 }
 
-
-void expand_args(t_word *args, char ***envp)
+void	expand_args(t_word *args, char ***envp)
 {
-	t_word *temp = args;
+	t_word	*temp;
 	char	*str;
 
+	temp = args;
 	while (temp)
 	{
 		if (temp->type == ARGUMENT)
 		{
-			//printf("temp->value: %s\n", temp->value);
 			str = expand_string(temp, envp);
 			free(temp->value);
 			temp->value = str;
-			//printf("temp->value: %s\n", temp->value);
 		}
 		temp = temp->next;
 	}
-	/* if (temp->prev)
-		ft_printf_fd(0,"WE GOT SOMETHING\n"); */
-	//free(temp);
-	//ft_free_args(temp);
 }
 
 int	ft_auto_execute(t_word *args, char ***envp)
 {
-	char *input;
+	char	*input;
 
-	//printf("args->value: %s\n", args->value);
 	expand_args(args, envp);
-	//printf("args->value: %s\n", args->next->value);
 	input = ft_args_to_line(args);
-	//ft_printf("AFTER: %s\n", input);
-	return(ft_exec_input(input, args, envp));
+	return (ft_exec_input(input, args, envp));
 }
