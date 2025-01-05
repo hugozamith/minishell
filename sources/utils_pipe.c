@@ -65,7 +65,7 @@ t_word	*get_next_command(t_word **args)
 	return (command);
 }
 
-void	create_pipes(int pipe_count, int pipes[][2])
+void	create_pipes(int pipe_count, int **pipes)
 {
 	int	i;
 

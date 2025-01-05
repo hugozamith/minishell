@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	handle_pipe_redirection(int i, int pipe_count, int pipes[][2])
+void	handle_pipe_redirection(int i, int pipe_count, int **pipes)
 {
 	int	j;
 
@@ -20,12 +20,12 @@ void	handle_pipe_redirection(int i, int pipe_count, int pipes[][2])
 			exit(EXIT_FAILURE);
 		}
 	}
-	j = 0;
-	while (j < pipe_count)
+	j = -1;
+	while (++j < pipe_count)
 	{
 		close(pipes[j][0]);
 		close(pipes[j][1]);
-		j++;
+		free(pipes[j]);
 	}
 }
 
@@ -45,7 +45,7 @@ char	*command_to_str(t_word *command)
 	return (str);
 }
 
-void	close_pipes(int pipe_count, int pipes[][2])
+void	close_pipes(int pipe_count, int **pipes)
 {
 	int	i;
 
@@ -56,33 +56,35 @@ void	close_pipes(int pipe_count, int pipes[][2])
 		close(pipes[i][1]);
 		i++;
 	}
+	while (--i >= 0)
+		free(pipes[i]);
 }
 
-void	ft_special_free(t_word *args)
+void	ft_guarding_args(t_word *args, int i, int pipe_count)
 {
-	t_word	*old;
-	t_word	*dummy;
+	static t_word	*dummy;
 
-	dummy = args->prev;
-	while (dummy)
+	if (i > 1 && i <= pipe_count)
 	{
-		old = dummy->prev;
-		free(dummy->value);
-		free(dummy);
-		dummy = old;
+		if (!dummy)
+		{
+			ft_printf_fd(0, "NOTHING %d\n", i);
+			return ;
+		}
+		ft_pipe_free(dummy);
 	}
-	args->prev = NULL;
+	dummy = args;
 }
 
-void	ft_pipe_free(t_word *args)
+void	ft_free_process_var(t_pipes *pipes_struct)
 {
-	t_word	*next;
+	int	i;
 
-	while (args->type != PIPE)
-	{
-		next = args->next;
-		free(args->value);
-		free(args);
-		args = next;
-	}
+	i = -1;
+	if (pipes_struct->command)
+		ft_free_args(pipes_struct->command);
+	free(pipes_struct->pid);
+	free(pipes_struct->retainer);
+	free((pipes_struct)->pipes);
+	free((pipes_struct));
 }

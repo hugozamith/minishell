@@ -1,5 +1,31 @@
 #include "minishell.h"
 
+char	*merge_filename(t_word *node)
+{
+	char	*new_value;
+	int		i;
+
+	new_value = ft_strdup("");
+	while (node->type == ARGUMENT)
+	{
+		i = 0;
+		if (node->value[i] == '"')
+			i++;
+		while (node->value[i] != '"' && node->value[i])
+		{
+			new_value = add_char(new_value, node->value[i]);
+			i++;
+		}
+		if (node->_o == 1)
+		{
+			node = node->next;
+		}
+		else
+			break ;
+	}
+	return (new_value);
+}
+
 int	handle_heredoc(const char *delimiter)
 {
 	char	*line;
@@ -28,131 +54,67 @@ int	handle_heredoc(const char *delimiter)
 	return (pipefd[0]);
 }
 
+int	ft_handle_heredoc(t_word *current, char ***envp)
+{
+	int		fd;
+	char	*filename;
+
+	filename = merge_filename(current->next);
+	fd = handle_heredoc(current->next->value);
+	if (fd == -1)
+		return (-1);
+	if (dup2(fd, STDIN_FILENO) == -1)
+	{
+		perror("dup2");
+		ft_put_exitcode(envp, 1);
+		close(fd);
+		free(filename);
+		return (-1);
+	}
+	close(fd);
+	free(filename);
+	return (0);
+}
+
+int	ft_check_redir(t_word *args, char ***envp, t_word *current, char *first)
+{
+	if (current->type == REDIRECT_OUT)
+	{
+		if (ft_handle_redirect_out(current, envp))
+			return (-1);
+	}
+	else if (current->type == REDIRECT_APPEND)
+	{
+		if (ft_handle_redirect_append(current, envp))
+			return (-1);
+	}
+	else if ((current->type == REDIRECT_IN)
+		|| (ft_strchr(current->value, '<')
+			&& ft_strcmp(first, "echo")))
+	{
+		if (ft_handle_redirect_in(current, envp, args))
+			return (ft_handle_redirect_in(current, envp, args));
+	}
+	else if (current->type == HEREDOC)
+	{
+		if (ft_handle_heredoc(current, envp))
+			return (-1);
+	}
+	return (0);
+}
+
 int	handle_redirections(t_word *args, char ***envp)
 {
 	t_word	*current;
 	t_word	*next;
-	int		fd;
-	char	*filename;
 	char	*first;
 
 	current = args;
 	first = args->value;
 	while (current)
 	{
-		if (current->type == REDIRECT_OUT)
-		{
-			filename = merge_filename(current->next);
-			fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd < 0)
-			{
-				free(filename);
-				if (errno == EACCES)
-				{
-					ft_print_error(5);
-					ft_put_exitcode(envp, 1);
-				}
-				return (-1);
-			}
-			if (dup2(fd, STDOUT_FILENO) == -1)
-			{
-				perror("dup2");
-				ft_put_exitcode(envp, 1);
-				close(fd);
-				free(filename);
-				return (-1);
-			}
-			close(fd);
-			free(filename);
-		}
-		else if (current->type == REDIRECT_APPEND)
-		{
-			filename = merge_filename(current->next);
-			fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fd < 0)
-			{
-				ft_print_error(5);
-				ft_put_exitcode(envp, 1);
-				free(filename);
-				return (-1);
-			}
-			if (dup2(fd, STDOUT_FILENO) == -1)
-			{
-				perror("dup2");
-				ft_put_exitcode(envp, 1);
-				close(fd);
-				free(filename);
-				return (-1);
-			}
-			free(filename);
-			close(fd);
-		}
-		else if ((current->type == REDIRECT_IN)
-			|| (ft_strchr(current->value, '<')
-				&& ft_strcmp(first, "echo")))
-		{
-			if (!(count_nodes(current) > 2))
-				return (69);
-			filename = merge_filename(current->next);
-			fd = open(filename, O_RDONLY);
-			if (fd < 0)
-			{
-				free(filename);
-				if (errno == EACCES)
-				{
-					ft_print_error(5);
-					ft_put_exitcode(envp, 1);
-				}
-				else if (errno == ENOENT)
-				{
-					if (!ft_strcmp(current->prev->value, "echo")
-						&& (!ft_strncmp(current->next->next->value, "END", 3)
-							|| !handle_redirections(current->next->next, envp)))
-						return (-1);
-					if ((has_pipe(args) && !is_bts_in_pipe(args))
-						|| !has_pipe(args))
-						ft_print_error(4);
-					if (ft_strchr(current->value, '<')
-						&& ft_strlen(current->value) > 1)
-						return (-2);
-					else
-						ft_put_exitcode(envp, 1);
-					return (-1);
-				}
-				else
-				{
-					ft_print_error(5);
-					ft_put_exitcode(envp, 1);
-				}
-				return (-1);
-			}
-			if (dup2(fd, STDIN_FILENO) == -1)
-			{
-				perror("dup2");
-				ft_put_exitcode(envp, 1);
-				close(fd);
-				return (-1);
-			}
-			close(fd);
-			free(filename);
-		}
-		else if (current->type == HEREDOC)
-		{
-			filename = merge_filename(current->next);
-			fd = handle_heredoc(current->next->value);
-			if (fd == -1)
-				return (-1);
-			if (dup2(fd, STDIN_FILENO) == -1)
-			{
-				perror("dup2");
-				ft_put_exitcode(envp, 1);
-				close(fd);
-				free(filename);
-				return (-1);
-			}
-			close(fd);
-			free(filename);
-		}
+		if (ft_check_redir(args, envp, current, first))
+			return (ft_check_redir(args, envp, current, first));
 		next = current->next;
 		current = next;
 	}

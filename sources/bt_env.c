@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	print_env(char **envp)
+/* void	print_env(char **envp)
 {
 	int	i;
 
@@ -11,6 +11,21 @@ void	print_env(char **envp)
 	while (envp[++i] != NULL)
 	{
 		printf("%s\n", envp[i]);
+	}
+} */
+
+void	print_env(char **envp)
+{
+	int	i;
+
+	i = 0;
+	while (envp[i] != NULL)
+		i++;
+	i = -1;
+	while (envp[++i] != NULL)
+	{
+		if (ft_strchr(envp[i], '='))
+			printf("%s\n", envp[i]);
 	}
 }
 

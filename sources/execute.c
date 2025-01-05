@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static char	*ft_shelljoin(char *dir, char *command)
+char	*ft_shelljoin(char *dir, char *command)
 {
 	int		dirlen;
 	int		comlen;
@@ -20,52 +20,65 @@ static char	*ft_shelljoin(char *dir, char *command)
 	return (result);
 }
 
-static char	*ft_find_command(char *command)
+static int	handle_redirections_and_errors(t_word *orgs, char ***env,
+	int *fds, char *input)
 {
-	char	*path_env;
-	char	*path_copy;
-	char	*full_path;
-	char	**dir;
-	int		i;
+	int	red;
 
-	i = -1;
-	path_env = getenv("PATH");
-	if (!path_env)
-		return (ft_strdup(""));
-	path_copy = ft_strdup(path_env);
-	dir = ft_split(path_copy, ':');
-	while (dir[++i])
+	red = handle_redirections(orgs, env);
+	if (red == -1 || red == -2)
 	{
-		full_path = ft_shelljoin(dir[i], command);
-		if (full_path && access(full_path, X_OK) == 0)
+		if (red == -2)
+			ft_put_exitcode(env, 2);
+		else
+			ft_put_exitcode(env, 1);
+		reset_fd(fds[0], fds[1]);
+		free(input);
+		return (1);
+	}
+	if (has_redir(orgs->next))
+		orgs->next = rm_redir_node(orgs->next);
+	if (red == 69)
+	{
+		ft_put_exitcode(env, 2);
+		reset_fd(fds[0], fds[1]);
+		ft_print_error(6);
+		return (1);
+	}
+	return (0);
+}
+
+static int	execute_command(char *command_path, char **args,
+	char ***env, t_word *orgs)
+{
+	int	pid;
+	int	status;
+	int	exit_code;
+
+	pid = fork();
+	exit_code = 0;
+	if (pid == 0)
+	{
+		if (execve(command_path, args, *env) == -1)
+			ft_exit_failure(command_path, args, env, orgs);
+	}
+	else if (pid > 0)
+	{
+		if (waitpid(pid, &status, 0) == -1)
 		{
-			free(path_copy);
-			return (ft_free_argvs(dir), full_path);
+			perror("waitpid");
+			return (ft_put_exitcode(env, 1), 1);
 		}
-		free(full_path);
+		if (WIFEXITED(status))
+		{
+			if (ft_handle_exit_status(status, exit_code, env))
+				return (1);
+		}
 	}
-	ft_free_argvs(dir);
-	free(path_copy);
-	return (ft_strdup(""));
+	return (0);
 }
 
-char	*ft_args_to_line(t_word *args)
-{
-	char	*result;
-	int		i;
-
-	result = ft_strdup("");
-	i = 0;
-	while (args->type == COMMAND || args->type == ARGUMENT)
-	{
-		result = ft_strjoin_free(result, ft_strdup(args->value));
-		result = ft_strjoin_free(result, ft_strdup(" "));
-		args = args->next;
-	}
-	return (result);
-}
-
-static int	ft_exec_input(char *input, t_word *orgs, char ***env)
+/* static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 {
 	char	*command_path;
 	char	**args;
@@ -113,7 +126,7 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 	args = ft_split(input, ' ');
 	free(input);
 	if (!ft_strchr(args[0], '/'))
-		command_path = ft_find_command(args[0]);
+		command_path = ft_find_command(args[0], env);
 	else
 		command_path = ft_strdup(args[0]);
 	pid = fork();
@@ -162,24 +175,33 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 	free(command_path);
 	reset_fd(fds[0], fds[1]);
 	return (0);
-}
+} */
 
-void	expand_args(t_word *args, char ***envp)
+static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 {
-	t_word	*temp;
-	char	*str;
+	int		fds[2];
+	char	**args;
+	char	*command_path;
 
-	temp = args;
-	while (temp)
+	fds[0] = dup(STDIN_FILENO);
+	fds[1] = dup(STDOUT_FILENO);
+	if (fds[0] == -1 || fds[1] == -1)
+		return (perror("dup"), 1);
+	if (handle_redirections_and_errors(orgs, env, fds, input))
+		return (1);
+	free(input);
+	command_path = prepare_command_and_args(orgs, env, &args);
+	if (execute_command(command_path, args, env, orgs))
 	{
-		if (temp->type == ARGUMENT)
-		{
-			str = expand_string(temp, envp);
-			free(temp->value);
-			temp->value = str;
-		}
-		temp = temp->next;
+		ft_free_argvs(args);
+		free(command_path);
+		reset_fd(fds[0], fds[1]);
+		return (1);
 	}
+	ft_free_argvs(args);
+	free(command_path);
+	reset_fd(fds[0], fds[1]);
+	return (0);
 }
 
 int	ft_auto_execute(t_word *args, char ***envp)

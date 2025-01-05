@@ -3,6 +3,7 @@
 		"string.h": "c",
 		"types.h": "c",
 		"fcntl.h": "c",
-		"minishell.h": "c"
+		"minishell.h": "c",
+		"ft_printf.h": "c"
 	}
 }

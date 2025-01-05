@@ -6,7 +6,7 @@
 /*   By: peferrei <peferrei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:48:55 by hteixeir          #+#    #+#             */
-/*   Updated: 2024/12/29 17:11:43 by peferrei         ###   ########.fr       */
+/*   Updated: 2025/01/05 19:11:38 by peferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@
 # include "../libraries/libft/libft.h"
 # include "../libraries/ft_printf/ft_printf.h"
 
-extern char	**g_env;
+extern int	g_code_of_exit;
 
 typedef enum e_tokens
 {
@@ -54,17 +54,19 @@ typedef struct s_word
 	char				*value;
 	struct s_word		*next;
 	struct s_word		*prev;
-	int					O;
+	int					_o;
 }	t_word;
 
-typedef struct s_shelly
+typedef struct s_pipes
 {
-	int	exit_code;
-	int	i;
-	int	j;
-	int	k;
-	int	l;
-}	t_shelly;
+	t_word	*command;
+	t_word	**retainer;
+	int		pipe_count;
+	int		status;
+	int		*pid;
+	int		i;
+	int		**pipes;
+}	t_pipes;
 
 int			has_redir(t_word *args);
 t_word		*rm_redir_node(t_word *args);
@@ -123,15 +125,76 @@ void		ft_redirect_free(t_word *current, char ***env);
 void		ft_special_node_free(t_word **current);
 int			count_pipes(t_word *args);
 t_word		*get_next_command(t_word **args);
-void		create_pipes(int pipe_count, int pipes[][2]);
-void		handle_pipe_redirection(int i, int pipe_count, int pipes[][2]);
+void		create_pipes(int pipe_count, int **pipes);
+void		handle_pipe_redirection(int i, int pipe_count, int **pipes);
 char		*command_to_str(t_word *command);
-void		close_pipes(int pipe_count, int pipes[][2]);
+void		close_pipes(int pipe_count, int **pipes);
 void		ft_special_free(t_word *args);
 void		ft_pipe_free(t_word *args);
 int			ft_is_bt(char *word);
 int			is_bts_in_pipe(t_word *args);
 char		*merge_filename(t_word *node);
 int			count_nodes(t_word *head);
+void		print_env(char **envp);
+void		print_export(char **envp);
+int			has_redir(t_word *args);
+t_word		*rm_redir_node(t_word *args);
+t_word		*remove_single_redirection_node(t_word *current);
+int			ft_just_exit_code(t_word *args);
+int			tokensrch(t_word *args, t_tokens token);
+void		print_arguments(t_word *current, int fd, int newline, char ***envp);
+int			ft_empty(t_word *current);
+int			handle_redirection_logic(int i, int *fds, char ***envp);
+int			init_fds(int *fds, char ***envp);
+int			handle_exit_code(t_word *args, char ***envp);
+void		ft_put_exitcode(char ***envp, int nbr);
+int			ft_exportchecker(char **argv);
+int			ft_strcmp(const char *s1, const char *s2);
+char		**ft_realloc(char **envp, int size);
+char		*ft_find_command(char *command, char ***env);
+int			ft_handle_exit_status(int status, int exit_code, char ***env);
+void		ft_exit_failure(char *command_path, char **args,
+				char ***env, t_word *orgs);
+char		*ft_args_to_line(t_word *args);
+char		*prepare_command_and_args(t_word *orgs, char ***env, char ***args);
+char		*ft_shelljoin(char *dir, char *command);
+void		expand_args(t_word *args, char ***envp);
+char		*ft_getenv(char *var, char ***envp);
+char		*handle_shenanigans(char *result, char *current);
+char		*expand_variable(char *str, char ***envp);
+char		*handle_double_quotes(char *str, char ***envp);
+char		*handle_single_quotes(char *str);
+int			ft_handle_redirect_out(t_word *current, char ***envp);
+int			ft_handle_redirect_append(t_word *current, char ***envp);
+int			ft_handle_redirect_in(t_word *current, char ***envp, t_word *args);
+void		ft_put_in_my_env(char ***envp, char *cwd);
+int			handle_home_directory(char ***envp, char **path);
+void		ft_guarding_args(t_word *args, int i, int pipe_count);
+void		ft_free_process_var(t_pipes *pipes_struct);
+void		ft_init_pipes_struct(t_pipes **pipes_struct, t_word *args);
+int			handle_pipe(char **input, t_word **token_list, int *pepi,
+				t_tokens *prev_type);
+int			handle_redirection(char **input, t_word **token_list,
+				t_tokens *prev_type);
+int			handle_single_quote(char **input, t_word **token_list,
+				t_tokens *prev_type);
+int			handle_double_quote(char **input, t_word **token_list,
+				t_tokens *prev_type);
+int			handle_word(char **input, t_word **token_list,
+				t_tokens *prev_type, int *pepi);
+void		ft_add_redir_token(char ***input, t_word **token_list,
+				t_tokens type, char *value);
+void		add_token(t_word **token_list, t_tokens type,
+				char *value, int flag);
+void		free_tokens(t_word **token_list);
+void		bigproblem(void);
+int			check_quotes_and_finalize(int single_quote_open,
+				int double_quote_open, t_word **token_list);
+char		*extract_word(char *input, int *len);
+char		*extract_variable(char *input, int *len);
+int			ft_belong_env(const char *path, char ***envp);
+int			check_path(char *path, char ***envp);
+void		ft_free_line_arguments(t_word **args);
+int			ft_extras(char **word, t_word **args, char ***envp);
 
 #endif

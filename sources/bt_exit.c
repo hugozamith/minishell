@@ -29,7 +29,7 @@ int	ft_is_many_arguments(t_word *args, char ***envp)
 	return (exit_number);
 }
 
-int	bt_exit(t_word *args, char ***envp)
+/* int	bt_exit(t_word *args, char ***envp)
 {
 	int		exit_status;
 	char	*arg;
@@ -40,7 +40,10 @@ int	bt_exit(t_word *args, char ***envp)
 		printf("exit\n");
 		arg = ft_getenv("?", envp);
 		if (!arg)
+		{
+			ft_free_all(envp, &args);
 			exit(0);
+		}
 		exit_code = ft_atoi(arg);
 		ft_free_all(envp, &args);
 		exit(exit_code);
@@ -55,23 +58,84 @@ int	bt_exit(t_word *args, char ***envp)
 	arg = args->next->value;
 	if (*arg == '-' || *arg == '+')
 		arg++;
-	while (*arg)
+	while (*arg != '\0')
 	{
 		if (!ft_isdigit(*arg))
 		{
-			arg = expand_string(args->next, envp);
-			if (!ft_atoi(arg))
+			if (ft_isalpha(*arg))
 			{
 				ft_print_error(2);
 				ft_free_all(envp, &args);
-				free(arg);
 				exit(2);
 			}
-			free(arg);
 		}
 		arg++;
 	}
 	printf("exit\n");
 	ft_free_all(envp, &args);
 	exit(exit_status);
+} */
+
+int	handle_exit_no_args_or_invalid(t_word *args, char ***envp)
+{
+	char	*arg;
+	int		exit_code;
+
+	if (!ft_strncmp(args->next->value, "END", 3))
+	{
+		printf("exit\n");
+		arg = ft_getenv("?", envp);
+		if (!arg)
+		{
+			ft_free_all(envp, &args);
+			exit(0);
+		}
+		exit_code = ft_atoi(arg);
+		ft_free_all(envp, &args);
+		exit(exit_code);
+	}
+	if (!ft_is_many_arguments(args, envp))
+	{
+		ft_print_error(1);
+		ft_put_exitcode(envp, 1);
+		return (0);
+	}
+	return (-1);
+}
+
+void	validate_and_exit_with_arg(t_word *args, char ***envp, int exit_status)
+{
+	char	*arg;
+
+	arg = args->next->value;
+	if (*arg == '-' || *arg == '+')
+		arg++;
+	while (*arg != '\0')
+	{
+		if (!ft_isdigit(*arg))
+		{
+			if (ft_isalpha(*arg))
+			{
+				ft_print_error(2);
+				ft_free_all(envp, &args);
+				exit(2);
+			}
+		}
+		arg++;
+	}
+	printf("exit\n");
+	ft_free_all(envp, &args);
+	exit(exit_status);
+}
+
+int	bt_exit(t_word *args, char ***envp)
+{
+	int	exit_status;
+
+	exit_status = handle_exit_no_args_or_invalid(args, envp);
+	if (exit_status != -1)
+		return (exit_status);
+	exit_status = ft_is_many_arguments(args, envp);
+	validate_and_exit_with_arg(args, envp, exit_status);
+	return (0);
 }

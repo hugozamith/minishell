@@ -17,72 +17,44 @@ int	ft_is_bt(char *word)
 	return (0);
 }
 
+void	ft_check_pipe_redir(int *pipe, int *redirect, t_word *args,
+	int i)
+{
+	if (args->type == PIPE)
+		*pipe = i;
+	if (args->type == REDIRECT_APPEND || args->type == REDIRECT_IN
+		|| args->type == REDIRECT_OUT)
+	{
+		if (redirect)
+			*redirect = -1;
+		else
+			*redirect = i;
+	}
+}
+
 int	is_bts_in_pipe(t_word *args)
 {
 	int		i;
-	int		j;
 	int		pipe;
 	int		redirect;
 	char	*str;
 
 	i = 0;
-	j = 0;
 	pipe = 0;
 	redirect = 0;
 	str = args->value;
 	while ((args || (pipe == 0 && redirect == 0)) && args->type != PIPE)
 	{
-		if (args->type == PIPE)
-		{
-			pipe = i;
-		}
-		if (args->type == REDIRECT_APPEND || args->type == REDIRECT_IN
-			|| args->type == REDIRECT_OUT)
-		{
-			if (redirect)
-				redirect = -1;
-			else
-				redirect = j;
-		}
+		ft_check_pipe_redir(&pipe, &redirect, args, i);
 		i++;
-		j++;
 		args = args->next;
 	}
 	pipe = i;
 	if (!ft_is_bt(str))
 		return (0);
 	else if (redirect < pipe && pipe && redirect && redirect != -1)
-	{
-		ft_print_error(-1);
-		return (1);
-	}
+		return (ft_print_error(-1), 1);
 	return (0);
-}
-
-char	*merge_filename(t_word *node)
-{
-	char	*new_value;
-	int		i;
-
-	new_value = ft_strdup("");
-	while (node->type == ARGUMENT)
-	{
-		i = 0;
-		if (node->value[i] == '"')
-			i++;
-		while (node->value[i] != '"' && node->value[i])
-		{
-			new_value = add_char(new_value, node->value[i]);
-			i++;
-		}
-		if (node->O == 1)
-		{
-			node = node->next;
-		}
-		else
-			break ;
-	}
-	return (new_value);
 }
 
 int	count_nodes(t_word *head)
