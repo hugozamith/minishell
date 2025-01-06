@@ -13,24 +13,27 @@ SOURCES_FILES	=	$(wildcard $(SOURCES_DIR)/*.c) $(wildcard $(FT_PRINTF_FD_DIR)/*.
 
 HEADER			=	$(SOURCES_DIR)/minishell.h
 
-SOURCES			=	$(SOURCES_FILES)
 OUTFILES_DIR	=	outfiles
-OBJECTS			= 	$(patsubst %.c, $(OUTFILES_DIR)/%.o, $(notdir $(SOURCES_FILES)))
+OBJECTS			= 	$(patsubst %.c,$(OUTFILES_DIR)/%.o,$(notdir $(SOURCES_FILES)))
 
 NAME			=	minishell
 
 CC				=	clang
 RM				=	rm -f
-MKDIR			=	mkdir -p
 
 CFLAGS			=	-Wall -Wextra -Werror -g
 
-# Rule to compile .c files into .o files in the outfiles directory
-$(OUTFILES_DIR)/%.o: $(SOURCES_DIR)/%.c
-				$(MKDIR) $(OUTFILES_DIR)
+all:			$(NAME)
+
+# Ensure outfiles directory exists
+$(OUTFILES_DIR):
+				mkdir -p $(OUTFILES_DIR)
+
+$(OUTFILES_DIR)/%.o: $(SOURCES_DIR)/%.c | $(OUTFILES_DIR)
 				$(CC) $(CFLAGS) -c $< -o $@
 
-all:			$(NAME)
+$(OUTFILES_DIR)/%.o: $(FT_PRINTF_FD_DIR)/%.c | $(OUTFILES_DIR)
+				$(CC) $(CFLAGS) -c $< -o $@
 
 $(NAME):		$(LIBFT) $(PRINTF) $(OBJECTS) $(HEADER)
 				$(CC) $(CFLAGS) $(OBJECTS) $(PRINTF) $(LIBFT) $(READLINE_FLAGS) $(NCURSES_FLAGS) -o $(NAME)  # Flags de ncurses adicionadas
@@ -44,7 +47,6 @@ $(PRINTF):
 clean:	
 				$(MAKE) -C $(LIBFT_PATH) clean
 				$(MAKE) -C $(FT_PRINTF_PATH) clean
-				$(RM) $(OBJECTS)
 				$(RM) -r $(OUTFILES_DIR)
 
 fclean:			clean
