@@ -14,16 +14,20 @@ SOURCES_FILES	=	$(wildcard $(SOURCES_DIR)/*.c) $(wildcard $(FT_PRINTF_FD_DIR)/*.
 HEADER			=	$(SOURCES_DIR)/minishell.h
 
 SOURCES			=	$(SOURCES_FILES)
-OBJECTS			= 	$(SOURCES:.c=.o)
+OUTFILES_DIR	=	outfiles
+OBJECTS			= 	$(patsubst %.c, $(OUTFILES_DIR)/%.o, $(notdir $(SOURCES_FILES)))
 
 NAME			=	minishell
 
 CC				=	clang
 RM				=	rm -f
+MKDIR			=	mkdir -p
 
 CFLAGS			=	-Wall -Wextra -Werror -g
 
-.c.o:
+# Rule to compile .c files into .o files in the outfiles directory
+$(OUTFILES_DIR)/%.o: $(SOURCES_DIR)/%.c
+				$(MKDIR) $(OUTFILES_DIR)
 				$(CC) $(CFLAGS) -c $< -o $@
 
 all:			$(NAME)
@@ -37,14 +41,11 @@ $(LIBFT):
 $(PRINTF):
 				$(MAKE) -C $(FT_PRINTF_PATH)
 
-valgrind: 
-	@echo "{\n   leak readline\n   Memcheck:Leak\n...\n   fun:readline\n}\n{\n   leak add_history\n   Memcheck:Leak\n...\n   fun:add_history\n}" > readline.supp
-	@valgrind --suppressions=readline.supp --leak-check=full -s --show-leak-kinds=all ./$(NAME)
-
 clean:	
 				$(MAKE) -C $(LIBFT_PATH) clean
 				$(MAKE) -C $(FT_PRINTF_PATH) clean
 				$(RM) $(OBJECTS)
+				$(RM) -r $(OUTFILES_DIR)
 
 fclean:			clean
 				$(MAKE) -C $(LIBFT_PATH) fclean
