@@ -1,20 +1,5 @@
 #include "minishell.h"
 
-char	*extract_word(char *input, int *len)
-{
-	char	*start;
-
-	start = input;
-	*len = 0;
-	while (*input && *input != ' ' && *input != '|'
-		&& *input != '>' && *input != '<' && *input != '"' && *input != '\'')
-	{
-		(*len)++;
-		input++;
-	}
-	return (ft_strndup(start, *len));
-}
-
 char	*extract_variable(char *input, int *len)
 {
 	char	*start;
@@ -30,9 +15,45 @@ char	*extract_variable(char *input, int *len)
 	return (ft_strndup(start, *len));
 }
 
+int	quote_nbr(char *input)
+{
+	int	i;
+
+	i = 0;
+	if (input[i] == 39)
+	{
+		while (input[i] == 39)
+			i++;
+	}
+	else if (input[i] == '"')
+	{
+		while (input[i] == '"')
+			i++;
+	}
+	if (i % 2 == 0)
+		return (1);
+	return (0);
+}
+
+void	ft_add_all(char **input, t_word **token_list, t_tokens *prev_type)
+{
+	char	*value;
+
+	if (**input)
+	{
+		value = ft_strdup(*input);
+		add_token(token_list, ARGUMENT, value, 0);
+		free(value);
+		*prev_type = ARGUMENT;
+		(*input)++;
+	}
+}
+
 int	lexer_options(char *input, t_word **token_list, int pepi,
 	t_tokens prev_type)
 {
+	if (!quote_nbr(input))
+		return (ft_add_all(&input, token_list, &prev_type), 0);
 	while (*input != '\0')
 	{
 		while (*input == ' ' || *input == '\t')

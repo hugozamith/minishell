@@ -75,6 +75,8 @@ void	expand_args(t_word *args, char ***envp)
 	char	*str;
 
 	temp = args;
+	if (args->next->type == END && ft_strchr(args->value, ' '))
+		return ;
 	while (temp)
 	{
 		if (temp->type == ARGUMENT)

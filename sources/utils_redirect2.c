@@ -13,10 +13,10 @@ int	ft_bad_fd_in(t_word *current, char ***envp, t_word *args, char *filename)
 		ft_bad_fd_error(envp);
 	else if (errno == ENOENT)
 	{
-		if (!ft_strcmp(current->prev->value, "echo")
+		if (current->prev && !ft_strcmp(current->prev->value, "echo")
 			&& (!ft_strncmp(current->next->next->value, "END", 3)
 				|| !handle_redirections(current->next->next, envp)))
-			return (-1);
+			return (ft_print_error(4), -1);
 		if ((has_pipe(args) && !is_bts_in_pipe(args))
 			|| !has_pipe(args))
 			ft_print_error(4);
@@ -94,10 +94,16 @@ int	ft_handle_redirect_in(t_word *current, char ***envp, t_word *args)
 {
 	int		fd;
 	char	*filename;
+	t_word	*dummy;
 
 	if (!(count_nodes(current) > 2))
 		return (69);
-	filename = merge_filename(current->next);
+	dummy = current;
+	while (ft_strncmp(dummy->value, "<", 1))
+	{
+		dummy = dummy->next;
+	}
+	filename = merge_filename(dummy->next);
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
 		return (ft_bad_fd_in(current, envp, args, filename));

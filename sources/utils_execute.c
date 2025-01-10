@@ -2,10 +2,12 @@
 
 char	*ft_args_to_line(t_word *args)
 {
-	char	*result;
-	int		i;
+	char		*result;
+	t_tokens	first;
+	int			i;
 
 	result = ft_strdup("");
+	first = args->type;
 	i = 0;
 	while (args->type == COMMAND || args->type == ARGUMENT)
 	{
@@ -20,8 +22,10 @@ void	ft_exit_failure(char *command_path, char **args,
 	char ***env, t_word *orgs)
 {
 	ft_print_error(0);
-	ft_free_argvs(args);
-	free(command_path);
+	if (args && *args)
+		ft_free_argvs(args);
+	if (command_path)
+		free(command_path);
 	ft_free_all(env, &orgs);
 	exit(EXIT_FAILURE);
 }
@@ -40,43 +44,50 @@ int	ft_handle_exit_status(int status, int exit_code, char ***env)
 	return (0);
 }
 
-char	*prepare_command_and_args(t_word *orgs, char ***env, char ***args)
+char	*ft_special_args_to_line(t_word *args)
 {
-	char	*input;
+	char		*result;
+	t_tokens	first;
+	int			i;
 
-	input = ft_args_to_line(orgs);
-	*args = ft_split(input, ' ');
-	free(input);
-	if (!ft_strchr((*args)[0], '/'))
-		return (ft_find_command((*args)[0], env));
-	return (ft_strdup((*args)[0]));
+	ft_reoganize_args(&args);
+	result = ft_strdup("");
+	first = args->type;
+	i = 0;
+	while (args && args->type != END)
+	{
+		result = ft_strjoin_free(result, ft_strdup(args->value));
+		result = ft_strjoin_free(result, ft_strdup(" "));
+		args = args->next;
+	}
+	return (result);
 }
 
-char	*ft_find_command(char *command, char ***env)
+void	ft_reoganize_args(t_word **args)
 {
-	char	*path_env;
-	char	*path_copy;
-	char	*full_path;
-	char	**dir;
-	int		i;
+	char		*first;
+	char		*second;
+	t_tokens	first_token;
+	t_tokens	second_token;
+	t_word		*dummy;
 
-	i = -1;
-	path_env = ft_getenv("PATH", env);
-	if (!path_env)
-		return (ft_strdup(""));
-	path_copy = ft_strdup(path_env);
-	dir = ft_split(path_copy, ':');
-	while (dir[++i])
+	first = (*args)->value;
+	second = (*args)->next->value;
+	first_token = (*args)->type;
+	second_token = (*args)->next->type;
+	dummy = *args;
+	dummy = dummy->next->next;
+	while (dummy && dummy->type != END)
 	{
-		full_path = ft_shelljoin(dir[i], command);
-		if (full_path && access(full_path, X_OK) == 0)
-		{
-			free(path_copy);
-			free(path_env);
-			return (ft_free_argvs(dir), full_path);
-		}
-		free(full_path);
+		dummy->prev->prev->value = dummy->value;
+		dummy->prev->prev->type = dummy->type;
+		dummy = dummy->next;
 	}
-	ft_free_argvs(dir);
-	return (free(path_copy), free(path_env), ft_strdup(""));
+	if (dummy->prev->prev)
+	{
+		dummy->prev->prev->value = first;
+		dummy->prev->value = second;
+		dummy->prev->prev->type = first_token;
+		dummy->prev->type = second_token;
+	}
 }

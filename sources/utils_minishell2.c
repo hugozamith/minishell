@@ -38,13 +38,13 @@ int	is_bt(char *word, t_word *args, char ***envp)
 	if (!ft_strncmp(word, "cd", 3))
 		return (bt_cd(args, envp));
 	if (!ft_strncmp(word, "pwd", 4))
-		return (bt_pwd());
+		return (bt_pwd(args));
 	if (!ft_strncmp(word, "export", 7))
 		return (bt_export(args, envp));
 	if (!ft_strncmp(word, "unset", 6))
 		return (bt_unset(args, envp));
 	if (!ft_strncmp(word, "env", 4))
-		return (bt_env(*envp));
+		return (bt_env(args, *envp));
 	if (!ft_strncmp(word, "exit", 5))
 		return (bt_exit(args, envp));
 	return (1);

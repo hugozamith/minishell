@@ -49,19 +49,20 @@ int	main(int argc, char **argv, char **envp)
 	my_env = env_init(envp);
 	line = NULL;
 	args = NULL;
-	setup_signals();
 	while (1)
 	{
+		setup_signals();
 		line = read_input();
 		if (line == NULL)
 		{
 			cleanup(NULL, &args, my_env);
-			break ;
+			exit(0);
 		}
 		if (*line && *line != ' ')
 			execute_input(line, &args, my_env);
 		free(line);
 		ft_free_line_arguments(&args);
+		ft_print_error(-1);
 	}
 	return (0);
 }

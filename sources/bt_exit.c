@@ -29,53 +29,6 @@ int	ft_is_many_arguments(t_word *args, char ***envp)
 	return (exit_number);
 }
 
-/* int	bt_exit(t_word *args, char ***envp)
-{
-	int		exit_status;
-	char	*arg;
-	int		exit_code;
-
-	if (!ft_strncmp(args->next->value, "END", 3))
-	{
-		printf("exit\n");
-		arg = ft_getenv("?", envp);
-		if (!arg)
-		{
-			ft_free_all(envp, &args);
-			exit(0);
-		}
-		exit_code = ft_atoi(arg);
-		ft_free_all(envp, &args);
-		exit(exit_code);
-	}
-	exit_status = ft_is_many_arguments(args, envp);
-	if (!exit_status)
-	{
-		ft_print_error(1);
-		ft_put_exitcode(envp, 1);
-		return (0);
-	}
-	arg = args->next->value;
-	if (*arg == '-' || *arg == '+')
-		arg++;
-	while (*arg != '\0')
-	{
-		if (!ft_isdigit(*arg))
-		{
-			if (ft_isalpha(*arg))
-			{
-				ft_print_error(2);
-				ft_free_all(envp, &args);
-				exit(2);
-			}
-		}
-		arg++;
-	}
-	printf("exit\n");
-	ft_free_all(envp, &args);
-	exit(exit_status);
-} */
-
 int	handle_exit_no_args_or_invalid(t_word *args, char ***envp)
 {
 	char	*arg;
@@ -88,11 +41,12 @@ int	handle_exit_no_args_or_invalid(t_word *args, char ***envp)
 		if (!arg)
 		{
 			ft_free_all(envp, &args);
-			exit(0);
+			exit(g_code_of_exit);
 		}
 		exit_code = ft_atoi(arg);
 		ft_free_all(envp, &args);
-		exit(exit_code);
+		g_code_of_exit = exit_code;
+		exit(g_code_of_exit);
 	}
 	if (!ft_is_many_arguments(args, envp))
 	{

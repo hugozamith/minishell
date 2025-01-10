@@ -2,8 +2,8 @@
 
 int	get_cd_path(t_word *args, char ***envp, char **path)
 {
-	if (!args->next)
-		return (handle_home_directory(envp, path));
+	if (args->next->type == END)
+		return (handle_home_directory(envp, &path));
 	args = args->next;
 	*path = expand_string(args, envp);
 	return (0);
@@ -11,6 +11,8 @@ int	get_cd_path(t_word *args, char ***envp, char **path)
 
 int	check_end_token(t_word *args, char *path, char ***envp)
 {
+	if (!args->next->next)
+		return (0);
 	if (ft_strcmp(args->next->next->value, "END"))
 	{
 		free(path);
