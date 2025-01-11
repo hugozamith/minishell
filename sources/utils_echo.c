@@ -14,43 +14,11 @@ int	tokensrch(t_word *args, t_tokens token)
 int	ft_just_exit_code(t_word *args)
 {
 	if (!ft_strcmp(args->value, "echo")
-		&& !ft_strcmp(args->next->value, "$?")
+		&& !ft_strncmp(args->next->value, "$?", 3)
 		&& !ft_strcmp(args->next->next->value, "END"))
 		return (1);
 	return (0);
 }
-
-/* t_word	*rm_redir_node(t_word *args)
-{
-	t_word	*current;
-	t_word	*next;
-	t_word	*prev;
-
-	current = args;
-	while (current)
-	{
-		next = current->next;
-		if (current->type == REDIRECT_IN || current->type == REDIRECT_OUT
-			|| current->type == REDIRECT_APPEND || current->type == HEREDOC)
-		{
-			if (current->prev->type == COMMAND)
-			{
-				while (current->next->O == 1)
-					current = current->next;
-				prev = current->prev;
-				current->prev->next = current->next->next;
-				return (ft_special_node_free(&current), prev->next);
-			}
-			while (current->next->O == 1)
-				current = next;
-			prev = current->prev;
-			current->prev->next = current->next->next;
-			return (ft_special_node_free(&current), prev);
-		}
-		current = next;
-	}
-	return (args);
-} */
 
 t_word	*remove_single_redirection_node(t_word *current)
 {

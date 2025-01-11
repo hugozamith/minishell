@@ -50,7 +50,7 @@ char	*expand_variable(char *str, char ***envp)
 	str++;
 	if (*str == '?')
 	{
-		value = ft_getenv(str, envp);
+		value = ft_itoa(g_code_of_exit);
 	}
 	else
 	{

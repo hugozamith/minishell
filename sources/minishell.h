@@ -6,7 +6,7 @@
 /*   By: peferrei <peferrei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:48:55 by hteixeir          #+#    #+#             */
-/*   Updated: 2025/01/05 19:11:38 by peferrei         ###   ########.fr       */
+/*   Updated: 2025/01/10 16:48:17 by peferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,9 @@ t_word		*rm_redir_node(t_word *args);
 void		reset_fd(int saved_fd_in, int saved_fd_out);
 void		pipe_execution(t_word *args, char ***rara);
 int			bt_exit(t_word *args, char ***envp);
-int			bt_pwd(void);
+int			bt_pwd(t_word *args);
 int			bt_cd(t_word *args, char ***envp);
-int			bt_env(char **envp);
+int			bt_env(t_word *args, char **envp);
 int			bt_unset(t_word *args, char ***envp);
 int			is_bt(char *word, t_word *args, char ***envp);
 int			split_count(char **split);
@@ -116,7 +116,7 @@ int			ft_printfputstr_fd(char *str, int fd);
 size_t		ft_printfstrlcpy(char *dst, const char *src, size_t size);
 size_t		ft_printfstrlen(const char *str);
 int			ft_printfstrncmp(const char *s1, const char *s2, size_t n);
-void		ft_put_exitcode(char ***envp, int nbr);
+int			ft_put_exitcode(char ***envp, int nbr);
 char		*ft_getenv(char *var, char ***envp);
 void		expand_args(t_word *args, char ***envp);
 void		ft_print_error(int i);
@@ -147,7 +147,7 @@ int			ft_empty(t_word *current);
 int			handle_redirection_logic(int i, int *fds, char ***envp);
 int			init_fds(int *fds, char ***envp);
 int			handle_exit_code(t_word *args, char ***envp);
-void		ft_put_exitcode(char ***envp, int nbr);
+//int			ft_put_exitcode(char ***envp, int nbr);
 int			ft_exportchecker(char **argv);
 int			ft_strcmp(const char *s1, const char *s2);
 char		**ft_realloc(char **envp, int size);
@@ -168,7 +168,7 @@ int			ft_handle_redirect_out(t_word *current, char ***envp);
 int			ft_handle_redirect_append(t_word *current, char ***envp);
 int			ft_handle_redirect_in(t_word *current, char ***envp, t_word *args);
 void		ft_put_in_my_env(char ***envp, char *cwd);
-int			handle_home_directory(char ***envp, char **path);
+int			handle_home_directory(char ***envp, char ***path);
 void		ft_guarding_args(t_word *args, int i, int pipe_count);
 void		ft_free_process_var(t_pipes *pipes_struct);
 void		ft_init_pipes_struct(t_pipes **pipes_struct, t_word *args);
@@ -196,5 +196,16 @@ int			ft_belong_env(const char *path, char ***envp);
 int			check_path(char *path, char ***envp);
 void		ft_free_line_arguments(t_word **args);
 int			ft_extras(char **word, t_word **args, char ***envp);
+void		ft_seg_fault(int sigur);
+void		setup_signals(void);
+void		ft_reoganize_args(t_word **args);
+char		*ft_special_args_to_line(t_word *args);
+int			update_environment(char ***envp, char *path);
+void		ft_bad_checker(char **argv, char *variable, char ***envp);
+char		*ft_set_variable_value(t_word **dummy, char ***envp);
+void		update_env(char ***envp, char *variable, char **argv);
+int			handle_export_input(t_word *args, char ***envp);
+char		*extract_word(char *input, int *len);
+int			ft_sum_exit_code(t_word **args);
 
 #endif

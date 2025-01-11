@@ -27,10 +27,10 @@ void	ft_put_in_my_env(char ***envp, char *cwd)
 	ft_free_argvs(old_pwd);
 }
 
-int	handle_home_directory(char ***envp, char **path)
+int	handle_home_directory(char ***envp, char ***path)
 {
-	*path = ft_getenv("HOME", envp);
-	if (!*path)
+	**path = ft_getenv("HOME", envp);
+	if (!**path)
 	{
 		perror("cd: HOME not set");
 		return (1);

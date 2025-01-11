@@ -44,7 +44,11 @@ $(LIBFT):
 $(PRINTF):
 				$(MAKE) -C $(FT_PRINTF_PATH)
 
-clean:	
+valgrind: 
+	@echo "{\n   leak readline\n   Memcheck:Leak\n...\n   fun:readline\n}\n{\n   leak add_history\n   Memcheck:Leak\n...\n   fun:add_history\n}" > readline.supp
+	/usr/bin/valgrind --suppressions=readline.supp --leak-check=full -s --show-leak-kinds=all ./$(NAME)
+
+clean:
 				$(MAKE) -C $(LIBFT_PATH) clean
 				$(MAKE) -C $(FT_PRINTF_PATH) clean
 				$(RM) -r $(OUTFILES_DIR)

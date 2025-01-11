@@ -36,46 +36,58 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return (*(unsigned char *)str1 - *(unsigned char *)str2);
 }
 
+int	ft_str_check(char *str)
+{
+	int	i;
+
+	i = -1;
+	while (str[++i])
+	{
+		if (!ft_isalpha(str[i]) && !ft_isdigit(str[i]))
+		{
+			return (0);
+		}
+	}
+	return (1);
+}
+
 int	ft_exportchecker(char **argv)
 {
 	if (!argv || !argv[0] || !ft_strcmp(argv[0], "1INVALID"))
 	{
+		ft_print_error(-1);
 		ft_print_error(3);
 		return (0);
 	}
 	if ((ft_strchr(argv[0], '-')))
 	{
+		ft_print_error(-1);
 		ft_print_error(3);
 		return (0);
 	}
 	if (!(argv[0][0] != '_' && ft_isalpha(argv[0][0])))
 	{
+		ft_print_error(-1);
+		ft_print_error(3);
+		return (0);
+	}
+	if (!ft_str_check(argv[0]))
+	{
+		ft_print_error(-1);
 		ft_print_error(3);
 		return (0);
 	}
 	return (1);
 }
 
-void	ft_put_exitcode(char ***envp, int nbr)
+int	ft_put_exitcode(char ***envp, int nbr)
 {
-	int		i;
-	char	*str;
-	char	*number;
+	static int	old_code_of_exit;
 
-	i = -1;
-	number = ft_itoa(nbr);
-	str = ft_strjoin("?=", number);
-	free(number);
-	while ((*envp)[++i])
-	{
-		if (!ft_strcmp((*envp)[i], "?"))
-		{
-			free((*envp)[i]);
-			(*envp)[i] = str;
-			return ;
-		}
-	}
-	*envp = (ft_realloc(*envp, (i + 2)));
-	(*envp)[i] = str;
-	(*envp)[i + 1] = NULL;
+	if (nbr == -2)
+		return (old_code_of_exit);
+	(void) envp;
+	old_code_of_exit = g_code_of_exit;
+	g_code_of_exit = nbr;
+	return (0);
 }

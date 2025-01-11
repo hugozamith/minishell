@@ -14,7 +14,7 @@ int	has_pipe(t_word *args)
 void	ft_print_error(int i)
 {
 	static int	status;
-	char		*err_msg[8];
+	char		*err_msg[11];
 
 	err_msg[0] = " command not found\n";
 	err_msg[1] = " too many arguments\n";
@@ -24,16 +24,19 @@ void	ft_print_error(int i)
 	err_msg[5] = " Permission denied\n";
 	err_msg[6] = "minishell: syntax error near unexpected token `newline'\n";
 	err_msg[7] = " Is a directory\n";
+	err_msg[8] = " Is a directory\n";
+	err_msg[9] = " Arguments and options aren't supported\n";
+	err_msg[10] = " Options aren't supported\n";
 	if (!status)
 	{
 		status = 1;
 		if (i == -1)
-		{
 			ft_printf_fd(STDERR_FILENO, "");
-		}
 		else
 			ft_printf_fd(STDERR_FILENO, err_msg[i]);
 	}
+	if (i == -1)
+		status = 0;
 }
 
 const char	*token_type_to_str(t_tokens type)

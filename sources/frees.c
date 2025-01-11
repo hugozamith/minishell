@@ -46,7 +46,9 @@ void	ft_free_args(t_word *args)
 void	ft_free_all(char ***env, t_word **args)
 {
 	if (env && *env)
+	{
 		ft_free_env(env);
+	}
 	if (args && *args)
 	{
 		ft_free_args(*args);
