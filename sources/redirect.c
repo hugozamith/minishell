@@ -153,7 +153,6 @@ int	ft_check_redir(t_word *args, char ***envp, t_word *current, char *first)
 		if (ft_handle_redirect_in(current, envp, args))
 			return (ft_handle_redirect_in(current, envp, args));
 	}
-	//printf("value: %s\n", token_type_to_str(current->type));
 	if (current->type == HEREDOC)
 	{
 		if (ft_handle_heredoc(current, envp))
@@ -177,6 +176,5 @@ int	handle_redirections(t_word *args, char ***envp)
 		next = current->next;
 		current = next;
 	}
-	//write(1, "imhere\n", 7);
 	return (0);
 }

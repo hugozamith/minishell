@@ -14,7 +14,7 @@ int	has_pipe(t_word *args)
 void	ft_print_error(int i)
 {
 	static int	status;
-	char		*err_msg[11];
+	char		*err_msg[12];
 
 	err_msg[0] = " command not found\n";
 	err_msg[1] = " too many arguments\n";
@@ -27,6 +27,7 @@ void	ft_print_error(int i)
 	err_msg[8] = " Is a directory\n";
 	err_msg[9] = " Arguments and options aren't supported\n";
 	err_msg[10] = " Options aren't supported\n";
+	err_msg[11] = " Syntax error\n";
 	if (!status)
 	{
 		status = 1;
@@ -61,27 +62,17 @@ const char	*token_type_to_str(t_tokens type)
 		return ("UNKNOWN");
 }
 
-int	ft_belong_env(const char *path, char ***envp)
+int	ft_belong_env(const char *path)
 {
 	char	**str;
-	char	**str_env;
-	int		i;
+	char	*str_env;
 
 	str = ft_split(path, '/');
-	i = -1;
-	while ((*envp)[++i])
+	str_env = getenv("PATH");
+	if (ft_strnstr(str_env, str[0], ft_strlen(str_env)))
 	{
-		str_env = ft_split((*envp)[i], '=');
-		if (!ft_strcmp(str_env[0], "PATH"))
-		{
-			if (ft_strnstr(str_env[1], str[0], ft_strlen(str_env[1])))
-			{
-				ft_free_argvs(str_env);
-				ft_free_argvs(str);
-				return (1);
-			}
-		}
-		ft_free_argvs(str_env);
+		ft_free_argvs(str);
+		return (1);
 	}
 	ft_free_argvs(str);
 	return (0);
@@ -91,7 +82,7 @@ int	check_path(char *path, char ***envp)
 {
 	struct stat	path_stat;
 
-	if (ft_belong_env(path, envp) == 1)
+	if (ft_belong_env(path) == 1)
 		return (1);
 	if (stat(path, &path_stat) == -1)
 	{

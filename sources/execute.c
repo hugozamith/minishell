@@ -107,6 +107,14 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 	return (0);
 }
 
+void	ft_just_create(t_word *args)
+{
+	int	fd;
+
+	fd = open(args->next->value, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	close(fd);
+}
+
 int	ft_auto_execute(t_word *args, char ***envp)
 {
 	char	*input;
@@ -116,9 +124,13 @@ int	ft_auto_execute(t_word *args, char ***envp)
 		if (ft_sum_exit_code(&args) != -1)
 			return (0);
 	}
+	if (ft_only_redir(args))
+		return(0);
 	expand_args(args, envp);
 	if (!ft_strncmp(args->value, "<", 1))
 		input = ft_special_args_to_line(args);
+	else if (!ft_strncmp(args->value, ">", 1) && args->next->next->type == END)
+		return (ft_just_create(args), 0);
 	else
 		input = ft_args_to_line(args);
 	return (ft_exec_input(input, args, envp));

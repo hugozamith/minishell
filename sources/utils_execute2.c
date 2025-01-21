@@ -7,6 +7,7 @@ char	*prepare_command_and_args(t_word *orgs, char ***env, char ***args)
 	input = ft_args_to_line(orgs);
 	*args = ft_split(input, ' ');
 	free(input);
+	//ft_printf("BEFORE: %s\n", (*args)[0]);
 	if (!ft_strchr((*args)[0], '/'))
 		return (ft_find_command((*args)[0], env));
 	return (ft_strdup((*args)[0]));
@@ -21,7 +22,11 @@ char	*ft_find_command(char *command, char ***env)
 	int		i;
 
 	i = -1;
-	path_env = ft_getenv("PATH", env);
+	//ft_printf_fd(0, "VALUE: %s\n", command);
+	if (!ft_strncmp(command, "/", 1))
+		path_env = getenv("PATH");
+	else
+		path_env = ft_getenv("PATH", env);
 	if (!path_env)
 		return (ft_strdup(""));
 	path_copy = ft_strdup(path_env);
@@ -66,4 +71,15 @@ int	ft_sum_exit_code(t_word **args)
 	}
 	ft_printf("%d\n", result);
 	return (ft_put_exitcode(NULL, result), result);
+}
+
+int	ft_only_redir(t_word *args)
+{
+	if ((args->type == REDIRECT_APPEND || args->type == REDIRECT_IN
+		|| args->type == REDIRECT_OUT || args->type == HEREDOC) && args->next->type == END)
+	{
+		ft_print_error(11);
+		return (1);
+	}
+	return (0);
 }

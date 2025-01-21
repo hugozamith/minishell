@@ -6,7 +6,7 @@
 /*   By: peferrei <peferrei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:48:55 by hteixeir          #+#    #+#             */
-/*   Updated: 2025/01/10 16:48:17 by peferrei         ###   ########.fr       */
+/*   Updated: 2025/01/21 12:15:43 by peferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,7 +192,7 @@ int			check_quotes_and_finalize(int single_quote_open,
 				int double_quote_open, t_word **token_list);
 char		*extract_word(char *input, int *len);
 char		*extract_variable(char *input, int *len);
-int			ft_belong_env(const char *path, char ***envp);
+int			ft_belong_env(const char *path);
 int			check_path(char *path, char ***envp);
 void		ft_free_line_arguments(t_word **args);
 int			ft_extras(char **word, t_word **args, char ***envp);
@@ -207,5 +207,6 @@ void		update_env(char ***envp, char *variable, char **argv);
 int			handle_export_input(t_word *args, char ***envp);
 char		*extract_word(char *input, int *len);
 int			ft_sum_exit_code(t_word **args);
+int			ft_only_redir(t_word *args);
 
 #endif
