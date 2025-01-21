@@ -21,7 +21,7 @@ char	*read_input(void)
 }
 
 void	execute_input(char *line, t_word **args, char ***my_env)
-{
+{							
 	if (!lexer(line, args))
 	{
 		if (has_pipe(*args))
@@ -36,6 +36,19 @@ void	cleanup(char *line, t_word **args, char ***my_env)
 	free(line);
 	ft_free_line_arguments(args);
 	ft_free_all(my_env, args);
+}
+
+char	cornelius(char *dababy)
+{
+	if (!ft_strncmp(dababy, "/\0", 9696))
+	{
+		ft_print_error(4);
+		return(0);
+	}
+
+	while (*dababy && (*dababy == ' ' || *dababy == '\t'))
+		dababy++;
+	return(*dababy);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -58,7 +71,7 @@ int	main(int argc, char **argv, char **envp)
 			cleanup(NULL, &args, my_env);
 			exit(0);
 		}
-		if (*line && *line != ' ')
+		if (cornelius(line))
 			execute_input(line, &args, my_env);
 		free(line);
 		ft_free_line_arguments(&args);

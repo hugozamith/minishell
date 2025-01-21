@@ -39,12 +39,24 @@ int	other_situations(char **current, char **result, char ***envp)
 	return (0);
 }
 
+void print_tokens(t_word *args)
+{
+	while (args)
+	{
+		ft_printf("type: %s, value: %s\n", token_type_to_str(args->type), args->value);
+		args = args->next;
+	}
+}
+
 char	*expand_string(t_word *input, char ***envp)
 {
 	char	*result;
 	char	*current;
 	char	*expanded;
 
+	//write(1, "stard\n", 6);
+	//print_tokens(input);
+	//write(1, "aqui\n", 5);
 	result = ft_strdup("");
 	current = input->value;
 	while (*current)

@@ -4,7 +4,8 @@
 		"types.h": "c",
 		"fcntl.h": "c",
 		"minishell.h": "c",
-		"ft_printf.h": "c"
+		"ft_printf.h": "c",
+		"libft.h": "c"
 	},
 	"makefile.configureOnOpen": false
 }
