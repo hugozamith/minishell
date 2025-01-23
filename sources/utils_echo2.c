@@ -63,7 +63,7 @@ void	print_arguments(t_word *current, int fd, int newline, char ***envp)
 		ft_putstr_fd(expanded, fd);
 		free(expanded);
 		if (current->next && current->next->type == ARGUMENT
-			&& ft_strncmp(current->next->value, "'", 1)
+			&& current->_a == 1
 			&& !ft_empty(current))
 			ft_putchar_fd(' ', fd);
 		current = current->next;
