@@ -21,7 +21,6 @@ char	*ft_find_command(char *command, char ***env)
 	int		i;
 
 	i = -1;
-	//ft_printf_fd(0, "VALUE: %s\n", command);
 	if (!ft_strncmp(command, "/", 1))
 		path_env = getenv("PATH");
 	else

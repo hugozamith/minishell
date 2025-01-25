@@ -6,7 +6,7 @@
 /*   By: hteixeir <hteixeir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:48:55 by hteixeir          #+#    #+#             */
-/*   Updated: 2025/01/23 18:09:19 by hteixeir         ###   ########.fr       */
+/*   Updated: 2025/01/25 16:14:05 by hteixeir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,13 @@ typedef struct s_pipes
 	int		**pipes;
 }	t_pipes;
 
+char		cornelius(char *dababy);
+void		set_flag_o(t_word **token_list);
 int			has_redir(t_word *args);
 t_word		*rm_redir_node(t_word *args);
 void		reset_fd(int saved_fd_in, int saved_fd_out);
 void		pipe_execution(t_word *args, char ***rara);
+int			get_flag(char *str, char c);
 int			bt_exit(t_word *args, char ***envp);
 int			bt_pwd(t_word *args);
 int			bt_cd(t_word *args, char ***envp);

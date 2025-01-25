@@ -31,23 +31,6 @@ int	handle_redirection(char **input, t_word **token_list, t_tokens *prev_type)
 	return (0);
 }
 
-int get_flag(char *str, char c)
-{
-	if (c == 'w')
-	{
-		while (*str && *str != ' ')
-			str++;
-		if(*str == ' ')
-			return(1);
-		return(0);
-	}
-	while (*(str + 1) && *str != c)
-		str++;
-	if(*(str + 1) == ' ')
-		return(1);
-	return(0);
-}
-
 int	handle_single_quote(char **input, t_word **token_list, t_tokens *prev_type)
 {
 	char	*start;
@@ -72,16 +55,6 @@ int	handle_single_quote(char **input, t_word **token_list, t_tokens *prev_type)
 	return (1);
 }
 
-void set_flag_o(t_word **token_list)
-{
-	t_word	*temp;
-
-	temp = *token_list;
-	while (temp->next)
-		temp = temp->next;
-	temp->_o = 1;
-}
-
 int	handle_double_quote(char **input, t_word **token_list, t_tokens *prev_type)
 {
 	char	*start;
@@ -90,7 +63,7 @@ int	handle_double_quote(char **input, t_word **token_list, t_tokens *prev_type)
 
 	start = (*input)++;
 	flag = get_flag((start + 1), '"');
-	while (**input && **input != '"') 	
+	while (**input && **input != '"')
 		(*input)++;
 	if (**input == '"')
 	{
@@ -108,8 +81,7 @@ int	handle_double_quote(char **input, t_word **token_list, t_tokens *prev_type)
 		return (0);
 	}
 	free_tokens(token_list);
-	bigproblem();
-	return (1);
+	return (bigproblem(), 1);
 }
 
 int	handle_word(char **input, t_word **token_list,
@@ -131,7 +103,7 @@ int	handle_word(char **input, t_word **token_list,
 	}
 	else
 	{
-		add_token(token_list, ARGUMENT, word,  get_flag(*input, 'w'));
+		add_token(token_list, ARGUMENT, word, get_flag(*input, 'w'));
 	}
 	free(word);
 	*input += len;

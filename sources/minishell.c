@@ -21,9 +21,15 @@ char	*read_input(void)
 }
 
 void	execute_input(char *line, t_word **args, char ***my_env)
-{							
+{
+	t_word	*value;
+
 	if (!lexer(line, args))
 	{
+		value = *args;
+		if (value->type == ARGUMENT && (value->value[0] == '\''
+				|| value->value[0] == '"') && (ft_strlen(value->value) < 3))
+			return (ft_print_error(0));
 		if (has_pipe(*args))
 			pipe_execution(*args, my_env);
 		else if (is_bt((*args)->value, *args, my_env))
@@ -36,19 +42,6 @@ void	cleanup(char *line, t_word **args, char ***my_env)
 	free(line);
 	ft_free_line_arguments(args);
 	ft_free_all(my_env, args);
-}
-
-char	cornelius(char *dababy)
-{
-	if (!ft_strncmp(dababy, "/\0", 9696))
-	{
-		ft_print_error(4);
-		return(0);
-	}
-
-	while (*dababy && (*dababy == ' ' || *dababy == '\t'))
-		dababy++;
-	return(*dababy);
 }
 
 int	main(int argc, char **argv, char **envp)
