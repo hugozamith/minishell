@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: peferrei <peferrei@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hteixeir <hteixeir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:48:55 by hteixeir          #+#    #+#             */
-/*   Updated: 2025/01/25 16:59:25 by peferrei         ###   ########.fr       */
+/*   Updated: 2025/01/25 17:17:18 by hteixeir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ typedef struct s_pipes
 	int		**pipes;
 }	t_pipes;
 
+char		**ft_realloc(char **envp, int size);
 char		cornelius(char *dababy);
 void		set_flag_o(t_word **token_list);
 int			has_redir(t_word *args);
@@ -102,7 +103,8 @@ char		*expand_string(t_word *input, char ***envp);
 char		*extract_string(char *input, int *len);
 char		*remove_quotations(char *str);
 const char	*token_type_to_str(t_tokens type);
-int			handle_redirections(t_word *args, char ***envp, t_heredoc heredoc_vars);
+int			handle_redirections(t_word *args, char ***envp,
+				t_heredoc heredoc_vars);
 int			bt_echo(t_word *args, int fd, char ***envp);
 int			ft_clear_screen(void);
 int			lexer(char *input, t_word **token_list);
@@ -159,7 +161,6 @@ int			ft_empty(t_word *current);
 int			handle_redirection_logic(int i, int *fds, char ***envp);
 int			init_fds(int *fds, char ***envp);
 int			handle_exit_code(t_word *args, char ***envp);
-//int			ft_put_exitcode(char ***envp, int nbr);
 int			ft_exportchecker(char **argv);
 int			ft_strcmp(const char *s1, const char *s2);
 char		**ft_realloc(char **envp, int size);
