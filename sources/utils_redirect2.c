@@ -8,6 +8,9 @@ void	ft_bad_fd_error(char ***envp)
 
 int	ft_bad_fd_in(t_word *current, char ***envp, t_word *args, char *filename)
 {
+	t_heredoc	nothing;
+
+	nothing.first = NULL;
 	free(filename);
 	if (errno == EACCES)
 		ft_bad_fd_error(envp);
@@ -15,7 +18,7 @@ int	ft_bad_fd_in(t_word *current, char ***envp, t_word *args, char *filename)
 	{
 		if (current->prev && !ft_strcmp(current->prev->value, "echo")
 			&& (!ft_strncmp(current->next->next->value, "END", 3)
-				|| !handle_redirections(current->next->next, envp)))
+				|| !handle_redirections(current->next->next, envp, nothing)))
 			return (ft_print_error(4), -1);
 		if ((has_pipe(args) && !is_bts_in_pipe(args))
 			|| !has_pipe(args))

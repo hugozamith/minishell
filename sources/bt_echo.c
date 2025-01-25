@@ -21,13 +21,15 @@ int	bt_echo(t_word *args, int fd, char ***envp)
 	int		newline;
 	int		i;
 	t_word	*current;
+	t_heredoc nothing;
 
+	nothing.first = NULL;
 	newline = 1;
 	if (handle_exit_code(args, envp) == 0)
 		return (0);
 	if (init_fds(fds, envp))
 		return (1);
-	i = handle_redirections(args, envp);
+	i = handle_redirections(args, envp, nothing);
 	if (handle_redirection_logic(i, fds, envp) != -1)
 		return (1);
 	current = args->next;

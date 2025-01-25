@@ -58,14 +58,29 @@ char	*ft_strndup(const char *s, int n)
 void	print_export(char **envp)
 {
 	int	i;
+	int j;
+	int theres_equal;
 
-	i = 0;
-	while (envp[i] != NULL)
-		i++;
 	i = -1;
 	while (envp[++i] != NULL)
 	{
-		printf("declare -x %s\n", envp[i]);
+		j = -1;
+		ft_printf("declare -x ");
+		while (envp[i][++j] != '\0')
+		{
+			ft_putchar_fd(envp[i][j], 1);
+			if (envp[i][j] == '=')
+			{
+				ft_putchar_fd('\"', 1);
+				theres_equal = 1;
+			}
+		}
+		if (theres_equal)
+		{
+			ft_putchar_fd('\"', 1);
+			theres_equal = 0;
+		}
+		ft_putchar_fd('\n', 1);
 	}
 }
 
