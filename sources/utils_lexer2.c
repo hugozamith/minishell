@@ -35,9 +35,10 @@ void	add_token(t_word **token_list, t_tokens type, char *value, int flag)
 	new_token->next = NULL;
 	new_token->prev = NULL;
 	if (flag == 1)
-		new_token->_o = 1;
+		new_token->_a = 1;
 	else
-		new_token->_o = 0;
+		new_token->_a = 0;
+	new_token->_o = 0;
 	if (*token_list == NULL)
 		*token_list = new_token;
 	else

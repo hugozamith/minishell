@@ -117,6 +117,12 @@ int	ft_handle_heredoc(t_word *current, char ***envp)
 	int		fd;
 	char	*filename;
 
+	if (current->next->type == END || current->next->type ==  PIPE
+		|| (ft_strcmp(current->next->value, "") == 0))
+	{
+		ft_print_error(4);
+		return (-1);
+	}
 	filename = merge_filename(current->next);
 	fd = handle_heredoc(current->next->value);
 	if (fd == -1)
