@@ -3,10 +3,12 @@
 int	bt_pwd(t_word *args)
 {
 	char	cwd[1024];
+	t_heredoc nothing;
 
+	nothing.first = NULL;
 	if (!ft_strncmp(args->next->value, "-", 1))
 		return (ft_print_error(10), 0);
-	handle_redirections(args, NULL);
+	handle_redirections(args, NULL, nothing);
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
 	{
 		printf("%s\n", cwd);

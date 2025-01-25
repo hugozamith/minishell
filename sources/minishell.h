@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hteixeir <hteixeir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: peferrei <peferrei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:48:55 by hteixeir          #+#    #+#             */
-/*   Updated: 2025/01/25 16:14:05 by hteixeir         ###   ########.fr       */
+/*   Updated: 2025/01/25 16:59:25 by peferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,14 @@ typedef struct s_word
 	int					_a;
 }	t_word;
 
+typedef struct s_heredoc
+{
+	char	*input;
+	char	*first;
+	char	*filename;
+	int		fd;
+}	t_heredoc;
+
 typedef struct s_pipes
 {
 	t_word	*command;
@@ -94,7 +102,7 @@ char		*expand_string(t_word *input, char ***envp);
 char		*extract_string(char *input, int *len);
 char		*remove_quotations(char *str);
 const char	*token_type_to_str(t_tokens type);
-int			handle_redirections(t_word *args, char ***envp);
+int			handle_redirections(t_word *args, char ***envp, t_heredoc heredoc_vars);
 int			bt_echo(t_word *args, int fd, char ***envp);
 int			ft_clear_screen(void);
 int			lexer(char *input, t_word **token_list);
@@ -212,5 +220,6 @@ int			handle_export_input(t_word *args, char ***envp);
 char		*extract_word(char *input, int *len);
 int			ft_sum_exit_code(t_word **args);
 int			ft_only_redir(t_word *args);
+int			has_plus(char *str);
 
 #endif

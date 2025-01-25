@@ -21,6 +21,8 @@ int	updated_environment(char ***envp, char **argv, t_word *dummy)
 		}
 		if (i != -2)
 			update_env(envp, variable, argv);
+		if (!dummy->next)
+			break ;
 		dummy = dummy->next;
 	}
 	if (i != -1)

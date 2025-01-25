@@ -24,8 +24,10 @@ static int	handle_redirections_and_errors(t_word *orgs, char ***env,
 	int *fds, char *input)
 {
 	int	red;
+	t_heredoc	heredoc_vars;
 
-	red = handle_redirections(orgs, env);
+	heredoc_vars.input = input;
+	red = handle_redirections(orgs, env, heredoc_vars);
 	if (red == -1 || red == -2)
 	{
 		if (red == -2)
@@ -127,8 +129,10 @@ int	ft_auto_execute(t_word *args, char ***envp)
 	if (ft_only_redir(args))
 		return(0);
 	expand_args(args, envp);
-	if (!ft_strncmp(args->value, "<", 1))
+	if (!ft_strncmp(args->value, "<", 1) && !has_pipe(args))
 		input = ft_special_args_to_line(args);
+	else if (!ft_strncmp(args->value, "<", 1) && has_pipe(args))
+		return (1);
 	else if (!ft_strncmp(args->value, ">", 1) && args->next->next->type == END)
 		return (ft_just_create(args), 0);
 	else

@@ -36,11 +36,20 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return (*(unsigned char *)str1 - *(unsigned char *)str2);
 }
 
+int	has_plus(char *str)
+{
+	if (str[ft_strlen(str) - 1] == '+')
+		return (1);
+	return (0);
+}
+
 int	ft_str_check(char *str)
 {
 	int	i;
 
 	i = -1;
+	if (has_plus(str))
+		return (1);
 	while (str[++i])
 	{
 		if (!ft_isalpha(str[i]) && !ft_isdigit(str[i]))
