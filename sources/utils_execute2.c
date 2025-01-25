@@ -7,7 +7,7 @@ char	*prepare_command_and_args(t_word *orgs, char ***env, char ***args)
 	input = ft_args_to_line(orgs);
 	*args = ft_split(input, ' ');
 	free(input);
-	if (!ft_strchr(input, '/'))
+	if (!ft_strchr((*args)[0], '/'))
 		return (ft_find_command((*args)[0], env));
 	return (ft_strdup((*args)[0]));
 }
