@@ -58,8 +58,8 @@ char	*ft_strndup(const char *s, int n)
 void	print_export(char **envp)
 {
 	int	i;
-	int j;
-	int theres_equal;
+	int	j;
+	int	theres_equal;
 
 	i = -1;
 	while (envp[++i] != NULL)

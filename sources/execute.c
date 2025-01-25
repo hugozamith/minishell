@@ -23,7 +23,7 @@ char	*ft_shelljoin(char *dir, char *command)
 static int	handle_redirections_and_errors(t_word *orgs, char ***env,
 	int *fds, char *input)
 {
-	int	red;
+	int			red;
 	t_heredoc	heredoc_vars;
 
 	heredoc_vars.input = input;
@@ -109,14 +109,6 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 	return (0);
 }
 
-void	ft_just_create(t_word *args)
-{
-	int	fd;
-
-	fd = open(args->next->value, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	close(fd);
-}
-
 int	ft_auto_execute(t_word *args, char ***envp)
 {
 	char	*input;
@@ -127,7 +119,7 @@ int	ft_auto_execute(t_word *args, char ***envp)
 			return (0);
 	}
 	if (ft_only_redir(args))
-		return(0);
+		return (0);
 	expand_args(args, envp);
 	if (!ft_strncmp(args->value, "<", 1) && !has_pipe(args))
 		input = ft_special_args_to_line(args);

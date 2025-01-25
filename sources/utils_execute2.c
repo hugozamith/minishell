@@ -33,11 +33,8 @@ char	*ft_find_command(char *command, char ***env)
 	{
 		full_path = ft_shelljoin(dir[i], command);
 		if (full_path && access(full_path, X_OK) == 0)
-		{
-			free(path_copy);
-			free(path_env);
-			return (ft_free_argvs(dir), full_path);
-		}
+			return (free(path_copy), free(path_env),
+				ft_free_argvs(dir), full_path);
 		free(full_path);
 	}
 	ft_free_argvs(dir);
@@ -74,10 +71,19 @@ int	ft_sum_exit_code(t_word **args)
 int	ft_only_redir(t_word *args)
 {
 	if ((args->type == REDIRECT_APPEND || args->type == REDIRECT_IN
-		|| args->type == REDIRECT_OUT || args->type == HEREDOC) && args->next->type == END)
+			|| args->type == REDIRECT_OUT
+			|| args->type == HEREDOC) && args->next->type == END)
 	{
 		ft_print_error(11);
 		return (1);
 	}
 	return (0);
+}
+
+void	ft_just_create(t_word *args)
+{
+	int	fd;
+
+	fd = open(args->next->value, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	close(fd);
 }

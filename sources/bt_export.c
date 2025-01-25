@@ -1,5 +1,11 @@
 #include "minishell.h"
 
+void	ft_check_i(int i, char ***envp)
+{
+	if (i != -1)
+		ft_put_exitcode(envp, 0);
+}
+
 int	updated_environment(char ***envp, char **argv, t_word *dummy)
 {
 	int		i;
@@ -25,8 +31,7 @@ int	updated_environment(char ***envp, char **argv, t_word *dummy)
 			break ;
 		dummy = dummy->next;
 	}
-	if (i != -1)
-		ft_put_exitcode(envp, 0);
+	ft_check_i(i, envp);
 	return (0);
 }
 

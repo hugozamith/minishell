@@ -17,11 +17,11 @@ int	process_arguments(t_word **current, int fd, int *newline)
 
 int	bt_echo(t_word *args, int fd, char ***envp)
 {
-	int		fds[2];
-	int		newline;
-	int		i;
-	t_word	*current;
-	t_heredoc nothing;
+	int			fds[2];
+	int			newline;
+	int			i;
+	t_word		*current;
+	t_heredoc	nothing;
 
 	nothing.first = NULL;
 	newline = 1;

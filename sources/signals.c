@@ -12,7 +12,6 @@ void	ft_handlesignal(int sigur)
 	}
 	else if (sigur == SIGQUIT)
 	{
-		//printf("Quit: 3\n");
 		rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();

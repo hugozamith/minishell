@@ -1,9 +1,29 @@
 #include "minishell.h"
 
-void	ft_bad_fd_error(char ***envp)
+char	*merge_filename(t_word *node)
 {
-	ft_print_error(5);
-	ft_put_exitcode(envp, 1);
+	char	*new_value;
+	int		i;
+
+	new_value = ft_strdup("");
+	while (node->type == ARGUMENT)
+	{
+		i = 0;
+		if (node->value[i] == '"')
+			i++;
+		while (node->value[i] != '"' && node->value[i])
+		{
+			new_value = add_char(new_value, node->value[i]);
+			i++;
+		}
+		if (node->_o == 1)
+		{
+			node = node->next;
+		}
+		else
+			break ;
+	}
+	return (new_value);
 }
 
 int	ft_bad_fd_in(t_word *current, char ***envp, t_word *args, char *filename)
@@ -31,10 +51,7 @@ int	ft_bad_fd_in(t_word *current, char ***envp, t_word *args, char *filename)
 		return (-1);
 	}
 	else
-	{
-		ft_print_error(5);
-		ft_put_exitcode(envp, 1);
-	}
+		ft_print_this_error(envp);
 	return (-1);
 }
 

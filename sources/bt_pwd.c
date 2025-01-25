@@ -2,8 +2,8 @@
 
 int	bt_pwd(t_word *args)
 {
-	char	cwd[1024];
-	t_heredoc nothing;
+	char		cwd[1024];
+	t_heredoc	nothing;
 
 	nothing.first = NULL;
 	if (!ft_strncmp(args->next->value, "-", 1))

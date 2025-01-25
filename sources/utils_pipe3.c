@@ -39,3 +39,22 @@ void	ft_init_pipes_struct(t_pipes **pipes_struct, t_word *args)
 	(*pipes_struct)->retainer[0] = NULL;
 	(*pipes_struct)->retainer[(*pipes_struct)->pipe_count] = NULL;
 }
+
+char	**ft_realloc(char **envp, int size)
+{
+	char	**new_envp;
+	int		i;
+
+	new_envp = malloc(sizeof(char *) * size);
+	if (!new_envp)
+		return (NULL);
+	i = -1;
+	while (envp[++i])
+	{
+		new_envp[i] = ft_strdup(envp[i]);
+		free(envp[i]);
+	}
+	free(envp);
+	new_envp[i] = NULL;
+	return (new_envp);
+}
