@@ -77,7 +77,7 @@ int	ft_handle_heredoc(t_word *current, char ***envp, t_word *args,
 	}
 	close(fd);
 	free(heredoc_vars.filename);
-	return (0);
+	return (1);
 }
 
 int	ft_check_redir(t_word *args, char ***envp, t_word *current,

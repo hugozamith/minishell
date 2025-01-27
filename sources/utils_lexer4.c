@@ -38,3 +38,11 @@ int	get_flag(char *str, char c)
 		return (1);
 	return (0);
 }
+
+void	ft_only_one(t_word **args)
+{
+	int	fd;
+
+	fd = open((*args)->next->value, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	close(fd);
+}

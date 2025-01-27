@@ -4,16 +4,24 @@ char	*ft_args_to_line(t_word *args)
 {
 	char		*result;
 	t_tokens	first;
+	t_word		*current;
 	int			i;
 
 	result = ft_strdup("");
 	first = args->type;
 	i = 0;
-	while (args->type == COMMAND || args->type == ARGUMENT)
+	current = args;
+	if (first == REDIRECT_IN)
 	{
-		result = ft_strjoin_free(result, ft_strdup(args->value));
+		result = ft_strjoin_free(result, ft_strdup(current->value));
 		result = ft_strjoin_free(result, ft_strdup(" "));
-		args = args->next;
+		current = current->next;
+	}
+	while (current->type == COMMAND || current->type == ARGUMENT)
+	{
+		result = ft_strjoin_free(result, ft_strdup(current->value));
+		result = ft_strjoin_free(result, ft_strdup(" "));
+		current = current->next;
 	}
 	return (result);
 }

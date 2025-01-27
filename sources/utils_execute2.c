@@ -7,7 +7,7 @@ char	*prepare_command_and_args(t_word *orgs, char ***env, char ***args)
 	input = ft_args_to_line(orgs);
 	*args = ft_split(input, ' ');
 	free(input);
-	if (!ft_strchr((*args)[0], '/'))
+	if ((*args)[0] && !ft_strchr((*args)[0], '/'))
 		return (ft_find_command((*args)[0], env));
 	return (ft_strdup((*args)[0]));
 }
@@ -80,10 +80,29 @@ int	ft_only_redir(t_word *args)
 	return (0);
 }
 
-void	ft_just_create(t_word *args)
+int	ft_just_create(t_word **args)
 {
-	int	fd;
+	int		fd;
+	t_word	*current;
+	t_word	*next;
 
-	fd = open(args->next->value, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	close(fd);
+	current = *args;
+	if (!ft_strncmp(current->value, ">", 1) && current->next->next->type == END)
+		return (ft_only_one(args), 1);
+	while (!ft_strncmp(current->value, ">", 1))
+	{
+		fd = open(current->next->value, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+		close(fd);
+		current = current->next->next;
+	}
+	if (current && current->type != END)
+	{
+		while (ft_strcmp((*args)->value, current->value))
+		{
+			next = (*args)->next;
+			*args = next;
+		}
+		return (0);
+	}
+	return (1);
 }

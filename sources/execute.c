@@ -34,9 +34,7 @@ static int	handle_redirections_and_errors(t_word *orgs, char ***env,
 			ft_put_exitcode(env, 2);
 		else
 			ft_put_exitcode(env, 1);
-		reset_fd(fds[0], fds[1]);
-		free(input);
-		return (1);
+		return (reset_fd(fds[0], fds[1]), free(input), 1);
 	}
 	if (has_redir(orgs->next))
 		orgs->next = rm_redir_node(orgs->next);
@@ -44,8 +42,7 @@ static int	handle_redirections_and_errors(t_word *orgs, char ***env,
 	{
 		ft_put_exitcode(env, 2);
 		reset_fd(fds[0], fds[1]);
-		ft_print_error(6);
-		return (1);
+		return (ft_print_error(6), 1);
 	}
 	return (0);
 }
@@ -92,7 +89,8 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 		return (perror("dup"), 1);
 	if (handle_redirections_and_errors(orgs, env, fds, input))
 		return (1);
-	free(input);
+	if (input)
+		free(input);
 	command_path = prepare_command_and_args(orgs, env, &args);
 	if (execute_command(command_path, args, env, orgs))
 	{
@@ -105,14 +103,14 @@ static int	ft_exec_input(char *input, t_word *orgs, char ***env)
 	if (args)
 		ft_free_argvs(args);
 	free(command_path);
-	reset_fd(fds[0], fds[1]);
-	return (0);
+	return (reset_fd(fds[0], fds[1]), 0);
 }
 
 int	ft_auto_execute(t_word *args, char ***envp)
 {
 	char	*input;
 
+	input = "";
 	if (!ft_strncmp(args->value, "expr", 5))
 	{
 		if (ft_sum_exit_code(&args) != -1)
@@ -125,8 +123,12 @@ int	ft_auto_execute(t_word *args, char ***envp)
 		input = ft_special_args_to_line(args);
 	else if (!ft_strncmp(args->value, "<", 1) && has_pipe(args))
 		return (1);
-	else if (!ft_strncmp(args->value, ">", 1) && args->next->next->type == END)
-		return (ft_just_create(args), 0);
+	else if (!ft_strncmp(args->value, ">", 1))
+	{
+		if (ft_just_create(&args))
+			return (0);
+		input = ft_args_to_line(args);
+	}
 	else
 		input = ft_args_to_line(args);
 	return (ft_exec_input(input, args, envp));

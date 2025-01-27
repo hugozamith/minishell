@@ -6,7 +6,7 @@
 /*   By: peferrei <peferrei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:48:55 by hteixeir          #+#    #+#             */
-/*   Updated: 2025/01/25 18:01:07 by peferrei         ###   ########.fr       */
+/*   Updated: 2025/01/27 12:21:47 by peferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,6 +231,7 @@ void		print_export_sort(char **envp);
 int			handle_export_input(t_word *args, char ***envp);
 char		*ft_only_arg(char *str);
 void		ft_print_this_error(char ***envp);
-void		ft_just_create(t_word *args);
+int			ft_just_create(t_word **args);
+void		ft_only_one(t_word **args);
 
 #endif
