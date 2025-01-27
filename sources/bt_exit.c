@@ -34,7 +34,8 @@ int	handle_exit_no_args_or_invalid(t_word *args, char ***envp)
 	char	*arg;
 	int		exit_code;
 
-	if (!ft_strncmp(args->next->value, "END", 3))
+	if (args->next->type == END
+			|| ft_strlen(args->next->value) <= 0)
 	{
 		printf("exit\n");
 		arg = ft_getenv("?", envp);

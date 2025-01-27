@@ -27,8 +27,7 @@ void	execute_input(char *line, t_word **args, char ***my_env)
 	if (!lexer(line, args))
 	{
 		value = *args;
-		if (value->type == ARGUMENT && (value->value[0] == '\''
-				|| value->value[0] == '"') && (ft_strlen(value->value) < 3))
+		if (mimimu(value->value))
 			return (ft_print_error(0));
 		if (has_pipe(*args))
 			pipe_execution(*args, my_env);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: peferrei <peferrei@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hteixeir <hteixeir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/16 11:48:55 by hteixeir          #+#    #+#             */
-/*   Updated: 2025/01/27 12:21:47 by peferrei         ###   ########.fr       */
+/*   Created: 2025/01/27 12:39:56 by hteixeir          #+#    #+#             */
+/*   Updated: 2025/01/27 12:39:58 by hteixeir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ typedef struct s_pipes
 	int		**pipes;
 }	t_pipes;
 
+int			mimimu(char *ok);
 char		cornelius(char *dababy);
 void		ft_bad_fd_error(char ***envp);
 void		set_flag_o(t_word **token_list);
