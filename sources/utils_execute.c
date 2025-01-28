@@ -27,7 +27,7 @@ char	*ft_args_to_line(t_word *args)
 }
 
 void	ft_exit_failure(char *command_path, char **args,
-	char ***env, t_word *orgs)
+					char ***env, t_word *orgs)
 {
 	ft_print_error(0);
 	if (args && *args)
@@ -45,8 +45,10 @@ int	ft_handle_exit_status(int status, int exit_code, char ***env)
 		ft_put_exitcode(env, 2);
 	else if (exit_code == 0)
 		ft_put_exitcode(env, 0);
-	else
+	else if (exit_code == 1)
 		ft_put_exitcode(env, 127);
+	else
+		ft_put_exitcode(env, exit_code);
 	if (exit_code != 0 && exit_code != 2)
 		return (1);
 	return (0);

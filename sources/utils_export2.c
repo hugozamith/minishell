@@ -8,7 +8,10 @@ int	ft_change_found(char ***envp, char *variable, char **argv, int i)
 			(*envp)[i] = ft_strjoin_free(ft_strjoin_free((*envp)[i],
 						ft_strdup("=")), ft_strdup(argv[1]));
 		else
-			(*envp)[i] = ft_strjoin_free((*envp)[i], ft_strdup(argv[1]));
+		{
+			if (ft_strcmp(argv[1], "END"))
+				(*envp)[i] = ft_strjoin_free((*envp)[i], ft_strdup(argv[1]));
+		}
 		free(variable);
 	}
 	else
