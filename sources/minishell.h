@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: hteixeir <hteixeir@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/27 12:39:56 by hteixeir          #+#    #+#             */
-/*   Updated: 2025/01/27 12:39:58 by hteixeir         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -78,6 +66,7 @@ typedef struct s_pipes
 }	t_pipes;
 
 int			mimimu(char *ok);
+char		**ft_realloc(char **envp, int size);
 char		cornelius(char *dababy);
 void		ft_bad_fd_error(char ***envp);
 void		set_flag_o(t_word **token_list);

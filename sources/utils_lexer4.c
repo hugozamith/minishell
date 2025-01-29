@@ -1,5 +1,6 @@
 #include "minishell.h"
 
+
 int	mimimu(char *ok)
 {
 	size_t	x;
@@ -15,6 +16,25 @@ int	mimimu(char *ok)
 	if (x == ft_strlen(ok))
 		return (1);
 	return (0);
+}
+
+char	**ft_realloc(char **envp, int size)
+{
+	char	**new_envp;
+	int		i;
+
+	new_envp = malloc(sizeof(char *) * size);
+	if (!new_envp)
+		return (NULL);
+	i = -1;
+	while (envp[++i])
+	{
+		new_envp[i] = ft_strdup(envp[i]);
+		free(envp[i]);
+	}
+	free(envp);
+	new_envp[i] = NULL;
+	return (new_envp);
 }
 
 char	cornelius(char *dababy)

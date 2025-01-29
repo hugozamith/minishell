@@ -6,14 +6,10 @@ int	process_arguments(t_word **current, int fd, int *newline)
 		*current = rm_redir_node(*current);
 	if (fd < 0)
 		return (1);
-	if (*current && ft_strncmp((*current)->value,
-			"-n", ft_strlen((*current)->value)) == 0)
-	{
-		*newline = 0;
-		*current = (*current)->next;
-	}
+	newline = 0;
 	return (0);
 }
+
 
 int	bt_echo(t_word *args, int fd, char ***envp)
 {
