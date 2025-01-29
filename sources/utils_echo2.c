@@ -56,17 +56,29 @@ int	ft_empty(t_word *current)
 void	print_arguments(t_word *current, int fd, int newline, char ***envp)
 {
 	char	*expanded;
+	char	*tmp;
 
 	while (current && current->type == ARGUMENT)
 	{
 		expanded = expand_string(current, envp);
-		ft_putstr_fd(expanded, fd);
-		free(expanded);
+		tmp = expanded;
+		if(*expanded == '-')
+		{
+			tmp = expanded;
+			tmp++;
+			while (*tmp == 'n')
+				tmp++;
+			if (!(*tmp))
+				newline = 0;
+		}
+		if (*tmp)
+			ft_putstr_fd(expanded, fd);
 		if (current->next && current->next->type == ARGUMENT
-			&& current->_a == 1
+			&& current->_a == 1	&& *tmp
 			&& !ft_empty(current))
 			ft_putchar_fd(' ', fd);
 		current = current->next;
+		free(expanded);
 	}
 	if (newline)
 		ft_putchar_fd('\n', fd);

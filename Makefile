@@ -35,6 +35,7 @@ SOURCES_FILES	=	\
 	$(SOURCES_DIR)/utils_execute2.c \
 	$(SOURCES_DIR)/utils_execute.c \
 	$(SOURCES_DIR)/utils_expand_string.c \
+	$(SOURCES_DIR)/utils_export3.c \
 	$(SOURCES_DIR)/utils_export2.c \
 	$(SOURCES_DIR)/utils_export.c \
 	$(SOURCES_DIR)/utils_lexer2.c \
@@ -46,6 +47,7 @@ SOURCES_FILES	=	\
 	$(SOURCES_DIR)/utils_pipe2.c \
 	$(SOURCES_DIR)/utils_pipe3.c \
 	$(SOURCES_DIR)/utils_pipe.c \
+	$(SOURCES_DIR)/utils_redirect3.c \
 	$(SOURCES_DIR)/utils_redirect2.c \
 	$(SOURCES_DIR)/utils_redirect.c \
 	$(FT_PRINTF_FD_DIR)/ft_printf_fd.c \
@@ -93,6 +95,10 @@ $(LIBFT):
 
 $(PRINTF):
 				$(MAKE) -C $(FT_PRINTF_PATH)
+
+valgrind: 
+	@echo "{\n   leak readline\n   Memcheck:Leak\n...\n   fun:readline\n}\n{\n   leak add_history\n   Memcheck:Leak\n...\n   fun:add_history\n}" > readline.supp
+	/usr/bin/valgrind --suppressions=readline.supp --leak-check=full -s --show-leak-kinds=all ./$(NAME)
 
 clean:
 				$(MAKE) -C $(LIBFT_PATH) clean
