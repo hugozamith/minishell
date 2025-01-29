@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-=======
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: peferrei <peferrei@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/27 12:39:56 by hteixeir          #+#    #+#             */
-/*   Updated: 2025/01/29 13:12:25 by peferrei         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
->>>>>>> 1af01f86ec346757e3f9702baaecdd3c2b6a3b4a
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -80,6 +65,7 @@ typedef struct s_pipes
 	int		**pipes;
 }	t_pipes;
 
+int			substring(const char *str, const char *sub);
 int			mimimu(char *ok);
 char		**ft_realloc(char **envp, int size);
 char		cornelius(char *dababy);

@@ -86,6 +86,16 @@ int	lexer(char *input, t_word **token_list)
 
 	pepi = 0;
 	prev_type = END;
+	if(substring(input, ">>>"))
+	{
+		ft_putstr_fd("minishell: syntax error near unexpected token `>>'\n", 2);
+		return (1);
+	}
+	if(substring(input, "<<<"))
+	{
+		ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
+		return (1);
+	}
 	if (lexer_options(input, token_list, pepi, prev_type))
 		return (1);
 	return (check_quotes_and_finalize(0, 0, token_list));

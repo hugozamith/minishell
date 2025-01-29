@@ -41,6 +41,7 @@ SOURCES_FILES	=	\
 	$(SOURCES_DIR)/utils_lexer2.c \
 	$(SOURCES_DIR)/utils_lexer3.c \
 	$(SOURCES_DIR)/utils_lexer4.c \
+	$(SOURCES_DIR)/utils_lexer5.c \
 	$(SOURCES_DIR)/utils_lexer.c \
 	$(SOURCES_DIR)/utils_minishell2.c \
 	$(SOURCES_DIR)/utils_minishell.c \
