@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hteixeir <hteixeir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: peferrei <peferrei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 12:39:56 by hteixeir          #+#    #+#             */
-/*   Updated: 2025/01/27 12:39:58 by hteixeir         ###   ########.fr       */
+/*   Updated: 2025/01/29 13:12:25 by peferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,7 +214,7 @@ void		ft_seg_fault(int sigur);
 void		setup_signals(void);
 void		ft_reoganize_args(t_word **args);
 char		*ft_special_args_to_line(t_word *args);
-int			update_environment(char ***envp, char *path);
+int			update_environment(char ***envp, char **path);
 void		ft_bad_checker(char **argv, char *variable, char ***envp);
 char		*ft_set_variable_value(t_word **dummy, char ***envp);
 void		update_env(char ***envp, char *variable, char **argv);
