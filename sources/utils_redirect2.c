@@ -40,11 +40,9 @@ int	ft_bad_fd_in(t_word *current, char ***envp, t_word *args, char *filename)
 			&& (!ft_strncmp(current->next->next->value, "END", 3)
 				|| !handle_redirections(current->next->next, envp, nothing)))
 			return (ft_print_error(4), -1);
-		if ((has_pipe(args) && !is_bts_in_pipe(args))
-			|| !has_pipe(args))
+		if ((has_pipe(args) && !is_bts_in_pipe(args)) || !has_pipe(args))
 			ft_print_error(4);
-		if (ft_strchr(current->value, '<')
-			&& ft_strlen(current->value) > 1)
+		if (ft_strchr(current->value, '<') && ft_strlen(current->value) > 1)
 			return (-2);
 		else
 			ft_put_exitcode(envp, 1);

@@ -48,6 +48,8 @@ SOURCES_FILES	=	\
 	$(SOURCES_DIR)/utils_pipe2.c \
 	$(SOURCES_DIR)/utils_pipe3.c \
 	$(SOURCES_DIR)/utils_pipe.c \
+	$(SOURCES_DIR)/utils_redirect5.c \
+	$(SOURCES_DIR)/utils_redirect4.c \
 	$(SOURCES_DIR)/utils_redirect3.c \
 	$(SOURCES_DIR)/utils_redirect2.c \
 	$(SOURCES_DIR)/utils_redirect.c \

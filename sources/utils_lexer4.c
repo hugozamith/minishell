@@ -1,6 +1,5 @@
 #include "minishell.h"
 
-
 int	mimimu(char *ok)
 {
 	size_t	x;

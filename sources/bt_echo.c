@@ -10,7 +10,6 @@ int	process_arguments(t_word **current, int fd, int *newline)
 	return (0);
 }
 
-
 int	bt_echo(t_word *args, int fd, char ***envp)
 {
 	int			fds[2];
