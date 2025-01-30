@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-=======
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: peferrei <peferrei@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/27 12:39:56 by hteixeir          #+#    #+#             */
-/*   Updated: 2025/01/29 13:12:25 by peferrei         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
->>>>>>> 1af01f86ec346757e3f9702baaecdd3c2b6a3b4a
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -67,6 +52,9 @@ typedef struct s_heredoc
 	char	*first;
 	char	*filename;
 	int		fd;
+	char	***env;
+	t_word	*args;
+	int		i;
 }	t_heredoc;
 
 typedef struct s_pipes
@@ -206,6 +194,10 @@ void		add_token(t_word **token_list, t_tokens type,
 				char *value, int flag);
 void		free_tokens(t_word **token_list);
 void		bigproblem(void);
+void		ft_close_it(int fd);
+char		**ft_new_list(char **str_list, int i, char *input);
+void		ft_free_it(char **str_list, char **lines, char *input);
+void		ft_print_all_lines(char **list, t_heredoc heredoc_vars);
 int			check_quotes_and_finalize(int single_quote_open,
 				int double_quote_open, t_word **token_list);
 char		*extract_word(char *input, int *len);
@@ -230,7 +222,7 @@ int			has_plus(char *str);
 void		free_2d_array(char **array);
 char		*merge_filename(t_word *node);
 void		ft_handle_heredoc_signal(int sigur);
-void		ft_free_heredoc(t_word *args, char ***envp,
+int			ft_free_heredoc(char **str_list, char **lines,
 				t_heredoc heredoc_vars, char *input);
 void		print_export_sort(char **envp);
 int			handle_export_input(t_word *args, char ***envp);
@@ -238,5 +230,12 @@ char		*ft_only_arg(char *str);
 void		ft_print_this_error(char ***envp);
 int			ft_just_create(t_word **args);
 void		ft_only_one(t_word **args);
+int			handle_heredoc(const char *delimiter, t_heredoc heredoc_vars);
+int			ft_bad_fd_in(t_word *current, char ***envp,
+				t_word *args, char *filename);
+char		**ft_list_init(void);
+void		ft_end_it(t_heredoc heredoc_vars, char **str_list);
+int			ft_get_fd(t_heredoc heredoc_vars);
+char		*ft_get_filename(t_word *current);
 
 #endif

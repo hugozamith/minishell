@@ -1,8 +1,7 @@
 #include "minishell.h"
 
-int get_cd_path(t_word *args, char ***envp, char **path)
+int	get_cd_path(t_word *args, char ***envp, char **path)
 {
-	//ft_printf("FIRST\n");
 	if (args->next->type == END)
 		return (handle_home_directory(envp, &path));
 	args = args->next;
@@ -10,9 +9,8 @@ int get_cd_path(t_word *args, char ***envp, char **path)
 	return (0);
 }
 
-int check_end_token(t_word *args, char **path, char ***envp)
+int	check_end_token(t_word *args, char **path, char ***envp)
 {
-	//ft_printf("SECOND\n");
 	if (!args->next->next)
 		return (0);
 	if (ft_strcmp(args->next->next->value, "END"))
@@ -26,9 +24,8 @@ int check_end_token(t_word *args, char **path, char ***envp)
 	return (0);
 }
 
-int change_directory(char **path, char ***envp)
+int	change_directory(char **path, char ***envp)
 {
-	//ft_printf("THIRD\n");
 	if (!ft_strcmp(*path, "$PWD"))
 	{
 		free(*path);
@@ -46,10 +43,9 @@ int change_directory(char **path, char ***envp)
 	return (0);
 }
 
-int update_environment(char ***envp, char **path)
+int	update_environment(char ***envp, char **path)
 {
-	//ft_printf("FOURTH\n");
-	char cwd[1024];
+	char	cwd[1024];
 
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
 	{
@@ -65,9 +61,9 @@ int update_environment(char ***envp, char **path)
 	return (0);
 }
 
-int bt_cd(t_word *args, char ***envp)
+int	bt_cd(t_word *args, char ***envp)
 {
-	char *path;
+	char	*path;
 
 	path = NULL;
 	if (get_cd_path(args, envp, &path))

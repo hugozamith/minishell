@@ -24,17 +24,23 @@ void	ft_handle_heredoc_signal(int sigur)
 	}
 }
 
-void	ft_free_heredoc(t_word *args, char ***envp,
+int	ft_free_heredoc(char **str_list, char **lines,
 	t_heredoc heredoc_vars, char *input)
 {
-	ft_free_all(envp, &args);
+	if (input)
+		ft_print_all_lines(str_list, heredoc_vars);
+	else if (!input)
+		ft_end_it(heredoc_vars, str_list);
+	ft_free_all(heredoc_vars.env, &heredoc_vars.args);
 	free(heredoc_vars.filename);
 	free(heredoc_vars.input);
 	if (!input)
 		ft_printf("\n");
 	else
 		free(input);
+	ft_free_it(str_list, lines, NULL);
 	close(heredoc_vars.fd);
+	return (open(".heredoc_tmp", O_RDONLY));
 }
 
 void	ft_print_this_error(char ***envp)

@@ -62,7 +62,7 @@ void	print_arguments(t_word *current, int fd, int newline, char ***envp)
 	{
 		expanded = expand_string(current, envp);
 		tmp = expanded;
-		if(*expanded == '-')
+		if (*expanded == '-')
 		{
 			tmp = expanded;
 			tmp++;
@@ -74,8 +74,7 @@ void	print_arguments(t_word *current, int fd, int newline, char ***envp)
 		if (*tmp)
 			ft_putstr_fd(expanded, fd);
 		if (current->next && current->next->type == ARGUMENT
-			&& current->_a == 1	&& *tmp
-			&& !ft_empty(current))
+			&& current->_a == 1	&& *tmp && !ft_empty(current))
 			ft_putchar_fd(' ', fd);
 		current = current->next;
 		free(expanded);
