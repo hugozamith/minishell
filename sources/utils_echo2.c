@@ -64,10 +64,8 @@ void	print_arguments(t_word *current, int fd, int newline, char ***envp)
 		tmp = expanded;
 		if(*expanded == '-')
 		{
-			tmp = expanded;
-			tmp++;
-			while (*tmp == 'n')
-				tmp++;
+			while (*++tmp == 'n')
+					;
 			if (!(*tmp))
 				newline = 0;
 		}
